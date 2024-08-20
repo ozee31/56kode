@@ -1,13 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 36 36">
-  <path fill="#000" d="M22.25 4h-8.5a1 1 0 0 0-.96.73l-5.54 19.4a.5.5 0 0 0 .62.62l5.05-1.44a2 2 0 0 0 1.38-1.4l3.22-11.66a.5.5 0 0 1 .96 0l3.22 11.67a2 2 0 0 0 1.38 1.39l5.05 1.44a.5.5 0 0 0 .62-.62l-5.54-19.4a1 1 0 0 0-.96-.73Z"/>
-  <path fill="url(#gradient)" d="M18 28a7.63 7.63 0 0 1-5-2c-1.4 2.1-.35 4.35.6 5.55.14.17.41.07.47-.15.44-1.8 2.93-1.22 2.93.6 0 2.28.87 3.4 1.72 3.81.34.16.59-.2.49-.56-.31-1.05-.29-2.46 1.29-3.25 3-1.5 3.17-4.83 2.5-6-.67.67-2.6 2-5 2Z"/>
-  <defs>
-    <linearGradient id="gradient" x1="16" x2="16" y1="32" y2="24" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#000"/>
-      <stop offset="1" stop-color="#000" stop-opacity="0"/>
-    </linearGradient>
-  </defs>
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" width="36" height="36">
+	<title>logo_small</title>
+	<defs>
+		<image  width="36" height="36" id="img1" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAMAAADW3miqAAAAAXNSR0IB2cksfwAAAWhQTFRFICc3Jy4+LTNDKzFBIik5Jiw8KzJBJSw8Iyo6LDNDl5yn3+Lq2d3kvMDJISg4NTxLub3GlJmkz9PbdXqHKjBAtrrDn6SupKiyX2VyMThHzdHZio+ao6exw8bPKjFAr7S9UlhmlZqkpKmzJi08cHWCzM/XO0FQu7/IREpZPEJRWV5sLDNC0dXdNz5NTVNhUFZkW2Fu3uHpRUxaw8fPm5+qvsLLyMvU4OPrbXOAjJGcvcHKrbG7tbnCRkxakZah19ri0NTcb3SBR05cXmRxNz1MvL/JvsPLt7vE5OfvcXaChYmVKTBA0tXdWV9swcXOiY6ZRk1b1NjgoKSuUlhl4OPqPENSOD9OLjRE1NffkpahT1VjKC4+MjlIY2l2Iik4f4SQys7WTlRiztHaPENRsra/lZqlOkFQ4uXtam98WmBt3+PqSU9dbHJ/1tnh1tri3N/nnaKsLTRDwcTNbnOAv8PMKzJCKTA/ISg3xFS44wAAASdJREFUeJxjZCACMI4qGsSKGEE0418Qk+Uf828GBjbGnwwMHIy//yAp4gKpYmT8xMDAz8j44T8DgxDjWwYRoMAPJEXijC8gDElGxqcgGqiIj4+R8RGydfKMD8A0nzAj412oIhVGxlsoblJnBIKrDAyazCD6D0iRLCPjORSH86mCFDGeYLAEkvcYlA8zCOkwMh79jaKIxZZxH4PzSYs9row3HrFYcR7/JGTG+FFgG2Y4eTMybvZj3MjAEMB466qQA1AD42oURWE7PjGEM167JGO7nIEh6sDz/6AgEBcwWYqkKGabN+OqcMbXWxMZGedqWzLOBodTGiPjDGSTMs/KiV0wnMrAkAP2QT9DEWMvA0MGD2M3ipvK+iF+Ke9m+oMj7vCDUUWDUhEAGzdIJer9eMYAAAAASUVORK5CYII="/>
+	</defs>
 	<style>
-    @media (prefers-color-scheme:dark){:root{filter:invert(100%)}}
-  </style>
+	</style>
+	<use id="Background" href="#img1" x="0" y="0"/>
 </svg>
