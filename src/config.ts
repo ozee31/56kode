@@ -3,7 +3,7 @@ import type { Site, SocialObjects } from "./types";
 export const SITE: Site = {
   website: "https://www.56kode.com", // replace this with your deployed domain
   author: "Flavien Beninca",
-  profile: "https://satnaing.dev/",
+  profile: "https://www.56kode.com/about",
   desc: "A minimal, responsive and SEO-friendly Astro blog theme.",
   title: "56kode",
   ogImage: "",
@@ -46,7 +46,7 @@ export const SOCIALS: SocialObjects = [
   },
   {
     name: "Twitter",
-    href: "https://x.com/ozee_31",
+    href: "https://x.com/56_kode",
     linkTitle: `${SITE.title} on X`,
     active: true,
   },
@@ -88,9 +88,9 @@ export const SOCIALS: SocialObjects = [
   },
   {
     name: "CodePen",
-    href: "https://github.com/satnaing/astro-paper",
+    href: "https://codepen.io/56kode",
     linkTitle: `${SITE.title} on CodePen`,
-    active: false,
+    active: true,
   },
   {
     name: "Discord",
