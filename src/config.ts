@@ -4,7 +4,7 @@ export const SITE: Site = {
   website: "https://www.56kode.com", // replace this with your deployed domain
   author: "Flavien Beninca",
   profile: "https://www.56kode.com/about",
-  desc: "A minimal, responsive and SEO-friendly Astro blog theme.",
+  desc: "A blog focused on trends, tips, and techniques in web development, with a particular emphasis on React, TypeScript, and JavaScript.",
   title: "56kode",
   ogImage: "",
   lightAndDarkMode: true,
@@ -40,7 +40,7 @@ export const SOCIALS: SocialObjects = [
   },
   {
     name: "Mail",
-    href: "mailto:flavien.beninca@gmail.com",
+    href: "mailto:contact@56kode.com",
     linkTitle: `Send an email to ${SITE.title}`,
     active: true,
   },
