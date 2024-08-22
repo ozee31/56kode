@@ -1,7 +1,7 @@
 ---
 import { type CollectionEntry, getCollection } from "astro:content";
 import TagPosts from "@layouts/TagPosts.astro";
-import getUniqueTags from "@utils/getUniqueTags";
+import { getUniqueTagsForAllPosts } from "@utils/getUniqueTags";
 import getPostsByTag from "@utils/getPostsByTag";
 import getPageNumbers from "@utils/getPageNumbers";
 import getPagination from "@utils/getPagination";
@@ -13,9 +13,9 @@ export interface Props {
 }
 
 export async function getStaticPaths() {
-  const posts = await getCollection("blog");
-
-  const tags = getUniqueTags(posts);
+  const blogPosts = await getCollection("blog");
+  const techwatchPosts = await getCollection("techwatch");
+  const tags = getUniqueTagsForAllPosts(blogPosts, techwatchPosts);
 
   return tags.flatMap(({ tag, tagName }) => {
     const tagPosts = getPostsByTag(posts, tag);
