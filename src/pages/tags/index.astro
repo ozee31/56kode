@@ -7,10 +7,19 @@ import Main from "@layouts/Main.astro";
 import Tag from "@components/Tag.astro";
 import getUniqueTags from "@utils/getUniqueTags";
 import { SITE } from "@config";
+import uniqBy from "lodash.uniqby";
 
-const posts = await getCollection("blog");
+interface Tag {
+  tag: string;
+  tagName: string;
+}
 
-let tags = getUniqueTags(posts);
+const blogPosts = await getCollection("blog");
+const techwatchPosts = await getCollection("techwatch");
+
+let postsTags = getUniqueTags(blogPosts);
+let techwatchTags = getUniqueTags(techwatchPosts);
+let tags = uniqBy([...postsTags, ...techwatchTags], "tag") as Tag[];
 ---
 
 <Layout title={`Tags | ${SITE.title}`}>
