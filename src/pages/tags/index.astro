@@ -5,12 +5,12 @@ import Footer from "@components/Footer.astro";
 import Layout from "@layouts/Layout.astro";
 import Main from "@layouts/Main.astro";
 import Tag from "@components/Tag.astro";
-import getUniqueTags from "@utils/getUniqueTags";
+import { getUniqueTagsForAllPosts } from "@utils/getUniqueTags";
 import { SITE } from "@config";
 
-const posts = await getCollection("blog");
-
-let tags = getUniqueTags(posts);
+const blogPosts = await getCollection("blog");
+const techwatchPosts = await getCollection("techwatch");
+const tags = getUniqueTagsForAllPosts(blogPosts, techwatchPosts);
 ---
 
 <Layout title={`Tags | ${SITE.title}`}>

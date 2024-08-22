@@ -7,6 +7,7 @@ import Footer from "@components/Footer.astro";
 import Card from "@components/Card";
 import Pagination from "@components/Pagination.astro";
 import { SITE } from "@config";
+import Hr from "@components/Hr.astro";
 
 export interface Props {
   currentPage: number;
@@ -14,9 +15,21 @@ export interface Props {
   paginatedPosts: CollectionEntry<"blog">[];
   tag: string;
   tagName: string;
+  techWatchPagination: {
+    currentPage: number;
+    totalPages: number;
+    paginatedPosts: CollectionEntry<"techwatch">[];
+  };
 }
 
-const { currentPage, totalPages, paginatedPosts, tag, tagName } = Astro.props;
+const {
+  currentPage,
+  totalPages,
+  paginatedPosts,
+  tag,
+  tagName,
+  techWatchPagination,
+} = Astro.props;
 ---
 
 <Layout title={`Tag: ${tagName} | ${SITE.title}`}>
@@ -27,13 +40,36 @@ const { currentPage, totalPages, paginatedPosts, tag, tagName } = Astro.props;
     pageDesc={`All the articles with the tag "${tagName}".`}
   >
     <h1 slot="title" transition:name={tag}>{`Tag:${tag}`}</h1>
-    <ul>
-      {
-        paginatedPosts.map(({ data, slug }) => (
-          <Card href={`/posts/${slug}/`} frontmatter={data} />
-        ))
-      }
-    </ul>
+    {
+      paginatedPosts.length > 0 && (
+        <section>
+          <h2 class="text-3xl">My posts</h2>
+          <ul>
+            {paginatedPosts.map(({ data, slug }) => (
+              <Card href={`/posts/${slug}/`} frontmatter={data} />
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      paginatedPosts.length > 0 &&
+        techWatchPagination.paginatedPosts.length > 0 && <Hr />
+    }
+
+    {
+      techWatchPagination.paginatedPosts.length > 0 && (
+        <section class="mt-5">
+          <h2 class="text-3xl">Tech Watch Posts</h2>
+          <ul>
+            {techWatchPagination.paginatedPosts.map(({ data, slug }) => (
+              <Card href={`/posts/${slug}/`} frontmatter={data} />
+            ))}
+          </ul>
+        </section>
+      )
+    }
   </Main>
 
   <Pagination
