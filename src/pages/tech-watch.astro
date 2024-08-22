@@ -4,7 +4,9 @@ import getPagination from "@utils/getPagination";
 import TechWatchPost from "@layouts/TechWatchPost.astro";
 
 const techwatchItems = await getCollection("techwatch");
-techwatchItems.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+techwatchItems.sort(
+  (a, b) => b.data.pubDatetime.valueOf() - a.data.pubDatetime.valueOf()
+);
 
 const pagination = getPagination({
   posts: techwatchItems,
