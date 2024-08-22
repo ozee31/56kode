@@ -1,5 +1,5 @@
 ---
-import { getCollection } from "astro:content";
+import { getCollection, type CollectionEntry } from "astro:content";
 import TagPosts from "@layouts/TagPosts.astro";
 import getPostsByTag from "@utils/getPostsByTag";
 import getPagination from "@utils/getPagination";
@@ -20,8 +20,11 @@ export async function getStaticPaths() {
 
 const { tag, tagName, blogPosts, techwatchPosts } = Astro.props;
 
-const postsByTag = getPostsByTag(blogPosts, tag);
-const techWatchPostsByTag = getPostsByTag(techwatchPosts, tag);
+const postsByTag = getPostsByTag(blogPosts, tag) as CollectionEntry<"blog">[];
+const techWatchPostsByTag = getPostsByTag(
+  techwatchPosts,
+  tag
+) as CollectionEntry<"techwatch">[];
 
 const pagination = getPagination({
   posts: postsByTag,
@@ -29,7 +32,7 @@ const pagination = getPagination({
   isIndex: true,
 });
 
-const techWatchPagination = getPagination({
+const techWatchPagination = getPagination<CollectionEntry<"techwatch">>({
   posts: techWatchPostsByTag,
   page: 1,
   isIndex: true,
