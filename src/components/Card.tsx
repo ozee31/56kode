@@ -38,7 +38,7 @@ export default function Card({
       </a>
       <div className="flex items-center gap-3">
         <Datetime pubDatetime={pubDatetime} modDatetime={modDatetime} />
-        {displayAuthor && (
+        {displayAuthor && author.length > 0 && (
           <span className="text-sm opacity-80">({author})</span>
         )}
       </div>

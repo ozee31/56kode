@@ -17,7 +17,11 @@ const { currentPage, totalPages, paginatedPosts } = Astro.props;
 
 <Layout title="Tech Watch">
   <Header activeNav="tech-watch" />
-  <Main pageTitle="Tech Watch" pageDesc="All the articles I've posted.">
+  <Main
+    pageTitle="Tech Watch"
+    pageDesc="All the articles I've selected."
+    rss="/rss-techwatch.xml"
+  >
     <ul>
       {
         paginatedPosts.map(item => (
