@@ -15,7 +15,11 @@ export interface Props {
 const { currentPage, totalPages, paginatedPosts } = Astro.props;
 ---
 
-<Layout title="Tech Watch">
+<Layout
+  title="Tech Watch"
+  title="Tech Watch: Latest Trends in React, TypeScript, and Front-End Development"
+  description="Discover the latest trends and insights in React, TypeScript, and front-end development. Stay ahead in tech with our curated tech watch updates."
+>
   <Header activeNav="tech-watch" />
   <Main
     pageTitle="Tech Watch"

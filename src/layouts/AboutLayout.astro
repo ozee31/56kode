@@ -15,7 +15,10 @@ export interface Props {
 const { frontmatter } = Astro.props;
 ---
 
-<Layout title={`${frontmatter.title} | ${SITE.title}`}>
+<Layout
+  title={`${frontmatter.title} | ${SITE.title}`}
+  description="Learn more about 56kode, a forward-thinking tech agency specializing in innovative web and app development. Discover our mission, values, and the talented team driving digital transformation."
+>
   <Header activeNav="about" />
   <Breadcrumbs />
   <main id="main-content">
