@@ -1,0 +1,37 @@
+---
+import { getCollection } from "astro:content";
+import TechWatchPost from "@layouts/TechWatchPost.astro";
+import getPagination from "@utils/getPagination";
+
+export async function getStaticPaths() {
+  const techwatchItems = await getCollection("techwatch");
+  techwatchItems.sort(
+    (a, b) => b.data.pubDatetime.valueOf() - a.data.pubDatetime.valueOf()
+  );
+
+  const pagination = getPagination({
+    posts: techwatchItems,
+    page: 1,
+    isIndex: true,
+  });
+
+  const totalPages = pagination.totalPages;
+
+  return Array.from({ length: totalPages }, (_, i) => {
+    const currentPage = i + 1;
+    const pagination = getPagination({
+      posts: techwatchItems,
+      page: currentPage,
+      isIndex: false,
+    });
+    return {
+      params: { page: currentPage.toString() },
+      props: pagination,
+    };
+  });
+}
+
+const { paginatedPosts, ...pagination } = Astro.props;
+---
+
+<TechWatchPost {...pagination} paginatedPosts={paginatedPosts} />
