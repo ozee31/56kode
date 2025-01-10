@@ -63,8 +63,8 @@ const {
         <section class="mt-5">
           <h2 class="text-3xl">Tech Watch Posts</h2>
           <ul>
-            {techWatchPagination.paginatedPosts.map(({ data, slug }) => (
-              <Card href={`/posts/${slug}/`} frontmatter={data} />
+            {techWatchPagination.paginatedPosts.map(({ data }) => (
+              <Card href={data.url} frontmatter={data} />
             ))}
           </ul>
         </section>
