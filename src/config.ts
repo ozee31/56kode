@@ -4,8 +4,9 @@ export const SITE: Site = {
   website: "https://www.56kode.com", // replace this with your deployed domain
   author: "Flavien Beninca",
   profile: "https://www.56kode.com/about",
-  desc: "A blog focused on trends, tips, and techniques in web development, with a particular emphasis on React, TypeScript, and JavaScript.",
-  title: "56kode",
+  desc: "56kode is a blog about modern web development: React, TypeScript, JavaScript, frontend, best practices, and developer insights.",
+  title: "56kode - Web Development Blog on React & TypeScript",
+  titleShort: "56kode",
   ogImage: "",
   lightAndDarkMode: true,
   postPerIndex: 4,
