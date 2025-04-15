@@ -1,7 +1,7 @@
 ---
 author: 56kode
-pubDatetime: 2025-04-15T16:10:00+01:00
-modDatetime: 2025-04-15T16:10:00+01:00
+pubDatetime: 2025-04-15T16:10:00+02:00
+modDatetime: 2025-04-15T16:10:00+02:00
 title: "Level Up React: Mastering useReducer for structured state management"
 slug: level-up-react-mastering-use-reducer-for-structured-state-management
 featured: false
