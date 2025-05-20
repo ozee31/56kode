@@ -31,7 +31,7 @@ Level Up React is a series of in-depth articles designed to help React developer
 
 State management is a fundamental challenge in React application development. We've already explored `useState` and `useReducer` in our previous articles, but these hooks are primarily designed to manage a component's local state. What happens when multiple components, potentially far apart in the component tree, need to access the same state?
 
-This is where React's Context API comes in, an integrated solution for global state management. In this article, we'll explore in depth the internal workings of Context, its optimizations in React 19, and how to use it effectively in your applications.
+This is where React's Context API comes in, an integrated solution for global state management. In this article, we'll explore in depth the internal workings of Context, optimization techniques, and how to use it effectively in your applications.
 
 We'll also compare Context with popular libraries like Zustand and Redux, to help you choose the solution that best fits your needs.
 
@@ -120,7 +120,7 @@ A common confusion concerns the difference between `createContext` and the `Prov
 
 - `createContext` is called only once to create the context object.
 - The `Provider` is rendered on each render cycle of the parent component.
-- The context value is determined by the `Provider`'s `value` prop, not by the `defaultValue` argument of `createContext`.
+- The context value is determined by the Provider's `value` prop. However, if no Provider is found above a component that consumes the context, the `defaultValue` passed to `createContext` will be used.
 
 What's important to understand is that even if you pass an object that seems identical on each render, React considers it a new value if it's not the same object reference. This is why the `Provider` triggers re-renders even if the object is structurally identical.
 
@@ -393,7 +393,7 @@ However, I continue to use the Context API for simple cases, such as user prefer
 
 ## Conclusion
 
-React's Context API is a powerful tool for global state management, with sophisticated internal mechanisms for propagating data through the component tree. With the optimizations in React 19, it becomes even more performant and flexible.
+React's Context API is a powerful tool for global state management, with sophisticated internal mechanisms for propagating data through the component tree. With proper optimization techniques, it can be both performant and flexible.
 
 However, for complex applications or specific use cases, libraries like Zustand or Redux can offer significant advantages in terms of performance, features, and architecture.
 
