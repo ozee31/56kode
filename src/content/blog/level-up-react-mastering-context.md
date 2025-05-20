@@ -1,7 +1,7 @@
 ---
 author: 56kode
 pubDatetime: 2025-05-20T17:10:00+02:00
-modDatetime: 2025-05-20T17:10:00+02:00
+modDatetime: 2025-05-20T19:10:00+02:00
 title: "Level Up React: Mastering Context API"
 slug: level-up-react-mastering-context-api
 featured: false
@@ -10,7 +10,7 @@ tags:
   - react
   - level-up-react
   - basics
-description: "Explore the internal mechanisms of React's Context API, its optimizations in React 19, and how to use it effectively for global state management. Comparison with Zustand and Redux, advanced optimization techniques, and best practices to avoid unnecessary re-renders."
+description: "Explore the internal mechanisms of React's Context API, and how to use it effectively for global state management. Comparison with Zustand and Redux, advanced optimization techniques, and best practices to avoid unnecessary re-renders."
 ---
 
 ## About Level Up React Series
@@ -64,11 +64,13 @@ What's fascinating is that this propagation completely bypasses intermediate com
 
 ```tsx
 function App() {
-  const [theme, setTheme] = useState('light');
-  
+  const [theme, setTheme] = useState("light");
+
   return (
     <ThemeContext.Provider value={theme}>
-      <Layout>  {/* Layout doesn't use the context */}
+      <Layout>
+        {" "}
+        {/* Layout doesn't use the context */}
         <ThemeToggle onChange={setTheme} />
       </Layout>
     </ThemeContext.Provider>
@@ -78,9 +80,9 @@ function App() {
 // This component can be deeply nested
 function ThemeToggle({ onChange }) {
   const theme = useContext(ThemeContext);
-  
+
   return (
-    <button onClick={() => onChange(theme === 'light' ? 'dark' : 'light')}>
+    <button onClick={() => onChange(theme === "light" ? "dark" : "light")}>
       Current: {theme}
     </button>
   );
@@ -99,8 +101,8 @@ The `Provider` uses the `Object.is()` comparison algorithm to determine if the v
 ```tsx
 // Problematic: new object on each render
 function App() {
-  const [user, setUser] = useState({ name: 'Alice' });
-  
+  const [user, setUser] = useState({ name: "Alice" });
+
   return (
     // A new object is created on each render
     <UserContext.Provider value={{ user, setUser }}>
@@ -133,45 +135,7 @@ When a context value changes, here's what happens:
 
 This process is optimized to be efficient, but it can still cause performance issues if many components consume the same context or if the context value changes frequently.
 
-## Optimizations in React 19
-
-React 19 brings significant improvements to the Context system, aimed at solving common performance issues.
-
-### New useContextSelector hook
-
-One limitation of the traditional Context API is that consumer components are re-rendered even if only part of the context value changes. React 19 introduces `useContextSelector`, which allows components to subscribe only to a specific part of the context.
-
-```tsx
-import { createContext, useContextSelector } from 'react';
-
-const UserContext = createContext({ name: '', email: '' });
-
-function UserName() {
-  // This component will only re-render if user.name changes
-  const name = useContextSelector(UserContext, state => state.name);
-  
-  return <h2>{name}</h2>;
-}
-
-function UserEmail() {
-  // This component will only re-render if user.email changes
-  const email = useContextSelector(UserContext, state => state.email);
-  
-  return <p>{email}</p>;
-}
-```
-
-This approach is similar to selectors in Redux, but integrated directly into React.
-
-### Automatic re-render optimization
-
-React 19 also improves the change detection algorithm to avoid unnecessary re-renders. The system is now smarter about determining which components actually need to be updated.
-
-These optimizations are particularly beneficial for applications that heavily use Context for global state management.
-
 ## Optimization techniques for Context
-
-Even without React 19, there are several techniques to optimize the use of the Context API.
 
 ### Memoization with useMemo
 
@@ -179,14 +143,14 @@ One of the most effective techniques is to memoize the context value to avoid cr
 
 ```tsx
 function App() {
-  const [user, setUser] = useState({ name: 'Alice' });
-  const [theme, setTheme] = useState('light');
-  
+  const [user, setUser] = useState({ name: "Alice" });
+  const [theme, setTheme] = useState("light");
+
   // Memoization of the context value
   const userContextValue = useMemo(() => {
     return { user, setUser };
   }, [user]);
-  
+
   return (
     <UserContext.Provider value={userContextValue}>
       <ThemeContext.Provider value={theme}>
@@ -212,15 +176,15 @@ const UserDataContext = createContext(null);
 const UserActionsContext = createContext(null);
 
 function UserProvider({ children }) {
-  const [user, setUser] = useState({ name: 'Alice' });
-  
+  const [user, setUser] = useState({ name: "Alice" });
+
   const actions = useMemo(() => {
     return {
-      updateName: (name) => setUser(prev => ({ ...prev, name })),
-      logout: () => setUser(null)
+      updateName: name => setUser(prev => ({ ...prev, name })),
+      logout: () => setUser(null),
     };
   }, []);
-  
+
   return (
     <UserActionsContext.Provider value={actions}>
       <UserDataContext.Provider value={user}>
@@ -233,29 +197,25 @@ function UserProvider({ children }) {
 
 This approach allows components to consume only the context they need, reducing the number of re-renders.
 
-### Using manual selectors
+### Context splitting for performance
 
-Even without `useContextSelector`, you can implement a manual selector system:
+A better approach for performance optimization is to split your context into smaller, more focused contexts:
 
 ```tsx
-function useUserSelector(selector) {
-  const user = useContext(UserContext);
-  const selectedValue = selector(user);
-  
-  // Memoization of the selected value
-  const memoizedValue = useMemo(() => selectedValue, [selectedValue]);
-  
-  return memoizedValue;
-}
+// Instead of one large context
+const UserContext = createContext({
+  user: null,
+  settings: null,
+  theme: "light",
+});
 
-// Usage
-function UserGreeting() {
-  const name = useUserSelector(user => user.name);
-  return <h1>Hello, {name}</h1>;
-}
+// Create separate contexts for different concerns
+const UserDataContext = createContext(null);
+const UserSettingsContext = createContext(null);
+const ThemeContext = createContext("light");
 ```
 
-This approach isn't as optimized as `useContextSelector`, but it can help reduce unnecessary re-renders.
+This way, components only subscribe to the specific context they need, and only re-render when that particular context changes. This is more effective than trying to implement manual selector patterns, which don't actually prevent re-renders in React's current implementation.
 
 ## Best practices to avoid unnecessary re-renders
 
@@ -273,7 +233,7 @@ function App() {
       <ThemeProvider>
         <ThemeableComponents />
       </ThemeProvider>
-      
+
       {/* These components are not affected by theme changes */}
       <NonThemeableComponents />
     </AppLayout>
@@ -298,20 +258,18 @@ Use `useCallback` for functions passed via context:
 
 ```tsx
 function UserProvider({ children }) {
-  const [user, setUser] = useState({ name: 'Alice' });
-  
-  const updateUser = useCallback((updates) => {
+  const [user, setUser] = useState({ name: "Alice" });
+
+  const updateUser = useCallback(updates => {
     setUser(prev => ({ ...prev, ...updates }));
   }, []);
-  
+
   const contextValue = useMemo(() => {
     return { user, updateUser };
   }, [user, updateUser]);
-  
+
   return (
-    <UserContext.Provider value={contextValue}>
-      {children}
-    </UserContext.Provider>
+    <UserContext.Provider value={contextValue}>{children}</UserContext.Provider>
   );
 }
 ```
@@ -324,7 +282,7 @@ Encapsulate context access in custom hooks for better abstraction and reuse:
 function useUser() {
   const context = useContext(UserContext);
   if (context === undefined) {
-    throw new Error('useUser must be used inside a UserProvider');
+    throw new Error("useUser must be used inside a UserProvider");
   }
   return context;
 }
@@ -353,15 +311,16 @@ Zustand is a minimalist state management library that's gaining popularity.
 5. **No Provider needed** - Zustand doesn't require wrapping your application in a Provider.
 
 ```tsx
-import create from 'zustand';
+import create from "zustand";
 
 // Creating a store
-const useUserStore = create((set) => ({
-  user: { name: 'Alice' },
-  updateUser: (updates) => set((state) => ({
-    user: { ...state.user, ...updates }
-  })),
-  resetUser: () => set({ user: null })
+const useUserStore = create(set => ({
+  user: { name: "Alice" },
+  updateUser: updates =>
+    set(state => ({
+      user: { ...state.user, ...updates },
+    })),
+  resetUser: () => set({ user: null }),
 }));
 
 // Usage in a component
@@ -369,13 +328,11 @@ function UserProfile() {
   // Precise selection of needed data
   const userName = useUserStore(state => state.user.name);
   const updateUser = useUserStore(state => state.updateUser);
-  
+
   return (
     <div>
       <h2>{userName}</h2>
-      <button onClick={() => updateUser({ name: 'Bob' })}>
-        Change name
-      </button>
+      <button onClick={() => updateUser({ name: "Bob" })}>Change name</button>
     </div>
   );
 }
