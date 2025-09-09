@@ -26,7 +26,8 @@ const {
   tags,
 } = post.data;
 
-const { Content } = await post.render();
+// Use the HTML from post.rendered.html with null check
+const renderedHTML = post.rendered?.html;
 
 const ogImageUrl = typeof ogImage === "string" ? ogImage : ogImage?.src;
 const ogUrl = new URL(
@@ -70,7 +71,7 @@ const layoutProps = {
       className="my-2"
     />
     <article id="article" class="prose mx-auto mt-8 max-w-3xl">
-      <Content />
+      <div set:html={renderedHTML} />
     </article>
 
     <ul class="my-8">

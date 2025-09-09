@@ -25,4 +25,17 @@ const blog = defineCollection({
     }),
 });
 
-export const collections = { blog };
+const techwatch = defineCollection({
+  type: "content_layer",
+  loader: glob({ pattern: "**/*.md", base: "./src/content/techwatch" }),
+  schema: z.object({
+    title: z.string(),
+    url: z.string(),
+    description: z.string(),
+    author: z.string().optional().nullable().default("Unknown"),
+    pubDatetime: z.date(),
+    tags: z.array(z.string()).default(["tech"]),
+  }),
+});
+
+export const collections = { blog, techwatch };

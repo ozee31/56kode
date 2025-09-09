@@ -32,7 +32,7 @@ const { currentPage, totalPages, paginatedPosts } = Astro.props;
           <Card
             href={item.data.url}
             frontmatter={{
-              author: item.data.author,
+              author: item.data.author || "Unknown",
               title: item.data.title,
               pubDatetime: item.data.pubDatetime,
               modDatetime: item.data.pubDatetime,

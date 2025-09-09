@@ -45,8 +45,8 @@ const {
         <section>
           <h2 class="text-3xl">My posts</h2>
           <ul>
-            {paginatedPosts.map(({ data, slug }) => (
-              <Card href={`/posts/${slug}/`} frontmatter={data} />
+            {paginatedPosts.map(({ data, id }) => (
+              <Card href={`/posts/${id}/`} frontmatter={data} />
             ))}
           </ul>
         </section>
@@ -64,7 +64,7 @@ const {
           <h2 class="text-3xl">Tech Watch Posts</h2>
           <ul>
             {techWatchPagination.paginatedPosts.map(({ data }) => (
-              <Card href={data.url} frontmatter={data} />
+              <Card href={(data as any).url} frontmatter={data as any} />
             ))}
           </ul>
         </section>

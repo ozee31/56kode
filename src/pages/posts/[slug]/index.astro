@@ -14,7 +14,7 @@ export async function getStaticPaths() {
   const posts = await getCollection("blog", ({ data }) => !data.draft);
 
   const postResult = posts.map(post => ({
-    params: { slug: post.slug },
+    params: { slug: post.id },
     props: { post },
   }));
 
@@ -32,10 +32,7 @@ const posts = await getCollection("blog");
 
 const sortedPosts = getSortedPosts(posts) as CollectionEntry<"blog">[];
 
-const pagination = getPagination({
-  posts: sortedPosts,
-  page: slug,
-});
+const pagination = getPagination({ posts: sortedPosts, page: slug });
 ---
 
 {post ? <PostDetails post={post} /> : <Posts {...pagination} />}

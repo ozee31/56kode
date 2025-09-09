@@ -7,10 +7,14 @@ const getSortedPosts = (posts: CollectionEntry<"blog" | "techwatch">[]) => {
     .sort(
       (a, b) =>
         Math.floor(
-          new Date(b.data.modDatetime ?? b.data.pubDatetime).getTime() / 1000
+          new Date(
+            (b.data as any).modDatetime ?? b.data.pubDatetime
+          ).getTime() / 1000
         ) -
         Math.floor(
-          new Date(a.data.modDatetime ?? a.data.pubDatetime).getTime() / 1000
+          new Date(
+            (a.data as any).modDatetime ?? a.data.pubDatetime
+          ).getTime() / 1000
         )
     );
 };
