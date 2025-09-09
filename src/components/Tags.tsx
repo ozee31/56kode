@@ -8,6 +8,7 @@ export default function Tags({ tags, size = "sm" }: Props) {
     <ul>
       {tags.map(tag => (
         <li
+          key={tag}
           className={`inline-block ${
             size === "sm"
               ? "my-1 underline-offset-4"
