@@ -1,0 +1,108 @@
+---
+import { getCollection, type CollectionEntry } from "astro:content";
+import TagPosts from "@layouts/TagPosts.astro";
+import getPostsByTag from "@utils/getPostsByTag";
+import getPagination from "@utils/getPagination";
+import { getUniqueTagsForAllPosts } from "@utils/getUniqueTags";
+
+export async function getStaticPaths() {
+  const blogPosts = await getCollection("blog");
+  const techwatchPosts = await getCollection("techwatch");
+  const tags = getUniqueTagsForAllPosts(blogPosts, techwatchPosts);
+
+  const allPaths = [];
+
+  for (const { tag, tagName } of tags) {
+    const postsByTag = getPostsByTag(
+      blogPosts,
+      tag
+    ) as CollectionEntry<"blog">[];
+    const techWatchPostsByTag = getPostsByTag(
+      techwatchPosts,
+      tag
+    ) as CollectionEntry<"techwatch">[];
+
+    // Get pagination info for both types separately
+    const blogPagination = getPagination({
+      posts: postsByTag,
+      page: 1,
+      isIndex: true,
+    });
+
+    const techWatchPagination = getPagination({
+      posts: techWatchPostsByTag,
+      page: 1,
+      isIndex: true,
+    });
+
+    // Total pages is the maximum of both types
+    const totalPages = Math.max(
+      blogPagination.totalPages,
+      techWatchPagination.totalPages
+    );
+
+    // Generate paths for all pages of this tag (starting from page 2, since page 1 is handled by index.astro)
+    for (let page = 2; page <= totalPages; page++) {
+      allPaths.push({
+        params: { tag, page: page.toString() },
+        props: {
+          tag,
+          tagName,
+          blogPosts,
+          techwatchPosts,
+          currentPageNum: page,
+        },
+      });
+    }
+  }
+
+  return allPaths;
+}
+
+const { tag, tagName, blogPosts, techwatchPosts, currentPageNum } = Astro.props;
+
+const postsByTag = getPostsByTag(blogPosts, tag) as CollectionEntry<"blog">[];
+const techWatchPostsByTag = getPostsByTag(
+  techwatchPosts,
+  tag
+) as CollectionEntry<"techwatch">[];
+
+// Get separate pagination for each type
+const blogPagination = getPagination({
+  posts: postsByTag,
+  page: currentPageNum,
+  isIndex: false,
+});
+
+const techWatchPagination = getPagination({
+  posts: techWatchPostsByTag,
+  page: currentPageNum,
+  isIndex: false,
+});
+
+// Calculate total pages as the maximum of both types
+const totalPages = Math.max(
+  blogPagination.totalPages,
+  techWatchPagination.totalPages
+);
+
+// Create pagination objects for the layout with the global total pages
+const pagination = {
+  currentPage: currentPageNum,
+  totalPages: totalPages,
+  paginatedPosts: blogPagination.paginatedPosts,
+};
+
+const techWatchPaginationForLayout = {
+  currentPage: currentPageNum,
+  totalPages: totalPages,
+  paginatedPosts: techWatchPagination.paginatedPosts,
+};
+---
+
+<TagPosts
+  {...pagination}
+  {tag}
+  {tagName}
+  techWatchPagination={techWatchPaginationForLayout}
+/>

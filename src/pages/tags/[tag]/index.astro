@@ -26,17 +26,37 @@ const techWatchPostsByTag = getPostsByTag(
   tag
 ) as CollectionEntry<"techwatch">[];
 
-const pagination = getPagination({
+// Get separate pagination for each type
+const blogPagination = getPagination({
   posts: postsByTag,
   page: 1,
   isIndex: true,
 });
 
-const techWatchPagination = getPagination<CollectionEntry<"techwatch">>({
+const techWatchPaginationData = getPagination({
   posts: techWatchPostsByTag,
   page: 1,
   isIndex: true,
 });
+
+// Calculate total pages as the maximum of both types
+const totalPages = Math.max(
+  blogPagination.totalPages,
+  techWatchPaginationData.totalPages
+);
+
+// Create pagination objects for the layout with the global total pages
+const pagination = {
+  currentPage: 1,
+  totalPages: totalPages,
+  paginatedPosts: blogPagination.paginatedPosts,
+};
+
+const techWatchPagination = {
+  currentPage: 1,
+  totalPages: totalPages,
+  paginatedPosts: techWatchPaginationData.paginatedPosts,
+};
 ---
 
 <TagPosts
