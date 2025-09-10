@@ -9,6 +9,7 @@ draft: false
 tags:
   - testing
   - react
+  - migration
 description: Complete step-by-step guide to migrate from Jest to Vitest in a React/TypeScript project. Includes ESM handling, performance optimization, and real-world solutions from a 2900+ tests migration.
 ---
 
@@ -21,7 +22,6 @@ Our team maintains a React/TypeScript application with a large test base (2900 t
 ### Jest limitations
 
 1. Performance and stability
-
    - Frequent freezes requiring the `--max-workers` flag
    - High memory consumption affecting development machines performance
 
