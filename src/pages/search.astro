@@ -12,13 +12,24 @@ import getSortedPosts from "@utils/getSortedPosts";
 const posts = await getCollection("blog", ({ data }) => !data.draft);
 const sortedPosts = getSortedPosts(posts);
 
+const aiRadarPosts = await getCollection("aiRadar");
+const sortedAiRadarPosts = getSortedPosts(aiRadarPosts) as typeof aiRadarPosts;
+
 // List of items to search in
-const searchList = sortedPosts.map(({ data, id }) => ({
-  title: data.title,
-  description: data.description,
-  data,
-  slug: id,
-}));
+const searchList = [
+  ...sortedPosts.map(({ data, id }) => ({
+    title: data.title,
+    description: data.description,
+    data,
+    href: `/posts/${id}/`,
+  })),
+  ...sortedAiRadarPosts.map(({ data }) => ({
+    title: data.title,
+    description: data.description,
+    data: data as any,
+    href: `/ai-radar/${data.slug}/`,
+  })),
+];
 ---
 
 <Layout title={`Search | ${SITE.title}`}>
