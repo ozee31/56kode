@@ -9,8 +9,8 @@ import { getUniqueTagsForAllPosts } from "@utils/getUniqueTags";
 import { SITE } from "@config";
 
 const blogPosts = await getCollection("blog");
-const techwatchPosts = await getCollection("techwatch");
-const tags = getUniqueTagsForAllPosts(blogPosts, techwatchPosts);
+const aiRadarPosts = await getCollection("aiRadar");
+const tags = getUniqueTagsForAllPosts(blogPosts, aiRadarPosts);
 ---
 
 <Layout title={`Tags | ${SITE.title}`}>

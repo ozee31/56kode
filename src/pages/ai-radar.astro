@@ -1,0 +1,18 @@
+---
+import { getCollection } from "astro:content";
+import getPagination from "@utils/getPagination";
+import AiRadarPost from "@layouts/AiRadarPost.astro";
+
+const aiRadarItems = await getCollection("aiRadar");
+aiRadarItems.sort(
+  (a, b) => b.data.pubDatetime.valueOf() - a.data.pubDatetime.valueOf()
+);
+
+const pagination = getPagination({
+  posts: aiRadarItems,
+  page: 1,
+  isIndex: true,
+});
+---
+
+<AiRadarPost {...pagination} />

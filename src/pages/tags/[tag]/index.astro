@@ -7,24 +7,24 @@ import { getUniqueTagsForAllPosts } from "@utils/getUniqueTags";
 
 export async function getStaticPaths() {
   const blogPosts = await getCollection("blog");
-  const techwatchPosts = await getCollection("techwatch");
-  const tags = getUniqueTagsForAllPosts(blogPosts, techwatchPosts);
+  const aiRadarPosts = await getCollection("aiRadar");
+  const tags = getUniqueTagsForAllPosts(blogPosts, aiRadarPosts);
 
   return tags.map(({ tag, tagName }) => {
     return {
       params: { tag },
-      props: { tag, tagName, blogPosts, techwatchPosts },
+      props: { tag, tagName, blogPosts, aiRadarPosts },
     };
   });
 }
 
-const { tag, tagName, blogPosts, techwatchPosts } = Astro.props;
+const { tag, tagName, blogPosts, aiRadarPosts } = Astro.props;
 
 const postsByTag = getPostsByTag(blogPosts, tag) as CollectionEntry<"blog">[];
-const techWatchPostsByTag = getPostsByTag(
-  techwatchPosts,
+const aiRadarPostsByTag = getPostsByTag(
+  aiRadarPosts,
   tag
-) as CollectionEntry<"techwatch">[];
+) as CollectionEntry<"aiRadar">[];
 
 // Get separate pagination for each type
 const blogPagination = getPagination({
@@ -33,8 +33,8 @@ const blogPagination = getPagination({
   isIndex: true,
 });
 
-const techWatchPaginationData = getPagination({
-  posts: techWatchPostsByTag,
+const aiRadarPaginationData = getPagination({
+  posts: aiRadarPostsByTag,
   page: 1,
   isIndex: true,
 });
@@ -42,7 +42,7 @@ const techWatchPaginationData = getPagination({
 // Calculate total pages as the maximum of both types
 const totalPages = Math.max(
   blogPagination.totalPages,
-  techWatchPaginationData.totalPages
+  aiRadarPaginationData.totalPages
 );
 
 // Create pagination objects for the layout with the global total pages
@@ -52,10 +52,10 @@ const pagination = {
   paginatedPosts: blogPagination.paginatedPosts,
 };
 
-const techWatchPagination = {
+const aiRadarPagination = {
   currentPage: 1,
   totalPages: totalPages,
-  paginatedPosts: techWatchPaginationData.paginatedPosts,
+  paginatedPosts: aiRadarPaginationData.paginatedPosts,
 };
 ---
 
@@ -63,5 +63,5 @@ const techWatchPagination = {
   {...pagination}
   {tag}
   {tagName}
-  techWatchPagination={techWatchPagination}
+  aiRadarPagination={aiRadarPagination}
 />

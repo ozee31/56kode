@@ -1,0 +1,46 @@
+---
+import Header from "@components/Header.astro";
+import Layout from "./Layout.astro";
+import Main from "./Main.astro";
+import Pagination from "@components/Pagination.astro";
+import type { CollectionEntry } from "astro:content";
+import AiRadarCard from "@components/AiRadarCard";
+
+export interface Props {
+  currentPage: number;
+  totalPages: number;
+  paginatedPosts: CollectionEntry<"aiRadar">[];
+}
+
+const { currentPage, totalPages, paginatedPosts } = Astro.props;
+---
+
+<Layout
+  title="AI Radar: Curated AI & Agent Development Articles"
+  description="Curated articles on AI agents, LLMs, and AI-assisted development. Each article is rated and summarized."
+>
+  <Header activeNav="ai-radar" />
+  <Main
+    pageTitle="AI Radar"
+    pageDesc="AI & agent development articles, rated and summarized."
+    rss="/rss-ai-radar.xml"
+  >
+    <ul>
+      {
+        paginatedPosts.map(item => (
+          <AiRadarCard
+            href={`/ai-radar/${item.data.slug}/`}
+            frontmatter={item.data}
+          />
+        ))
+      }
+    </ul>
+  </Main>
+
+  <Pagination
+    {currentPage}
+    {totalPages}
+    prevUrl={`/ai-radar${currentPage - 1 !== 1 ? "/" + (currentPage - 1) : ""}/`}
+    nextUrl={`/ai-radar/${currentPage + 1}/`}
+  />
+</Layout>
