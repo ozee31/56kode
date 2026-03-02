@@ -7,7 +7,7 @@ export async function GET() {
   const posts = await getCollection("techwatch");
   const sortedPosts = getSortedPosts(posts);
   return rss({
-    title: `${SITE.title} - Tech Watch`,
+    title: "56kode - Tech Watch",
     description: "All the articles I've selected",
     site: SITE.website,
     items: sortedPosts.map(({ data, id }) => ({

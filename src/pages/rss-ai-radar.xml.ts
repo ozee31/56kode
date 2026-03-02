@@ -7,7 +7,7 @@ export async function GET() {
   const posts = await getCollection("aiRadar");
   const sortedPosts = getSortedPosts(posts);
   return rss({
-    title: `${SITE.title} - AI Radar`,
+    title: "56kode - AI Radar",
     description:
       "AI & agent development articles, rated and summarized.",
     site: SITE.website,
