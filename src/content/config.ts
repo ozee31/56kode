@@ -25,6 +25,21 @@ const blog = defineCollection({
     }),
 });
 
+const aiRadar = defineCollection({
+  type: "content_layer",
+  loader: glob({ pattern: "**/*.md", base: "./src/content/ai-radar" }),
+  schema: z.object({
+    title: z.string(),
+    slug: z.string(),
+    url: z.string(),
+    description: z.string(),
+    author: z.string().optional().nullable().default("Unknown"),
+    pubDatetime: z.date(),
+    tags: z.array(z.string()).default(["tech"]),
+    rating: z.number().min(1).max(5),
+  }),
+});
+
 const techwatch = defineCollection({
   type: "content_layer",
   loader: glob({ pattern: "**/*.md", base: "./src/content/techwatch" }),
@@ -38,4 +53,4 @@ const techwatch = defineCollection({
   }),
 });
 
-export const collections = { blog, techwatch };
+export const collections = { blog, techwatch, aiRadar };

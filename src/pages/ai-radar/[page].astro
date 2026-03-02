@@ -1,0 +1,37 @@
+---
+import { getCollection } from "astro:content";
+import AiRadarPost from "@layouts/AiRadarPost.astro";
+import getPagination from "@utils/getPagination";
+
+export async function getStaticPaths() {
+  const aiRadarItems = await getCollection("aiRadar");
+  aiRadarItems.sort(
+    (a, b) => b.data.pubDatetime.valueOf() - a.data.pubDatetime.valueOf()
+  );
+
+  const pagination = getPagination({
+    posts: aiRadarItems,
+    page: 1,
+    isIndex: true,
+  });
+
+  const totalPages = pagination.totalPages;
+
+  return Array.from({ length: totalPages }, (_, i) => {
+    const currentPage = i + 1;
+    const pagination = getPagination({
+      posts: aiRadarItems,
+      page: currentPage,
+      isIndex: false,
+    });
+    return {
+      params: { page: currentPage.toString() },
+      props: pagination,
+    };
+  });
+}
+
+const { paginatedPosts, ...pagination } = Astro.props;
+---
+
+<AiRadarPost {...pagination} paginatedPosts={paginatedPosts} />
