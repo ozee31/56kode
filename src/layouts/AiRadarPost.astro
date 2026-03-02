@@ -29,7 +29,7 @@ const { currentPage, totalPages, paginatedPosts } = Astro.props;
       {
         paginatedPosts.map(item => (
           <AiRadarCard
-            href={item.data.url}
+            href={`/ai-radar/${item.data.slug}/`}
             frontmatter={item.data}
           />
         ))
