@@ -7,8 +7,8 @@ import { getUniqueTagsForAllPosts } from "@utils/getUniqueTags";
 
 export async function getStaticPaths() {
   const blogPosts = await getCollection("blog");
-  const techwatchPosts = await getCollection("techwatch");
-  const tags = getUniqueTagsForAllPosts(blogPosts, techwatchPosts);
+  const aiRadarPosts = await getCollection("aiRadar");
+  const tags = getUniqueTagsForAllPosts(blogPosts, aiRadarPosts);
 
   const allPaths = [];
 
@@ -17,10 +17,10 @@ export async function getStaticPaths() {
       blogPosts,
       tag
     ) as CollectionEntry<"blog">[];
-    const techWatchPostsByTag = getPostsByTag(
-      techwatchPosts,
+    const aiRadarPostsByTag = getPostsByTag(
+      aiRadarPosts,
       tag
-    ) as CollectionEntry<"techwatch">[];
+    ) as CollectionEntry<"aiRadar">[];
 
     // Get pagination info for both types separately
     const blogPagination = getPagination({
@@ -29,8 +29,8 @@ export async function getStaticPaths() {
       isIndex: true,
     });
 
-    const techWatchPagination = getPagination({
-      posts: techWatchPostsByTag,
+    const aiRadarPagination = getPagination({
+      posts: aiRadarPostsByTag,
       page: 1,
       isIndex: true,
     });
@@ -38,7 +38,7 @@ export async function getStaticPaths() {
     // Total pages is the maximum of both types
     const totalPages = Math.max(
       blogPagination.totalPages,
-      techWatchPagination.totalPages
+      aiRadarPagination.totalPages
     );
 
     // Generate paths for all pages of this tag (starting from page 2, since page 1 is handled by index.astro)
@@ -49,7 +49,7 @@ export async function getStaticPaths() {
           tag,
           tagName,
           blogPosts,
-          techwatchPosts,
+          aiRadarPosts,
           currentPageNum: page,
         },
       });
@@ -59,13 +59,13 @@ export async function getStaticPaths() {
   return allPaths;
 }
 
-const { tag, tagName, blogPosts, techwatchPosts, currentPageNum } = Astro.props;
+const { tag, tagName, blogPosts, aiRadarPosts, currentPageNum } = Astro.props;
 
 const postsByTag = getPostsByTag(blogPosts, tag) as CollectionEntry<"blog">[];
-const techWatchPostsByTag = getPostsByTag(
-  techwatchPosts,
+const aiRadarPostsByTag = getPostsByTag(
+  aiRadarPosts,
   tag
-) as CollectionEntry<"techwatch">[];
+) as CollectionEntry<"aiRadar">[];
 
 // Get separate pagination for each type
 const blogPagination = getPagination({
@@ -74,8 +74,8 @@ const blogPagination = getPagination({
   isIndex: false,
 });
 
-const techWatchPagination = getPagination({
-  posts: techWatchPostsByTag,
+const aiRadarPagination = getPagination({
+  posts: aiRadarPostsByTag,
   page: currentPageNum,
   isIndex: false,
 });
@@ -83,7 +83,7 @@ const techWatchPagination = getPagination({
 // Calculate total pages as the maximum of both types
 const totalPages = Math.max(
   blogPagination.totalPages,
-  techWatchPagination.totalPages
+  aiRadarPagination.totalPages
 );
 
 // Create pagination objects for the layout with the global total pages
@@ -93,10 +93,10 @@ const pagination = {
   paginatedPosts: blogPagination.paginatedPosts,
 };
 
-const techWatchPaginationForLayout = {
+const aiRadarPaginationForLayout = {
   currentPage: currentPageNum,
   totalPages: totalPages,
-  paginatedPosts: techWatchPagination.paginatedPosts,
+  paginatedPosts: aiRadarPagination.paginatedPosts,
 };
 ---
 
@@ -104,5 +104,5 @@ const techWatchPaginationForLayout = {
   {...pagination}
   {tag}
   {tagName}
-  techWatchPagination={techWatchPaginationForLayout}
+  aiRadarPagination={aiRadarPaginationForLayout}
 />

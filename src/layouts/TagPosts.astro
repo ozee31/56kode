@@ -5,6 +5,7 @@ import Main from "@layouts/Main.astro";
 import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
 import Card from "@components/Card";
+import AiRadarCard from "@components/AiRadarCard";
 import Pagination from "@components/Pagination.astro";
 import { SITE } from "@config";
 import Hr from "@components/Hr.astro";
@@ -15,10 +16,10 @@ export interface Props {
   paginatedPosts: CollectionEntry<"blog">[];
   tag: string;
   tagName: string;
-  techWatchPagination: {
+  aiRadarPagination: {
     currentPage: number;
     totalPages: number;
-    paginatedPosts: CollectionEntry<"techwatch">[];
+    paginatedPosts: CollectionEntry<"aiRadar">[];
   };
 }
 
@@ -28,13 +29,13 @@ const {
   paginatedPosts,
   tag,
   tagName,
-  techWatchPagination,
+  aiRadarPagination,
 } = Astro.props;
 ---
 
 <Layout
   title={`Tag: ${tagName} | ${SITE.title}`}
-  description={`Browse all articles and tech watch posts tagged with "${tagName}". In-depth content about ${tagName} development, best practices, and insights.`}
+  description={`Browse all articles and AI radar posts tagged with "${tagName}". In-depth content about ${tagName} development, best practices, and insights.`}
 >
   <Header activeNav="tags" />
   <Main
@@ -58,16 +59,19 @@ const {
 
     {
       paginatedPosts.length > 0 &&
-        techWatchPagination.paginatedPosts.length > 0 && <Hr />
+        aiRadarPagination.paginatedPosts.length > 0 && <Hr />
     }
 
     {
-      techWatchPagination.paginatedPosts.length > 0 && (
+      aiRadarPagination.paginatedPosts.length > 0 && (
         <section class="mt-5">
-          <h2 class="text-3xl">Tech Watch Posts</h2>
+          <h2 class="text-3xl">AI Radar</h2>
           <ul>
-            {techWatchPagination.paginatedPosts.map(({ data }) => (
-              <Card href={(data as any).url} frontmatter={data as any} />
+            {aiRadarPagination.paginatedPosts.map(item => (
+              <AiRadarCard
+                href={`/ai-radar/${item.data.slug}/`}
+                frontmatter={item.data}
+              />
             ))}
           </ul>
         </section>

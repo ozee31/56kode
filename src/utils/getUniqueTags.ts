@@ -8,7 +8,7 @@ interface Tag {
   tagName: string;
 }
 
-const getUniqueTags = (posts: CollectionEntry<"blog" | "techwatch">[]) => {
+const getUniqueTags = (posts: CollectionEntry<"blog" | "techwatch" | "aiRadar">[]) => {
   const tags: Tag[] = posts
     .filter(postFilter)
     .flatMap(post => post.data.tags)
@@ -23,11 +23,11 @@ const getUniqueTags = (posts: CollectionEntry<"blog" | "techwatch">[]) => {
 
 export const getUniqueTagsForAllPosts = (
   blogPosts: CollectionEntry<"blog">[],
-  techwatchPosts: CollectionEntry<"techwatch">[]
+  aiRadarPosts: CollectionEntry<"aiRadar">[]
 ): Tag[] => {
   const postsTags = getUniqueTags(blogPosts);
-  const techwatchTags = getUniqueTags(techwatchPosts);
-  return mergeUniqueTags([...postsTags, ...techwatchTags]);
+  const aiRadarTags = getUniqueTags(aiRadarPosts);
+  return mergeUniqueTags([...postsTags, ...aiRadarTags]);
 };
 
 export const mergeUniqueTags = (tags: Tag[]): Tag[] => {
