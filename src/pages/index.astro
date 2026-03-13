@@ -119,27 +119,43 @@ const socialCount = SOCIALS.filter(social => social.active).length;
 </Layout>
 
 <style>
+  @reference "../styles/theme.css";
   /* ===== Hero Section ===== */
   #hero {
     @apply pb-6 pt-8;
   }
   #hero h1 {
-    @apply my-4 inline-block text-3xl font-bold sm:my-8 sm:text-5xl;
+    @apply my-4 inline-block text-3xl font-bold;
   }
   #hero .rss-link {
     @apply mb-6;
   }
   #hero .rss-icon {
-    @apply mb-2 h-6 w-6 scale-110 fill-skin-accent sm:mb-3 sm:scale-125;
+    @apply mb-2 h-6 w-6 scale-110 fill-accent;
   }
   #hero p {
     @apply my-2;
   }
   .social-wrapper {
-    @apply mt-4 flex flex-col sm:flex-row sm:items-center;
+    @apply mt-4 flex flex-col;
   }
   .social-links {
-    @apply mb-1 mr-2 whitespace-nowrap sm:mb-0;
+    @apply mb-1 mr-2 whitespace-nowrap;
+  }
+
+  @media (width >= 640px) {
+    #hero h1 {
+      @apply my-8 text-5xl;
+    }
+    #hero .rss-icon {
+      @apply mb-3 scale-125;
+    }
+    .social-wrapper {
+      @apply flex-row items-center;
+    }
+    .social-links {
+      @apply mb-0;
+    }
   }
 
   /* ===== Featured & Recent Posts Sections ===== */

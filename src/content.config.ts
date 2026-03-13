@@ -1,9 +1,10 @@
 import { SITE } from "@config";
 import { glob } from "astro/loaders";
-import { defineCollection, z } from "astro:content";
+import { defineCollection } from "astro:content";
+import { z } from "astro/zod";
 
 const blog = defineCollection({
-  type: "content_layer",
+
   loader: glob({ pattern: "**/*.md", base: "./src/content/blog" }),
   schema: ({ image }) =>
     z.object({
@@ -26,7 +27,7 @@ const blog = defineCollection({
 });
 
 const aiRadar = defineCollection({
-  type: "content_layer",
+
   loader: glob({ pattern: "**/*.md", base: "./src/content/ai-radar" }),
   schema: z.object({
     title: z.string(),
@@ -41,7 +42,7 @@ const aiRadar = defineCollection({
 });
 
 const techwatch = defineCollection({
-  type: "content_layer",
+
   loader: glob({ pattern: "**/*.md", base: "./src/content/techwatch" }),
   schema: z.object({
     title: z.string(),

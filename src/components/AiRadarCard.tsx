@@ -15,7 +15,7 @@ function Rating({ rating }: { rating: number }) {
       {Array.from({ length: 5 }, (_, i) => (
         <span
           key={i}
-          className={i < rating ? "text-skin-accent" : "opacity-40"}
+          className={i < rating ? "text-accent" : "opacity-40"}
         >
           {i < rating ? "★" : "☆"}
         </span>
@@ -40,7 +40,7 @@ export default function AiRadarCard({
     <li className="my-6">
       <a
         href={href}
-        className="inline-block text-lg font-medium text-skin-accent decoration-dashed underline-offset-4 focus-visible:no-underline focus-visible:underline-offset-0"
+        className="inline-block text-lg font-medium text-accent decoration-dashed underline-offset-4 focus-visible:no-underline focus-visible:underline-offset-0"
       >
         {secHeading ? (
           <h2 {...headerProps}>{title}</h2>

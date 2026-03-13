@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-background: var(--color-fill);
+  --color-foreground: var(--color-text-base);
+  --color-accent: var(--color-accent);
+  --color-card: var(--color-card);
+  --color-card-muted: var(--color-card-muted);
+  --color-border: var(--color-border);
+  --font-mono: "IBM Plex Mono", monospace;
+}
+
+@utility focus-outline {
+  outline: 2px solid transparent;
+  outline-offset: 1px;
+}

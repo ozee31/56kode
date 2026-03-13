@@ -56,7 +56,7 @@ const stars = Array.from({ length: 5 }, (_, i) => i < rating);
         )
       }
       <span class="text-base" title={`${rating}/5`}>
-        {stars.map(filled => (filled ? <span class="text-skin-accent">★</span> : <span class="opacity-40">☆</span>))}
+        {stars.map(filled => (filled ? <span class="text-accent">★</span> : <span class="opacity-40">☆</span>))}
       </span>
     </div>
 
@@ -69,7 +69,7 @@ const stars = Array.from({ length: 5 }, (_, i) => i < rating);
         href={url}
         target="_blank"
         rel="noopener noreferrer"
-        class="inline-flex items-center gap-1 text-skin-accent underline decoration-dashed underline-offset-4 hover:decoration-solid"
+        class="inline-flex items-center gap-1 text-accent underline decoration-dashed underline-offset-4 hover:decoration-solid"
       >
         Read the original article
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -106,11 +106,12 @@ const stars = Array.from({ length: 5 }, (_, i) => i < rating);
 </Layout>
 
 <style>
+  @reference "../styles/theme.css";
   main {
     @apply mx-auto w-full max-w-3xl px-4 pb-12;
   }
   .post-title {
-    @apply text-2xl font-semibold text-skin-accent;
+    @apply text-2xl font-semibold text-accent;
   }
 </style>
 
@@ -118,9 +119,9 @@ const stars = Array.from({ length: 5 }, (_, i) => i < rating);
   function createProgressBar() {
     const progressContainer = document.createElement("div");
     progressContainer.className =
-      "progress-container fixed top-0 z-10 h-1 w-full bg-skin-fill";
+      "progress-container fixed top-0 z-10 h-1 w-full bg-background";
     const progressBar = document.createElement("div");
-    progressBar.className = "progress-bar h-1 w-0 bg-skin-accent";
+    progressBar.className = "progress-bar h-1 w-0 bg-accent";
     progressBar.id = "myBar";
     progressContainer.appendChild(progressBar);
     document.body.appendChild(progressContainer);
@@ -170,7 +171,7 @@ const stars = Array.from({ length: 5 }, (_, i) => i < rating);
       wrapper.style.position = "relative";
       const copyButton = document.createElement("button");
       copyButton.className =
-        "copy-code absolute right-3 -top-3 rounded bg-skin-card px-2 py-1 text-xs leading-4 text-skin-base font-medium";
+        "copy-code absolute right-3 -top-3 rounded bg-card px-2 py-1 text-xs leading-4 text-foreground font-medium";
       copyButton.innerHTML = copyButtonLabel;
       codeBlock.setAttribute("tabindex", "0");
       codeBlock.appendChild(copyButton);

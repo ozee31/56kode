@@ -17,11 +17,11 @@ export default function Tags({ tags, size = "sm" }: Props) {
         >
           <a
             href={`/tags/${tag}/`}
-            className={`${size === "sm" ? "text-sm" : "text-lg"} group relative pr-2 underline decoration-dashed hover:-top-0.5 hover:text-skin-accent focus-visible:p-1`}
+            className={`${size === "sm" ? "text-sm" : "text-lg"} group relative pr-2 underline decoration-dashed hover:-top-0.5 hover:text-accent focus-visible:p-1`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className={`-mr-5 h-6 w-6 text-skin-base opacity-80 group-hover:fill-skin-accent ${
+              className={`-mr-5 h-6 w-6 text-foreground opacity-80 group-hover:fill-accent ${
                 size === "sm" ? "scale-75" : "scale-110"
               }`}
             >

@@ -57,10 +57,20 @@ const shareLinks = [
 </div>
 
 <style>
+  @reference "../styles/theme.css";
   .social-icons {
-    @apply flex flex-col flex-wrap items-center justify-center gap-1 sm:items-start;
+    @apply flex flex-col flex-wrap items-center justify-center gap-1;
   }
   .link-button {
-    @apply scale-90 p-2 hover:rotate-6 sm:p-1;
+    @apply scale-90 p-2 hover:rotate-6;
+  }
+
+  @media (width >= 640px) {
+    .social-icons {
+      @apply items-start;
+    }
+    .link-button {
+      @apply p-1;
+    }
   }
 </style>
