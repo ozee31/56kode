@@ -30,6 +30,9 @@
   body {
     @apply flex min-h-[100svh] flex-col bg-background font-mono text-foreground selection:bg-accent/70 selection:text-background;
   }
+  #main-content {
+    animation: fadeIn 0.3s ease-out;
+  }
   section,
   footer {
     @apply mx-auto max-w-3xl px-4;
@@ -113,6 +116,17 @@
     font-style: var(--shiki-dark-font-style) !important;
     font-weight: var(--shiki-dark-font-weight) !important;
     text-decoration: var(--shiki-dark-text-decoration) !important;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

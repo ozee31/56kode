@@ -29,6 +29,10 @@ const {
 // Use the HTML from post.rendered.html with null check
 const renderedHTML = post.rendered?.html;
 
+// Calculate reading time
+const wordCount = renderedHTML?.replace(/<[^>]*>/g, "").split(/\s+/).length ?? 0;
+const readingTime = Math.max(1, Math.round(wordCount / 200));
+
 const ogImageUrl = typeof ogImage === "string" ? ogImage : ogImage?.src;
 const ogUrl = new URL(
   ogImageUrl ?? `/posts/${slugifyStr(title)}.png`,
@@ -64,17 +68,19 @@ const layoutProps = {
   </div>
   <main id="main-content">
     <h1 transition:name={slugifyStr(title)} class="post-title">{title}</h1>
-    <Datetime
-      pubDatetime={pubDatetime}
-      modDatetime={modDatetime}
-      size="lg"
-      className="my-2"
-    />
+    <div class="my-2 flex items-center gap-3">
+      <Datetime
+        pubDatetime={pubDatetime}
+        modDatetime={modDatetime}
+        size="lg"
+      />
+      <span class="text-sm opacity-80">&middot; {readingTime} min read</span>
+    </div>
     <article id="article" class="prose mx-auto mt-8 max-w-3xl">
       <div set:html={renderedHTML} />
     </article>
 
-    <ul class="my-8">
+    <ul class="my-8 flex flex-wrap gap-2">
       {tags.map(tag => <Tag tag={slugifyStr(tag)} />)}
     </ul>
 

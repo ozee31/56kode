@@ -11,13 +11,13 @@ export interface Props {
 
 function Rating({ rating }: { rating: number }) {
   return (
-    <span className="text-sm" title={`${rating}/5`}>
+    <span className="text-base" title={`${rating}/5`}>
       {Array.from({ length: 5 }, (_, i) => (
         <span
           key={i}
           className={i < rating ? "text-accent" : "opacity-40"}
         >
-          {i < rating ? "★" : "☆"}
+          {i < rating ? "\u2605" : "\u2606"}
         </span>
       ))}
     </span>
@@ -38,22 +38,24 @@ export default function AiRadarCard({
 
   return (
     <li className="my-6">
-      <a
-        href={href}
-        className="inline-block text-lg font-medium text-accent decoration-dashed underline-offset-4 focus-visible:no-underline focus-visible:underline-offset-0"
-      >
-        {secHeading ? (
-          <h2 {...headerProps}>{title}</h2>
-        ) : (
-          <h3 {...headerProps}>{title}</h3>
-        )}
-      </a>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center justify-between gap-3">
+        <a
+          href={href}
+          className="inline-block text-lg font-medium text-accent decoration-dashed underline-offset-4 focus-visible:no-underline focus-visible:underline-offset-0"
+        >
+          {secHeading ? (
+            <h2 {...headerProps}>{title}</h2>
+          ) : (
+            <h3 {...headerProps}>{title}</h3>
+          )}
+        </a>
+        <Rating rating={rating} />
+      </div>
+      <div className="mt-1 flex items-center gap-3">
         <Datetime pubDatetime={pubDatetime} modDatetime={pubDatetime} />
         {author && author.length > 0 && (
-          <span className="text-sm opacity-80">({author})</span>
+          <span className="text-sm font-medium opacity-90">by {author}</span>
         )}
-        <Rating rating={rating} />
       </div>
       <p>{description}</p>
       <Tags tags={tags} />

@@ -3,37 +3,37 @@ layout: ../layouts/AboutLayout.astro
 title: "About"
 ---
 
-Developer with over 15 years of experience, I have built a solid expertise in building web applications across diverse sectors such as construction, real estate, e-learning, delivery, and administration.
-
 Starting as a fullstack developer (PHP/JS), I specialized in frontend development over the years, working with tools and frameworks like React, TypeScript, Vue.js, Node.js, CakePHP, and Symfony. This journey led me to the role of Frontend Tech Lead within several development teams, where I contributed to both greenfield projects and legacy systems.
 
 Today, my focus has shifted toward AI-assisted development and AI agents. I explore how LLMs, coding agents, and tools like Claude Code and MCP are transforming the way we write and ship software. My frontend background gives me a practical lens on these changes — I'm not just following the AI wave, I'm applying it daily as a developer.
 
-<div>
-  <img src="/assets/avatar.png" class="sm:w-1/2 mx-auto" alt="Flavien Beninca">
-</div>
-
 ## Tech Stack
 
-Currently:
+**Currently:**
 
-- AI agents (Claude Code, Cursor, MCP)
-- React
-- TypeScript
-- Docker
+<div class="not-prose flex flex-wrap gap-2 text-foreground mb-4">
+  <span class="rounded-full border border-border bg-card/40 px-3 py-1 text-sm">AI agents (Claude Code, Cursor, MCP)</span>
+  <span class="rounded-full border border-border bg-card/40 px-3 py-1 text-sm">React</span>
+  <span class="rounded-full border border-border bg-card/40 px-3 py-1 text-sm">TypeScript</span>
+  <span class="rounded-full border border-border bg-card/40 px-3 py-1 text-sm">Docker</span>
+</div>
 
-Past:
+**Past:**
 
-- PHP (CakePHP, Symfony)
-- Node.js
-- Vue.js
+<div class="not-prose flex flex-wrap gap-2 text-foreground mb-4">
+  <span class="rounded-full border border-border bg-card/40 px-3 py-1 text-sm">PHP (CakePHP, Symfony)</span>
+  <span class="rounded-full border border-border bg-card/40 px-3 py-1 text-sm">Node.js</span>
+  <span class="rounded-full border border-border bg-card/40 px-3 py-1 text-sm">Vue.js</span>
+</div>
 
 ## Skills
 
-- Integrating AI agents into development workflows
-- Building and shipping with AI-assisted coding tools
-- Implementing quality processes (ESLint, type checking, tests, CI...)
-- Taking over and improving legacy projects
-- Starting new projects from scratch
-- Mentoring developers
-- Providing technical expertise and architectural guidance
+<div class="not-prose flex flex-wrap gap-2 text-foreground">
+  <span class="rounded-full border border-border bg-card/40 px-3 py-1 text-sm">AI agents in dev workflows</span>
+  <span class="rounded-full border border-border bg-card/40 px-3 py-1 text-sm">AI-assisted coding tools</span>
+  <span class="rounded-full border border-border bg-card/40 px-3 py-1 text-sm">Quality processes (ESLint, tests, CI)</span>
+  <span class="rounded-full border border-border bg-card/40 px-3 py-1 text-sm">Legacy project improvement</span>
+  <span class="rounded-full border border-border bg-card/40 px-3 py-1 text-sm">Starting projects from scratch</span>
+  <span class="rounded-full border border-border bg-card/40 px-3 py-1 text-sm">Developer mentoring</span>
+  <span class="rounded-full border border-border bg-card/40 px-3 py-1 text-sm">Technical architecture</span>
+</div>

@@ -80,7 +80,7 @@ const stars = Array.from({ length: 5 }, (_, i) => i < rating);
       </a>
     </div>
 
-    <ul class="my-8">
+    <ul class="my-8 flex flex-wrap gap-2">
       {tags.map(tag => <Tag tag={slugifyStr(tag)} />)}
     </ul>
 

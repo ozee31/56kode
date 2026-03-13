@@ -4,7 +4,6 @@ import Layout from "@layouts/Layout.astro";
 import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
 import LinkButton from "@components/LinkButton.astro";
-import Hr from "@components/Hr.astro";
 import Card from "@components/Card";
 import Socials from "@components/Socials.astro";
 import getSortedPosts from "@utils/getSortedPosts";
@@ -23,63 +22,64 @@ const socialCount = SOCIALS.filter(social => social.active).length;
   <Header />
   <main id="main-content">
     <section id="hero">
-      <h1>
-        Welcome to 56kode,<br /><span class="text-xl"
-          >AI Agents, Frontend & Developer Insights</span
-        >
-      </h1>
-      <a
-        target="_blank"
-        href="/rss.xml"
-        class="rss-link"
-        aria-label="rss feed"
-        title="RSS Feed"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="rss-icon"
-          ><path
-            d="M19 20.001C19 11.729 12.271 5 4 5v2c7.168 0 13 5.832 13 13.001h2z"
-          ></path><path
-            d="M12 20.001h2C14 14.486 9.514 10 4 10v2c4.411 0 8 3.589 8 8.001z"
-          ></path><circle cx="6" cy="18" r="2"></circle>
-        </svg>
-        <span class="sr-only">RSS Feed</span>
-      </a>
-
-      <p>
-        From 15+ years of frontend development to the frontier of AI agents and
-        LLMs — this blog covers AI-assisted development, React, TypeScript, and
-        the tools shaping how we build software today.
-      </p>
-      {
-        // only display if at least one social link is enabled
-        socialCount > 0 && (
-          <div class="social-wrapper">
-            <div class="social-links">Social Links:</div>
-            <Socials />
+      <div class="hero-content">
+        <div class="hero-avatar shrink-0">
+          <img
+            src="/assets/avatar.png"
+            alt="Flavien Beninca"
+            width="112"
+            height="112"
+            class="avatar-img aspect-square h-28 w-28 shrink-0 rounded-full border-2 border-accent object-cover"
+          />
+        </div>
+        <div class="hero-text">
+          <h1>
+            Flavien Beninca<br /><span class="text-xl"
+              >Lead Frontend Developer</span
+            >
+          </h1>
+          <p>
+            From 15+ years of frontend development to the frontier of AI agents
+            and LLMs — this blog covers AI-assisted development, React,
+            TypeScript, and the tools shaping how we build software today.
+          </p>
+          <div class="hero-links">
+            <a
+              target="_blank"
+              href="/rss.xml"
+              class="rss-link"
+              aria-label="rss feed"
+              title="RSS Feed"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="rss-icon"
+                ><path
+                  d="M19 20.001C19 11.729 12.271 5 4 5v2c7.168 0 13 5.832 13 13.001h2z"
+                ></path><path
+                  d="M12 20.001h2C14 14.486 9.514 10 4 10v2c4.411 0 8 3.589 8 8.001z"
+                ></path><circle cx="6" cy="18" r="2"></circle>
+              </svg>
+              <span class="sr-only">RSS Feed</span>
+            </a>
+            {socialCount > 0 && <Socials />}
           </div>
-        )
-      }
+        </div>
+      </div>
     </section>
-
-    <Hr />
 
     {
       featuredPosts.length > 0 && (
-        <>
-          <section id="featured">
-            <h2>Featured</h2>
-            <ul>
-              {featuredPosts.map(({ data, id }) => (
-                <Card
-                  href={`/posts/${id}/`}
-                  frontmatter={data as any}
-                  secHeading={false}
-                />
-              ))}
-            </ul>
-          </section>
-          {recentPosts.length > 0 && <Hr />}
-        </>
+        <section id="featured">
+          <h2>Featured</h2>
+          <ul>
+            {featuredPosts.map(({ data, id }) => (
+              <Card
+                href={`/posts/${id}/`}
+                frontmatter={data as any}
+                secHeading={false}
+              />
+            ))}
+          </ul>
+        </section>
       )
     }
 
@@ -124,44 +124,44 @@ const socialCount = SOCIALS.filter(social => social.active).length;
   #hero {
     @apply pb-6 pt-8;
   }
-  #hero h1 {
-    @apply my-4 inline-block text-3xl font-bold;
+  .hero-content {
+    @apply flex flex-col items-center gap-5 text-center;
   }
-  #hero .rss-link {
-    @apply mb-6;
+  .avatar-img {
+    @apply h-28 w-28 shrink-0 rounded-full border-2 border-accent object-cover aspect-square;
+  }
+  #hero h1 {
+    @apply my-2 inline-block text-3xl font-bold;
   }
   #hero .rss-icon {
-    @apply mb-2 h-6 w-6 scale-110 fill-accent;
+    @apply h-6 w-6 scale-110 fill-accent;
   }
   #hero p {
     @apply my-2;
   }
-  .social-wrapper {
-    @apply mt-4 flex flex-col;
-  }
-  .social-links {
-    @apply mb-1 mr-2 whitespace-nowrap;
+  .hero-links {
+    @apply mt-3 flex items-center gap-1;
   }
 
   @media (width >= 640px) {
+    .hero-content {
+      @apply flex-row items-start text-left;
+    }
+    .avatar-img {
+      @apply mt-2;
+    }
     #hero h1 {
-      @apply my-8 text-5xl;
+      @apply my-2 text-5xl;
     }
     #hero .rss-icon {
-      @apply mb-3 scale-125;
-    }
-    .social-wrapper {
-      @apply flex-row items-center;
-    }
-    .social-links {
-      @apply mb-0;
+      @apply scale-125;
     }
   }
 
   /* ===== Featured & Recent Posts Sections ===== */
   #featured,
   #recent-posts {
-    @apply pb-6 pt-12;
+    @apply pb-6 pt-6;
   }
   #featured h2,
   #recent-posts h2 {

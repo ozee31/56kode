@@ -16,9 +16,12 @@ const { noMarginTop = false } = Astro.props;
   <div class="footer-wrapper">
     <Socials centered />
     <div class="copyright-wrapper">
-      <span>Copyright &#169; {currentYear}</span>
-      <span class="separator">&nbsp;|&nbsp;</span>
-      <span>All rights reserved.</span>
+      <span class="tagline">Human-directed, AI-assisted</span>
+      <div class="copyright-text">
+        <span>Copyright &#169; {currentYear}</span>
+        <span class="separator">&nbsp;|&nbsp;</span>
+        <span>All rights reserved.</span>
+      </div>
     </div>
   </div>
 </footer>
@@ -37,8 +40,14 @@ const { noMarginTop = false } = Astro.props;
   .link-button svg {
     @apply scale-125;
   }
+  .tagline {
+    @apply mb-1 text-xs opacity-40;
+  }
   .copyright-wrapper {
     @apply my-2 flex flex-col items-center whitespace-nowrap;
+  }
+  .copyright-text {
+    @apply flex flex-col items-center;
   }
   .separator {
     @apply hidden;
@@ -48,7 +57,7 @@ const { noMarginTop = false } = Astro.props;
     .footer-wrapper {
       @apply flex-row-reverse py-4;
     }
-    .copyright-wrapper {
+    .copyright-text {
       @apply flex-row;
     }
     .separator {

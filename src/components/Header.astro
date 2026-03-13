@@ -24,7 +24,7 @@ const { activeNav } = Astro.props;
               height={LOGO_IMAGE.height}
             />
           ) : (
-            SITE.titleShort
+            <><span class="opacity-40">~/</span>{SITE.titleShort}</>
           )
         }
       </a>
@@ -168,7 +168,7 @@ const { activeNav } = Astro.props;
     @apply col-span-1;
   }
   nav a.active {
-    @apply underline decoration-wavy decoration-2 underline-offset-4;
+    @apply text-accent underline decoration-wavy decoration-2 underline-offset-4;
   }
   nav a.active svg {
     @apply fill-accent;
