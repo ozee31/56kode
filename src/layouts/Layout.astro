@@ -36,11 +36,14 @@ const socialImageURL = new URL(
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
-  headline: `${title}`,
-  image: `${socialImageURL}`,
-  datePublished: `${pubDatetime?.toISOString()}`,
+  headline: title,
+  image: socialImageURL,
+  description: description,
+  datePublished: pubDatetime?.toISOString(),
   ...(modDatetime && { dateModified: modDatetime.toISOString() }),
-  author: [{ "@type": "Person", name: `${author}`, url: `${profile}` }],
+  author: [{ "@type": "Person", name: author, url: profile }],
+  publisher: { "@type": "Organization", name: SITE.titleShort, url: SITE.website },
+  mainEntityOfPage: { "@type": "WebPage", "@id": canonicalURL },
 };
 ---
 
@@ -62,12 +65,17 @@ const structuredData = {
     <meta name="description" content={description} />
     <meta name="author" content={author} />
     <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="alternate" type="application/rss+xml" title="56kode - Blog RSS Feed" href="/rss.xml" />
+    <link rel="alternate" type="application/rss+xml" title="56kode - AI Radar RSS Feed" href="/rss-ai-radar.xml" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:image" content={socialImageURL} />
+    <meta property="og:type" content={pubDatetime ? "article" : "website"} />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:site_name" content={SITE.titleShort} />
 
     <!-- Article Published/Modified time -->
     {
@@ -100,13 +108,26 @@ const structuredData = {
       set:html={JSON.stringify(structuredData)}
     />
 
-    <!-- Google Font -->
+    <!-- Google Font (non-blocking) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap"
+    />
+    <link
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap"
       rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
 
     <meta name="theme-color" content="" />
 
