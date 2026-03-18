@@ -18,7 +18,7 @@ const { post } = Astro.props;
 const { title, author, description, url, pubDatetime, tags, rating } =
   post.data;
 
-const renderedHTML = post.rendered?.html;
+const renderedHTML = post.rendered?.html?.replace(/<h1[^>]*>.*?<\/h1>/gs, "");
 
 const layoutProps = {
   title: `${title} | ${SITE.title}`,
