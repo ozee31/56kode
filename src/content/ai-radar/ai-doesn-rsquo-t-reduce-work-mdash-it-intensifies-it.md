@@ -1,7 +1,7 @@
 ---
 author: Aruna Ranganathan, Xingqi Maggie Ye
 pubDatetime: 2026-04-07T14:17:22.824Z
-title: "AI Doesn&rsquo;t Reduce Work&mdash;It Intensifies It"
+title: "AI Doesn't Reduce Work-It Intensifies It"
 slug: "ai-doesn-rsquo-t-reduce-work-mdash-it-intensifies-it"
 description: "Discover how generative AI tools are intensifying work instead of reducing it. Learn about workload creep, cognitive fatigue, and strategies for sustainable AI integration."
 url: "https://hbr.org/2026/02/ai-doesnt-reduce-work-it-intensifies-it"
