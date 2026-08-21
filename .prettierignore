@@ -11,3 +11,6 @@
 !.prettierrc
 !eslint.config.mjs
 !README.md
+# Verbatim code sample: prettier reformats the embedded markdown inside the
+# ```markdown fence and re-indents a line, changing the published sample.
+/src/content/ai-radar/i-read-anthropic-s-internal-guide-on-building-claude-skills-here-s-everything-yo.md

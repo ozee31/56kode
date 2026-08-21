@@ -56,7 +56,15 @@ const stars = Array.from({ length: 5 }, (_, i) => i < rating);
         )
       }
       <span class="text-base" title={`${rating}/5`}>
-        {stars.map(filled => (filled ? <span class="text-accent">★</span> : <span class="opacity-40">☆</span>))}
+        {
+          stars.map(filled =>
+            filled ? (
+              <span class="text-accent">★</span>
+            ) : (
+              <span class="opacity-40">☆</span>
+            )
+          )
+        }
       </span>
     </div>
 
@@ -72,8 +80,19 @@ const stars = Array.from({ length: 5 }, (_, i) => i < rating);
         class="inline-flex items-center gap-1 text-accent underline decoration-dashed underline-offset-4 hover:decoration-solid"
       >
         Read the original article
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+          ></path>
           <polyline points="15 3 21 3 21 9"></polyline>
           <line x1="10" y1="14" x2="21" y2="3"></line>
         </svg>
@@ -154,7 +173,10 @@ const stars = Array.from({ length: 5 }, (_, i) => i < rating);
       link.className =
         "heading-link ml-2 opacity-0 group-hover:opacity-100 focus:opacity-100";
       link.href = "#" + heading.id;
-      link.setAttribute("aria-label", "Link to section: " + heading.textContent.trim());
+      link.setAttribute(
+        "aria-label",
+        "Link to section: " + heading.textContent.trim()
+      );
       const span = document.createElement("span");
       span.ariaHidden = "true";
       span.innerText = "#";

@@ -4,7 +4,6 @@ import { defineCollection } from "astro:content";
 import { z } from "astro/zod";
 
 const blog = defineCollection({
-
   loader: glob({ pattern: "**/*.md", base: "./src/content/blog" }),
   schema: ({ image }) =>
     z.object({
@@ -27,7 +26,6 @@ const blog = defineCollection({
 });
 
 const aiRadar = defineCollection({
-
   loader: glob({ pattern: "**/*.md", base: "./src/content/ai-radar" }),
   schema: z.object({
     title: z.string(),
@@ -42,7 +40,6 @@ const aiRadar = defineCollection({
 });
 
 const techwatch = defineCollection({
-
   loader: glob({ pattern: "**/*.md", base: "./src/content/techwatch" }),
   schema: z.object({
     title: z.string(),

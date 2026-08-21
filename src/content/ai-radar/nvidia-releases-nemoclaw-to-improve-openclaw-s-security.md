@@ -24,10 +24,10 @@ NemoClaw is a runtime layer that sits on top of OpenClaw, constraining agent beh
 
 ### Key Features:
 
--   **Runtime Layer:** Enforces agent behavior.
--   **OpenShell Integration:** Provides a secure execution environment.
--   **Sandboxing:** Isolates agents to prevent direct system interaction.
--   **Policy Enforcement:** Controls file access, network traffic, and model inference.
+- **Runtime Layer:** Enforces agent behavior.
+- **OpenShell Integration:** Provides a secure execution environment.
+- **Sandboxing:** Isolates agents to prevent direct system interaction.
+- **Policy Enforcement:** Controls file access, network traffic, and model inference.
 
 ### Workflow:
 
@@ -42,19 +42,19 @@ OpenShell is a secure runtime that executes autonomous agents inside isolated en
 
 ### Key Aspects:
 
--   **Sandboxed Containers:** Each agent runs in a container with strict rules.
--   **Declarative Policies:** Rules are defined using declarative policies.
--   **Inference Routing:** Model requests are routed through a gateway for control.
+- **Sandboxed Containers:** Each agent runs in a container with strict rules.
+- **Declarative Policies:** Rules are defined using declarative policies.
+- **Inference Routing:** Model requests are routed through a gateway for control.
 
 ## Setting Up NemoClaw
 
 ### Prerequisites:
 
--   Linux environment (Ubuntu 22.04 or newer).
--   Docker installed and running.
--   Node.js version 20 or higher.
--   OpenShell available.
--   Optional: NVIDIA GPU for local model execution.
+- Linux environment (Ubuntu 22.04 or newer).
+- Docker installed and running.
+- Node.js version 20 or higher.
+- OpenShell available.
+- Optional: NVIDIA GPU for local model execution.
 
 ### Installation:
 
@@ -66,9 +66,9 @@ The script handles dependencies, integrates with OpenClaw, and launches an onboa
 
 ### Post-Installation:
 
--   Create a sandbox.
--   Configure inference.
--   Apply security policies.
+- Create a sandbox.
+- Configure inference.
+- Apply security policies.
 
 ### Interacting with NemoClaw:
 
@@ -85,8 +85,8 @@ NVIDIA offers a hosted environment via NVIDIA Brev for those without a Linux set
 
 ## NemoClaw vs. OpenClaw
 
--   **OpenClaw:** A platform for building agents, focusing on flexibility.
--   **NemoClaw:** Defines how agents are allowed to run, emphasizing security.
+- **OpenClaw:** A platform for building agents, focusing on flexibility.
+- **NemoClaw:** Defines how agents are allowed to run, emphasizing security.
 
 NemoClaw enforces boundaries, restricting file access, filtering network calls, and routing inference through a controlled gateway.
 

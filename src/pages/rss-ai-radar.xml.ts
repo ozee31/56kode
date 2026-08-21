@@ -8,11 +8,10 @@ export async function GET() {
   const sortedPosts = getSortedPosts(posts);
   return rss({
     title: "56kode - AI Radar",
-    description:
-      "AI & agent development articles, rated and summarized.",
+    description: "AI & agent development articles, rated and summarized.",
     site: SITE.website,
     items: sortedPosts.map(({ data, id }) => ({
-      link: (data as any).url || `posts/${id}/`,
+      link: data.url || `posts/${id}/`,
       title: data.title,
       description: data.description,
       pubDate: new Date(data.pubDatetime),

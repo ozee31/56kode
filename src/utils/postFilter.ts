@@ -1,11 +1,13 @@
 import { SITE } from "@config";
-import type { CollectionEntry } from "astro:content";
+import type { PostEntry } from "../types";
 
-const postFilter = ({ data }: CollectionEntry<"blog" | "techwatch" | "aiRadar">) => {
+const postFilter = ({ data }: PostEntry) => {
   const isPublishTimePassed =
     Date.now() >
     new Date(data.pubDatetime).getTime() - SITE.scheduledPostMargin;
-  return !(data as any).draft && (import.meta.env.DEV || isPublishTimePassed);
+  // `draft` only exists on the blog schema, hence the narrowing.
+  const isDraft = "draft" in data && data.draft === true;
+  return !isDraft && (import.meta.env.DEV || isPublishTimePassed);
 };
 
 export default postFilter;

@@ -13,10 +13,7 @@ function Rating({ rating }: { rating: number }) {
   return (
     <span className="text-base" title={`${rating}/5`}>
       {Array.from({ length: 5 }, (_, i) => (
-        <span
-          key={i}
-          className={i < rating ? "text-accent" : "opacity-40"}
-        >
+        <span key={i} className={i < rating ? "text-accent" : "opacity-40"}>
           {i < rating ? "\u2605" : "\u2606"}
         </span>
       ))}

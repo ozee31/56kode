@@ -20,10 +20,10 @@ Inception introduces Mercury 2, a reasoning language model built for speed in pr
 
 ## Key Features and Benefits
 
-*   **Speed:** Achieves 1,009 tokens/sec on NVIDIA Blackwell GPUs.
-*   **Cost:** Priced at $0.25/1M input tokens and $0.75/1M output tokens.
-*   **Quality:** Competitive with other speed-optimized models.
-*   **Features:** Tunable reasoning, 128K context window, native tool use, and schema-aligned JSON output.
+- **Speed:** Achieves 1,009 tokens/sec on NVIDIA Blackwell GPUs.
+- **Cost:** Priced at $0.25/1M input tokens and $0.75/1M output tokens.
+- **Quality:** Competitive with other speed-optimized models.
+- **Features:** Tunable reasoning, 128K context window, native tool use, and schema-aligned JSON output.
 
 Mercury 2 optimizes for responsiveness, low latency under high concurrency, consistent behavior, and stable throughput.
 

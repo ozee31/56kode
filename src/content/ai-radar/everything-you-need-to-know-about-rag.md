@@ -22,9 +22,9 @@ This article provides a comprehensive overview of Retrieval-Augmented Generation
 
 RAG addresses the limitations of standard AI models, such as:
 
-*   **Knowledge Cutoff:** AI models have a training cutoff date and lack awareness of recent events.
-*   **Private Data Access:** Models cannot access private or internal data.
-*   **Retraining Costs:** Retraining models is expensive and time-consuming.
+- **Knowledge Cutoff:** AI models have a training cutoff date and lack awareness of recent events.
+- **Private Data Access:** Models cannot access private or internal data.
+- **Retraining Costs:** Retraining models is expensive and time-consuming.
 
 RAG solves these issues by enabling the AI to retrieve relevant documents and use them as context for generating answers.
 
@@ -86,24 +86,24 @@ Different retrieval strategies are available:
 
 Techniques to improve search accuracy include:
 
-*   **Multi-Query Retrieval:** Rewrites the user's question into multiple variations.
-*   **Reciprocal Rank Fusion (RRF):** Merges multiple result lists and ranks chunks based on their combined score.
-*   **Reranking:** Reranks the top results using a deeper check of the query and candidate chunks.
+- **Multi-Query Retrieval:** Rewrites the user's question into multiple variations.
+- **Reciprocal Rank Fusion (RRF):** Merges multiple result lists and ranks chunks based on their combined score.
+- **Reranking:** Reranks the top results using a deeper check of the query and candidate chunks.
 
 ## RAG Use Cases
 
 RAG is used in various applications, including:
 
-*   Customer support bots
-*   Legal teams
-*   Medical assistants
-*   Internal knowledge bases
+- Customer support bots
+- Legal teams
+- Medical assistants
+- Internal knowledge bases
 
 ## RAG Limitations
 
-*   **Latency:** Extra processing steps add to response time.
-*   **Cost:** Semantic chunking, reranking models, and API calls can be expensive.
-*   **Data Quality:** RAG amplifies existing issues in the knowledge base.
+- **Latency:** Extra processing steps add to response time.
+- **Cost:** Semantic chunking, reranking models, and API calls can be expensive.
+- **Data Quality:** RAG amplifies existing issues in the knowledge base.
 
 ## Conclusion
 

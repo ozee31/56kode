@@ -21,13 +21,13 @@ The author argues that AI agents have fundamentally changed the software develop
 
 The classic SDLC consists of sequential stages:
 
-*   Requirements
-*   System Design
-*   Implementation
-*   Testing
-*   Code Review
-*   Deployment
-*   Monitoring
+- Requirements
+- System Design
+- Implementation
+- Testing
+- Code Review
+- Deployment
+- Monitoring
 
 Each stage has its own tools and processes. However, with AI agents, these stages have collapsed into a tighter loop:
 

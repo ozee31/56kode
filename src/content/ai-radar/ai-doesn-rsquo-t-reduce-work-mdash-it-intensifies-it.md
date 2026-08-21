@@ -20,9 +20,9 @@ This article from Harvard Business Review explores how the adoption of AI in the
 
 ## Key Findings
 
-*   **Scope Expansion:** AI enables workers to take on responsibilities beyond their original roles, leading to a widening of job scope and increased workload.
-*   **Always-On Work:** AI reduces the friction of starting tasks, causing workers to integrate small amounts of work into breaks and personal time, blurring the boundaries between work and non-work.
-*   **Constant Juggling:** AI encourages multitasking and parallel task management, resulting in cognitive overload and a sense of constant attention-switching.
+- **Scope Expansion:** AI enables workers to take on responsibilities beyond their original roles, leading to a widening of job scope and increased workload.
+- **Always-On Work:** AI reduces the friction of starting tasks, causing workers to integrate small amounts of work into breaks and personal time, blurring the boundaries between work and non-work.
+- **Constant Juggling:** AI encourages multitasking and parallel task management, resulting in cognitive overload and a sense of constant attention-switching.
 
 ## The Self-Reinforcing Cycle
 
@@ -30,18 +30,18 @@ AI accelerates tasks, raising expectations for speed. This increased speed leads
 
 ## Risks of Unchecked AI Adoption
 
-*   **Workload Creep:** The voluntary expansion of work can mask a silent increase in workload.
-*   **Cognitive Strain:** Constant multitasking and attention-switching can lead to cognitive fatigue and burnout.
-*   **Impaired Judgment:** Overwork can impair judgment and increase the likelihood of errors.
-*   **Unsustainable Intensity:** The initial productivity surge can give way to lower quality work and turnover.
+- **Workload Creep:** The voluntary expansion of work can mask a silent increase in workload.
+- **Cognitive Strain:** Constant multitasking and attention-switching can lead to cognitive fatigue and burnout.
+- **Impaired Judgment:** Overwork can impair judgment and increase the likelihood of errors.
+- **Unsustainable Intensity:** The initial productivity surge can give way to lower quality work and turnover.
 
 ## Developing an "AI Practice"
 
 To mitigate these risks, organizations should develop an "AI practice" – a set of intentional norms and routines that structure how AI is used. The authors suggest three key strategies:
 
-*   **Decision Pauses:** Implement brief, structured moments to assess alignment, reconsider assumptions, and absorb information before moving forward.
-*   **Sequencing:** Regulate the order and timing of work, rather than demanding continuous responsiveness, to reduce fragmentation and cognitive overload.
-*   **Social Anchors:** Protect time and space for listening and human connection to counter the individualizing effects of AI-mediated work and foster creativity.
+- **Decision Pauses:** Implement brief, structured moments to assess alignment, reconsider assumptions, and absorb information before moving forward.
+- **Sequencing:** Regulate the order and timing of work, rather than demanding continuous responsiveness, to reduce fragmentation and cognitive overload.
+- **Social Anchors:** Protect time and space for listening and human connection to counter the individualizing effects of AI-mediated work and foster creativity.
 
 ## Conclusion
 

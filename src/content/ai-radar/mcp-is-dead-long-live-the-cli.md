@@ -17,12 +17,12 @@ rating: 4
 
 The author argues that the Model Context Protocol (MCP) is dying and that Command Line Interfaces (CLIs) offer a better alternative for Large Language Models (LLMs) to interact with tools. The article outlines several reasons for this claim:
 
-*   **LLMs don't need a special protocol:** LLMs are proficient at using CLIs due to their training on vast amounts of documentation and code examples.
-*   **CLIs are for humans too:** CLIs allow for easier debugging as humans can directly replicate the commands used by LLMs, unlike MCP which requires decoding JSON logs.
-*   **Composability:** CLIs can be easily composed using tools like `jq` and `grep`, offering flexibility that MCP lacks.
-*   **Auth already works:** CLIs leverage existing authentication mechanisms like `aws sso login` and `gh auth login`, eliminating the need for MCP-specific authentication.
-*   **No moving parts:** CLIs are simple binaries, avoiding the complexity of managing MCP servers.
-*   **Practical pain points of MCP:** The author highlights issues like flaky initialization, frequent re-authentication, and limited permission control in MCP.
+- **LLMs don't need a special protocol:** LLMs are proficient at using CLIs due to their training on vast amounts of documentation and code examples.
+- **CLIs are for humans too:** CLIs allow for easier debugging as humans can directly replicate the commands used by LLMs, unlike MCP which requires decoding JSON logs.
+- **Composability:** CLIs can be easily composed using tools like `jq` and `grep`, offering flexibility that MCP lacks.
+- **Auth already works:** CLIs leverage existing authentication mechanisms like `aws sso login` and `gh auth login`, eliminating the need for MCP-specific authentication.
+- **No moving parts:** CLIs are simple binaries, avoiding the complexity of managing MCP servers.
+- **Practical pain points of MCP:** The author highlights issues like flaky initialization, frequent re-authentication, and limited permission control in MCP.
 
 The author concedes that MCP might be useful in cases where a CLI equivalent doesn't exist, or where a standardized interface is needed. However, for most tasks, CLIs are considered simpler, faster to debug, and more reliable.
 

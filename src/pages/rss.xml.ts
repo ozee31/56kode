@@ -14,7 +14,7 @@ export async function GET() {
       link: `posts/${id}/`,
       title: data.title,
       description: data.description,
-      pubDate: new Date((data as any).modDatetime ?? data.pubDatetime),
+      pubDate: new Date(data.modDatetime ?? data.pubDatetime),
     })),
   });
 }

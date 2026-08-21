@@ -22,7 +22,7 @@ Cleaning up this dead code is a thankless task. Doing it manually is risky and t
 
 ## Knip: static analysis without installation
 
-Knip is a static analysis tool that works where ESLint stops. It does not just look at syntax; it analyzes the complete dependency graph of your project to identify what is *really* unused.
+Knip is a static analysis tool that works where ESLint stops. It does not just look at syntax; it analyzes the complete dependency graph of your project to identify what is _really_ unused.
 
 Its main advantage is how easy it is to run via `npx`, without needing a heavy installation:
 
@@ -70,27 +70,25 @@ Here is a solid `knip.json` configuration for a React project (using Knip v5 at 
 
 ```json
 {
-    "$schema": "https://unpkg.com/knip@5/schema.json",
-    "vitest": false,
-    "entry": ["src/index.tsx!"],
-    "project": ["src/**/*.{js,ts,jsx,tsx}!"],
-    "ignore": [
-        "**/*.test.{js,jsx,ts,tsx}",
-        "**/__tests__/**"
-    ]
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "vitest": false,
+  "entry": ["src/index.tsx!"],
+  "project": ["src/**/*.{js,ts,jsx,tsx}!"],
+  "ignore": ["**/*.test.{js,jsx,ts,tsx}", "**/__tests__/**"]
 }
 ```
 
 **Key points:**
-*   **`"vitest": false`**: Disables the plugin that automatically adds tests as entries. This is radical but often necessary to see what is truly unused outside of tests.
-*   **The `!` suffix**: Tells Knip that this pattern applies only to production mode.
-*   **The `ignore` array**: Completely excludes test files from the dead code analysis.
+
+- **`"vitest": false`**: Disables the plugin that automatically adds tests as entries. This is radical but often necessary to see what is truly unused outside of tests.
+- **The `!` suffix**: Tells Knip that this pattern applies only to production mode.
+- **The `ignore` array**: Completely excludes test files from the dead code analysis.
 
 ## Managing test exports with `@internal`
 
 When you apply the strict configuration above, you will face a new situation: **false positives on exports**.
 
-Imagine a `calculateTotal` function used by your `Cart` component, but exported only so it can be unit tested. Knip, configured to ignore tests, will report: *"Unused export: calculateTotal"*.
+Imagine a `calculateTotal` function used by your `Cart` component, but exported only so it can be unit tested. Knip, configured to ignore tests, will report: _"Unused export: calculateTotal"_.
 
 If you remove the export, you break your tests. The solution is not to remove, but to mark.
 
@@ -106,9 +104,10 @@ export const calculateTotal = (items: Item[]) => {
 ```
 
 This approach has three benefits:
+
 1.  The code remains testable.
 2.  Knip will ignore this export in future runs.
-3.  You explicitly document *why* this export exists, preventing another developer from using it elsewhere by mistake.
+3.  You explicitly document _why_ this export exists, preventing another developer from using it elsewhere by mistake.
 
 ## Why native `--fix` is insufficient
 
@@ -116,12 +115,12 @@ Knip offers a `--fix` flag. While tempting, it is dangerous to use on a large pr
 
 Here is why a supervised approach is superior:
 
-| Problem | `--fix` Behavior | Supervised Approach (AI/Human) |
-| :--- | :--- | :--- |
-| **False Positives** | Deletes code used dynamically or with unresolved TS aliases. | Verifies usage via `grep` or text analysis before deletion. |
-| **Broken Tests** | Removes exports used only in tests (the case seen above). | Detects usage in tests and adds `@internal` instead of deleting. |
-| **Broken Builds** | Can remove build dependencies (Webpack, Babel) not imported in the code. | Analyzes context (config files) before touching `package.json`. |
-| **No Validation** | Modifies files and stops. | Runs `tsc` and tests after every change to validate there are no regressions. |
+| Problem             | `--fix` Behavior                                                         | Supervised Approach (AI/Human)                                                |
+| :------------------ | :----------------------------------------------------------------------- | :---------------------------------------------------------------------------- |
+| **False Positives** | Deletes code used dynamically or with unresolved TS aliases.             | Verifies usage via `grep` or text analysis before deletion.                   |
+| **Broken Tests**    | Removes exports used only in tests (the case seen above).                | Detects usage in tests and adds `@internal` instead of deleting.              |
+| **Broken Builds**   | Can remove build dependencies (Webpack, Babel) not imported in the code. | Analyzes context (config files) before touching `package.json`.               |
+| **No Validation**   | Modifies files and stops.                                                | Runs `tsc` and tests after every change to validate there are no regressions. |
 
 Automation should not mean a lack of control.
 
@@ -130,11 +129,13 @@ Automation should not mean a lack of control.
 Instead of doing the work by hand or letting `--fix` break the CI, the most effective strategy is to use an LLM as an executor.
 
 The workflow is as follows:
+
 1.  **Knip Identifies**: We generate the report of unused items using the production and strict flags:
 
 ```bash
 npx knip --production --strict
 ```
+
 2.  **AI Verifies**: The agent receives the report and, for each item, performs a text search (`grep`) to confirm it is not used (distinguishing between production vs. tests).
 3.  **AI Corrects**: It deletes the dead code OR adds the `@internal` tag if it is a test export.
 4.  **AI Validates**: After each batch of changes, it runs TypeScript and the tests.
@@ -147,9 +148,10 @@ You can find the prompt here: **[Prompt Knip Cleanup - GitHub](https://github.co
 
 **Advice for large projects:**
 Do not give the whole report to the agent at once. Go step by step:
-*   Start with **Unused files** (whole files). This brings the most value quickly.
-*   Then process **Unused dependencies**.
-*   Finish with **Unused exports**, file by file or in batches of 20, because this is where the risk of false positives is highest and requires the most verification.
+
+- Start with **Unused files** (whole files). This brings the most value quickly.
+- Then process **Unused dependencies**.
+- Finish with **Unused exports**, file by file or in batches of 20, because this is where the risk of false positives is highest and requires the most verification.
 
 ## Conclusion
 

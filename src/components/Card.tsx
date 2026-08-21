@@ -1,11 +1,11 @@
 import { slugifyStr } from "@utils/slugify";
 import Datetime from "./Datetime";
-import type { CollectionEntry } from "astro:content";
+import type { PostData } from "../types";
 import Tags from "./Tags";
 
 export interface Props {
   href?: string;
-  frontmatter: CollectionEntry<"blog">["data"];
+  frontmatter: PostData;
   secHeading?: boolean;
   displayAuthor?: boolean;
 }
@@ -16,15 +16,11 @@ export default function Card({
   secHeading = true,
   displayAuthor = false,
 }: Props) {
-  const {
-    title,
-    pubDatetime,
-    modDatetime,
-    description,
-    tags,
-    author,
-    featured,
-  } = frontmatter as any;
+  const { title, pubDatetime, description, tags, author } = frontmatter;
+  // Blog-only fields: absent from the techwatch and ai-radar schemas.
+  const modDatetime =
+    "modDatetime" in frontmatter ? frontmatter.modDatetime : undefined;
+  const featured = "featured" in frontmatter ? frontmatter.featured : undefined;
 
   const headerProps = {
     style: { viewTransitionName: slugifyStr(title) },

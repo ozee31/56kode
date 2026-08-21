@@ -20,38 +20,38 @@ This article discusses the recent shift in AI subscription pricing models, movin
 
 ## Key Announcements and Changes
 
-*   **Anthropic:**
-    *   Splitting Claude subscriptions into interactive and automated usage pools.
-    *   Automated usage (agentic tools) now requires separate credit meters.
-    *   Enterprise contracts are transitioning to usage-based plans.
-    *   A new tokenizer in Claude Opus 4.7 effectively increased costs by up to 27%.
-*   **OpenAI:**
-    *   Offering two free months of Codex access to users switching from Claude.
-*   **GitHub:**
-    *   Transitioning Copilot plans to usage-based billing on June 1, 2026, using AI Credits.
+- **Anthropic:**
+  - Splitting Claude subscriptions into interactive and automated usage pools.
+  - Automated usage (agentic tools) now requires separate credit meters.
+  - Enterprise contracts are transitioning to usage-based plans.
+  - A new tokenizer in Claude Opus 4.7 effectively increased costs by up to 27%.
+- **OpenAI:**
+  - Offering two free months of Codex access to users switching from Claude.
+- **GitHub:**
+  - Transitioning Copilot plans to usage-based billing on June 1, 2026, using AI Credits.
 
 ## Reasons for the Shift
 
-*   **Unsustainable Costs:** AI labs were selling compute at a fraction of its cost.
-*   **Agentic Workloads:** Autonomous agents generate significantly more requests than human users, making flat-fee subscriptions unsustainable.
-*   **IPO Timelines:** OpenAI and Anthropic are on IPO timelines and need to demonstrate a path to profitability.
+- **Unsustainable Costs:** AI labs were selling compute at a fraction of its cost.
+- **Agentic Workloads:** Autonomous agents generate significantly more requests than human users, making flat-fee subscriptions unsustainable.
+- **IPO Timelines:** OpenAI and Anthropic are on IPO timelines and need to demonstrate a path to profitability.
 
 ## Impact on Enterprises
 
-*   **Budget Overruns:** Companies like Uber and ServiceNow have already exceeded their AI budgets.
-*   **Increased Spending:** KPMG data shows U.S. organizations projecting nearly double their AI spending.
-*   **Two Emerging Coalitions:**
-    *   **OpenAI (Microsoft-backed):** Unified, unrestricted enterprise plans.
-    *   **Anthropic (Google, Amazon-aligned):** Tiered, capacity-controlled subscriptions with per-token billing.
+- **Budget Overruns:** Companies like Uber and ServiceNow have already exceeded their AI budgets.
+- **Increased Spending:** KPMG data shows U.S. organizations projecting nearly double their AI spending.
+- **Two Emerging Coalitions:**
+  - **OpenAI (Microsoft-backed):** Unified, unrestricted enterprise plans.
+  - **Anthropic (Google, Amazon-aligned):** Tiered, capacity-controlled subscriptions with per-token billing.
 
 ## Recommendations
 
 The article reiterates the importance of:
 
-*   Auditing token consumption.
-*   Modeling costs at 2x to 10x current prices.
-*   Building vendor optionality.
-*   Discussing AI budgets with CFOs proactively.
+- Auditing token consumption.
+- Modeling costs at 2x to 10x current prices.
+- Building vendor optionality.
+- Discussing AI budgets with CFOs proactively.
 
 ## Conclusion
 

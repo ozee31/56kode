@@ -417,14 +417,10 @@ function cartReducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {
     case "ADD_ITEM":
       // TypeScript knows that action.payload is of type Product
-      return {
-        /* ... */
-      };
+      return {/* ... */};
     case "REMOVE_ITEM":
       // TypeScript knows that action.payload is of type { id: string }
-      return {
-        /* ... */
-      };
+      return {/* ... */};
     default:
       return state;
   }

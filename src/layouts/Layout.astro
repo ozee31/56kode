@@ -42,7 +42,11 @@ const structuredData = {
   datePublished: pubDatetime?.toISOString(),
   ...(modDatetime && { dateModified: modDatetime.toISOString() }),
   author: [{ "@type": "Person", name: author, url: profile }],
-  publisher: { "@type": "Organization", name: SITE.titleShort, url: SITE.website },
+  publisher: {
+    "@type": "Organization",
+    name: SITE.titleShort,
+    url: SITE.website,
+  },
   mainEntityOfPage: { "@type": "WebPage", "@id": canonicalURL },
 };
 ---
@@ -65,8 +69,18 @@ const structuredData = {
     <meta name="description" content={description} />
     <meta name="author" content={author} />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <link rel="alternate" type="application/rss+xml" title="56kode - Blog RSS Feed" href="/rss.xml" />
-    <link rel="alternate" type="application/rss+xml" title="56kode - AI Radar RSS Feed" href="/rss-ai-radar.xml" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="56kode - Blog RSS Feed"
+      href="/rss.xml"
+    />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="56kode - AI Radar RSS Feed"
+      href="/rss-ai-radar.xml"
+    />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:title" content={title} />

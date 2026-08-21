@@ -20,13 +20,14 @@ This article explores how Claude Design can be used by marketing and localizatio
 
 ## Key Features
 
-*   **Design System Integration:** Claude Design automatically reads codebases and design files to build a design system, ensuring consistent branding.
-*   **Collaboration:** The tool allows for internal sharing and collaborative editing.
-*   **Inline Comments:** Users can leave comments directly on elements within the canvas for precise feedback.
+- **Design System Integration:** Claude Design automatically reads codebases and design files to build a design system, ensuring consistent branding.
+- **Collaboration:** The tool allows for internal sharing and collaborative editing.
+- **Inline Comments:** Users can leave comments directly on elements within the canvas for precise feedback.
 
 ## Use Cases
 
 1.  **Visual Style Guides:** Create easy-to-digest visual style guides for local markets, including tone examples and key terms.
+
     ```
     Prompt: "Create a one-pager style guide for translating a mobile app UI into Polish. Include tone examples, key terms, and what to avoid."
     ```
@@ -37,8 +38,8 @@ This article explores how Claude Design can be used by marketing and localizatio
 
 ## Limitations
 
-*   Inline comments may occasionally disappear.
-*   Large codebases can cause lag.
+- Inline comments may occasionally disappear.
+- Large codebases can cause lag.
 
 ## Conclusion
 

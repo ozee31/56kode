@@ -30,10 +30,10 @@ The `CLAUDE.md` file contains four key principles:
 
 A well-structured `CLAUDE.md` file should include:
 
-*   **Behavioral Guidelines:** The four principles mentioned above.
-*   **Project Commands:** Instructions for common tasks like building, testing, and linting.
-*   **Project Conventions:** Rules specific to the project, such as API conventions or coding standards.
-*   **Watch Out:** Notes on potential pitfalls or important considerations.
+- **Behavioral Guidelines:** The four principles mentioned above.
+- **Project Commands:** Instructions for common tasks like building, testing, and linting.
+- **Project Conventions:** Rules specific to the project, such as API conventions or coding standards.
+- **Watch Out:** Notes on potential pitfalls or important considerations.
 
 ## How to Use CLAUDE.md
 
@@ -46,10 +46,10 @@ There are two primary ways to use `CLAUDE.md`:
 
 While `CLAUDE.md` is helpful, it's not a complete solution. It won't:
 
-*   Magically understand large codebases.
-*   Replace tests.
-*   Prevent all bad edits.
-*   Remove the need for human review.
+- Magically understand large codebases.
+- Replace tests.
+- Prevent all bad edits.
+- Remove the need for human review.
 
 More structure is needed for large refactors and security-sensitive code.
 
