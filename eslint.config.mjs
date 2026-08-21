@@ -1,7 +1,6 @@
 import js from "@eslint/js";
 import globals from "globals";
 import tseslint from "typescript-eslint";
-import astroParser from "astro-eslint-parser";
 import eslintPluginAstro from "eslint-plugin-astro";
 
 export default [
@@ -16,16 +15,9 @@ export default [
       },
     },
   },
-  {
-    files: ["*.astro"],
-    languageOptions: {
-      parser: astroParser,
-      parserOptions: {
-        parser: "@typescript-eslint/parser",
-        extraFileExtensions: [".astro"],
-      },
-    },
-  },
+  // No .astro override needed: eslintPluginAstro.configs.recommended already
+  // registers astro-eslint-parser (with @typescript-eslint/parser inside and
+  // extraFileExtensions) for both "*.astro" and "**/*.astro".
   {
     files: ["tailwind.config.cjs", "**/*.d.ts"],
     rules: {
