@@ -60,9 +60,7 @@ useEffect(
       // Cleanup function (optional)
     };
   },
-  [
-    /* dependency array */
-  ]
+  [/* dependency array */]
 );
 ```
 

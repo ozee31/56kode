@@ -20,12 +20,12 @@ This article introduces Storybook MCP (Machine Communication Protocol) and its b
 
 ## Key Features and Benefits
 
-*   **Component Awareness:** MCP provides AI agents with context about existing components (stories, API, docs), enabling reuse and preventing the creation of new, inconsistent patterns.
-*   **Faster UI Generation:** Using MCP allows agents to generate UI faster and with fewer tokens compared to working without it.
-*   **Composition Support:** The MCP server supports composition, allowing agents to access components from multiple Storybooks without needing multiple endpoints.
-*   **Remote MCP Publishing:** Storybook MCP servers can be published remotely, allowing team members to access component context without running Storybook locally. Chromatic offers built-in support for publishing with quality checks, versioning, and secure authorization.
-*   **Story Previews:** MCP embeds live Storybook stories directly within the agent's chat UI, allowing developers to visually verify the generated UI and interactions.
-*   **Self-Verification with Tests:** MCP equips agents with tools to run component and accessibility tests, providing focused and fast feedback. Agents can automatically apply fixes or alert developers when human intervention is needed.
+- **Component Awareness:** MCP provides AI agents with context about existing components (stories, API, docs), enabling reuse and preventing the creation of new, inconsistent patterns.
+- **Faster UI Generation:** Using MCP allows agents to generate UI faster and with fewer tokens compared to working without it.
+- **Composition Support:** The MCP server supports composition, allowing agents to access components from multiple Storybooks without needing multiple endpoints.
+- **Remote MCP Publishing:** Storybook MCP servers can be published remotely, allowing team members to access component context without running Storybook locally. Chromatic offers built-in support for publishing with quality checks, versioning, and secure authorization.
+- **Story Previews:** MCP embeds live Storybook stories directly within the agent's chat UI, allowing developers to visually verify the generated UI and interactions.
+- **Self-Verification with Tests:** MCP equips agents with tools to run component and accessibility tests, providing focused and fast feedback. Agents can automatically apply fixes or alert developers when human intervention is needed.
 
 ## Getting Started
 
@@ -36,11 +36,13 @@ Storybook MCP is available in Storybook 10.3+ for React projects.
     ```bash
     npx storybook@latest upgrade
     ```
+
 2.  **Install and Register the Addon:**
 
     ```bash
     npx storybook add @storybook/addon-mcp
     ```
+
 3.  **Add the MCP Server to Your Client:**
 
     ```bash

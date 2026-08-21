@@ -20,23 +20,23 @@ OpenAI has released GPT-5.4 mini and nano, two new smaller models designed for h
 
 ## Key Features and Improvements
 
-*   **GPT-5.4 mini:**
-    *   Significantly improves upon GPT-5 mini in coding, reasoning, multimodal understanding, and tool use.
-    *   Runs more than 2x faster than GPT-5 mini.
-    *   Approaches the performance of the larger GPT-5.4 model on evaluations like SWE-Bench Pro and OSWorld-Verified.
-*   **GPT-5.4 nano:**
-    *   The smallest and cheapest version of GPT-5.4.
-    *   Suitable for tasks where speed and cost are paramount.
-    *   Recommended for classification, data extraction, ranking, and coding subagents handling simpler tasks.
+- **GPT-5.4 mini:**
+  - Significantly improves upon GPT-5 mini in coding, reasoning, multimodal understanding, and tool use.
+  - Runs more than 2x faster than GPT-5 mini.
+  - Approaches the performance of the larger GPT-5.4 model on evaluations like SWE-Bench Pro and OSWorld-Verified.
+- **GPT-5.4 nano:**
+  - The smallest and cheapest version of GPT-5.4.
+  - Suitable for tasks where speed and cost are paramount.
+  - Recommended for classification, data extraction, ranking, and coding subagents handling simpler tasks.
 
 ## Use Cases
 
 These models are designed for applications where latency directly impacts the user experience, such as:
 
-*   Coding assistants
-*   Subagents
-*   Computer-using systems interpreting screenshots
-*   Real-time multimodal applications
+- Coding assistants
+- Subagents
+- Computer-using systems interpreting screenshots
+- Real-time multimodal applications
 
 The article emphasizes that the best model isn't always the largest, but the one that responds quickly, uses tools reliably, and performs well on complex tasks.
 
@@ -44,11 +44,11 @@ The article emphasizes that the best model isn't always the largest, but the one
 
 The article includes performance benchmarks comparing GPT-5.4, GPT-5.4 mini, GPT-5.4 nano, and GPT-5 mini on various tasks, including:
 
-*   SWE-Bench Pro
-*   Terminal-Bench 2.0
-*   Toolathlon
-*   GPQA Diamond
-*   OSWorld-Verified
+- SWE-Bench Pro
+- Terminal-Bench 2.0
+- Toolathlon
+- GPQA Diamond
+- OSWorld-Verified
 
 These benchmarks demonstrate the improved performance of GPT-5.4 mini and nano compared to their predecessors.
 
@@ -66,21 +66,21 @@ GPT-5.4 mini is also strong in multimodal tasks, especially those related to com
 
 ## Availability and Pricing
 
-*   **GPT-5.4 mini:** Available in the API, Codex, and ChatGPT.
-    *   Supports text and image inputs, tool use, function calling, web search, file search, computer use, and skills.
-    *   400k context window.
-    *   Pricing: $0.75 per 1M input tokens and $4.50 per 1M output tokens.
-*   **GPT-5.4 nano:** Available only in the API.
-    *   Pricing: $0.20 per 1M input tokens and $1.25 per 1M output tokens.
+- **GPT-5.4 mini:** Available in the API, Codex, and ChatGPT.
+  - Supports text and image inputs, tool use, function calling, web search, file search, computer use, and skills.
+  - 400k context window.
+  - Pricing: $0.75 per 1M input tokens and $4.50 per 1M output tokens.
+- **GPT-5.4 nano:** Available only in the API.
+  - Pricing: $0.20 per 1M input tokens and $1.25 per 1M output tokens.
 
 ## Performance Data
 
 The article provides detailed performance data across various categories:
 
-*   Coding
-*   Tool-calling
-*   Intelligence
-*   MM / Vision / CUA
-*   Long context
+- Coding
+- Tool-calling
+- Intelligence
+- MM / Vision / CUA
+- Long context
 
 These tables compare the performance of GPT-5.4, GPT-5.4 mini, GPT-5.4 nano, and GPT-5 mini on specific benchmarks within each category.

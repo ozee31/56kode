@@ -22,12 +22,12 @@ This article argues that context engineering, the systematic design of informati
 
 Context engineering involves carefully designing what information is included, excluded, and how it's structured within the model's context window. It's broader than prompt engineering, encompassing:
 
--   Prompt design
--   Retrieval design
--   Memory design
--   Tool design
--   Structured output design
--   Cache design
+- Prompt design
+- Retrieval design
+- Memory design
+- Tool design
+- Structured output design
+- Cache design
 
 ## Why Context Engineering is a Moat
 
@@ -45,18 +45,18 @@ Context engineering involves carefully designing what information is included, e
 
 ## Why Teams Struggle with Context Engineering
 
--   **Invisibility:** The work is often unseen and doesn't result in flashy demos.
--   **Organizational Gap:** It falls between product and engineering responsibilities.
--   **Lack of Training:** There's no formal education on context engineering.
--   **Slow Compounding:** Gains are gradual and require patience.
+- **Invisibility:** The work is often unseen and doesn't result in flashy demos.
+- **Organizational Gap:** It falls between product and engineering responsibilities.
+- **Lack of Training:** There's no formal education on context engineering.
+- **Slow Compounding:** Gains are gradual and require patience.
 
 ## Key Principles
 
--   Context engineering is a product decision, not just a technical detail.
--   Context assets are the real product, more valuable than the underlying model.
--   Improvements at the context layer often outweigh model upgrades.
--   PMs must understand cache-friendly context to avoid costly mistakes.
--   Context engineering requires continuous maintenance and discipline.
+- Context engineering is a product decision, not just a technical detail.
+- Context assets are the real product, more valuable than the underlying model.
+- Improvements at the context layer often outweigh model upgrades.
+- PMs must understand cache-friendly context to avoid costly mistakes.
+- Context engineering requires continuous maintenance and discipline.
 
 ## Conclusion
 

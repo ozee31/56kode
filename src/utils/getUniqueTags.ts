@@ -8,7 +8,9 @@ interface Tag {
   tagName: string;
 }
 
-const getUniqueTags = (posts: CollectionEntry<"blog" | "techwatch" | "aiRadar">[]) => {
+const getUniqueTags = (
+  posts: CollectionEntry<"blog" | "techwatch" | "aiRadar">[]
+) => {
   const tags: Tag[] = posts
     .filter(postFilter)
     .flatMap(post => post.data.tags)

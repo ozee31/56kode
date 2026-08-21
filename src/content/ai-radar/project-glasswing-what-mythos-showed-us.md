@@ -20,11 +20,11 @@ This article details Cloudflare's experience using Anthropic's Mythos Preview LL
 
 ## Key Takeaways
 
-*   **Mythos Preview's advancements:** The model excels at exploit chain construction and proof generation, surpassing previous general-purpose models.
-*   **Model Refusals:** Despite lacking explicit safeguards, Mythos Preview exhibits inconsistent organic refusals to certain requests, highlighting the need for additional safety measures in publicly available models.
-*   **Signal-to-Noise Problem:** The article discusses the challenges of distinguishing real vulnerabilities from false positives, influenced by programming language and model bias. Mythos Preview improves this by providing proof-of-concepts.
-*   **Ineffectiveness of Generic Coding Agents:** The article explains why simply pointing a generic coding agent at a repository is insufficient for comprehensive vulnerability research due to context limitations and throughput issues.
-*   **Importance of a Harness:** A harness is crucial for managing the execution of vulnerability research, enabling narrow scoping, adversarial review, split chains, and parallel tasks.
+- **Mythos Preview's advancements:** The model excels at exploit chain construction and proof generation, surpassing previous general-purpose models.
+- **Model Refusals:** Despite lacking explicit safeguards, Mythos Preview exhibits inconsistent organic refusals to certain requests, highlighting the need for additional safety measures in publicly available models.
+- **Signal-to-Noise Problem:** The article discusses the challenges of distinguishing real vulnerabilities from false positives, influenced by programming language and model bias. Mythos Preview improves this by providing proof-of-concepts.
+- **Ineffectiveness of Generic Coding Agents:** The article explains why simply pointing a generic coding agent at a repository is insufficient for comprehensive vulnerability research due to context limitations and throughput issues.
+- **Importance of a Harness:** A harness is crucial for managing the execution of vulnerability research, enabling narrow scoping, adversarial review, split chains, and parallel tasks.
 
 ## Vulnerability Discovery Harness Stages
 
@@ -41,8 +41,8 @@ The article outlines Cloudflare's vulnerability discovery harness, detailing eac
 
 ## Implications for Security Teams
 
-*   **Speed is not enough:**  Simply patching faster isn't sufficient; architectural changes are needed to make exploitation more difficult.
-*   **Defense in Depth:** Implement defenses that block vulnerabilities from being reached and design applications to limit the impact of flaws.
-*   **Rapid Deployment:** Ensure the ability to quickly deploy fixes across all running instances of the code.
+- **Speed is not enough:** Simply patching faster isn't sufficient; architectural changes are needed to make exploitation more difficult.
+- **Defense in Depth:** Implement defenses that block vulnerabilities from being reached and design applications to limit the impact of flaws.
+- **Rapid Deployment:** Ensure the ability to quickly deploy fixes across all running instances of the code.
 
 The article concludes by acknowledging the dual-use nature of these capabilities and Cloudflare's commitment to protecting its customers.

@@ -28,10 +28,10 @@ The author identifies the core problem as the "gradient wall." The discrete natu
 
 ## Common Patches and Their Limitations
 
-*   **GraphRAG:** Improves retrieval for relationship-based questions but doesn't address the gradient problem.
-*   **Large Context Windows:** Circumvents retrieval but is computationally expensive (O(N²)).
-*   **Golden Retriever RAG:** Enhances query quality but doesn't enable learning.
-*   **Instructed Retriever:** Guides the retriever with instructions, improving recall but remaining a patch.
+- **GraphRAG:** Improves retrieval for relationship-based questions but doesn't address the gradient problem.
+- **Large Context Windows:** Circumvents retrieval but is computationally expensive (O(N²)).
+- **Golden Retriever RAG:** Enhances query quality but doesn't enable learning.
+- **Instructed Retriever:** Guides the retriever with instructions, improving recall but remaining a patch.
 
 ## A Potential Solution: Apple's CLaRa
 
@@ -40,4 +40,3 @@ CLaRa (Continuous Latent Reasoning) tackles the gradient wall directly. It uses 
 ## Practical Recommendations
 
 For current production systems, the author recommends combining the Instructed Retriever approach with Golden Retriever query expansion. He also suggests monitoring retrieval and generation quality separately and considering hierarchical indexing for structured documents.
-
