@@ -13,7 +13,7 @@ const posts = await getCollection("blog", ({ data }) => !data.draft);
 const sortedPosts = getSortedPosts(posts);
 
 const aiRadarPosts = await getCollection("aiRadar");
-const sortedAiRadarPosts = getSortedPosts(aiRadarPosts) as typeof aiRadarPosts;
+const sortedAiRadarPosts = getSortedPosts(aiRadarPosts);
 
 // List of items to search in
 const searchList = [
@@ -26,7 +26,7 @@ const searchList = [
   ...sortedAiRadarPosts.map(({ data }) => ({
     title: data.title,
     description: data.description,
-    data: data as any,
+    data,
     href: `/ai-radar/${data.slug}/`,
   })),
 ];
@@ -35,7 +35,7 @@ const searchList = [
 <Layout title={`Search | ${SITE.title}`}>
   <Header activeNav="search" />
   <Main pageTitle="Search" pageDesc="Search any article ...">
-    <SearchBar client:load searchList={searchList as any} />
+    <SearchBar client:load searchList={searchList} />
   </Main>
   <Footer />
 </Layout>
