@@ -1,77 +1,135 @@
 ---
-import Breadcrumbs from "@components/Breadcrumbs.astro";
+import StatusBar from "@components/StatusBar.astro";
 
-interface StringTitleProp {
-  pageTitle: string;
+interface BaseProps {
   pageDesc?: string;
   rss?: string;
+  tone?: "site" | "ai";
+  /** Info alignée à droite du titre, ex. « 28 ARTICLES · SORTED BY DATE ». */
+  headingMeta?: string;
+  /** Zones de la barre de statut. `statusRight` tombe sur le libellé RSS par défaut. */
+  statusLeft?: string;
+  statusCenter?: string;
+  statusRight?: string;
+  /** Cible du lien de droite. Par défaut celle de `rss`. */
+  statusRightHref?: string;
+  indicator?: "signal" | "pulse" | "dead" | "none";
 }
 
-interface ArrayTitleProp {
+interface StringTitleProp extends BaseProps {
+  pageTitle: string;
+}
+
+interface ArrayTitleProp extends BaseProps {
   pageTitle: [string, string];
   titleTransition: string;
-  pageDesc?: string;
-  rss?: string;
 }
 
 export type Props = StringTitleProp | ArrayTitleProp;
 
 const { props } = Astro;
+const {
+  pageDesc,
+  rss,
+  tone = "site",
+  headingMeta,
+  statusLeft,
+  statusCenter,
+  statusRight,
+  statusRightHref,
+  indicator = tone === "ai" ? "pulse" : "signal",
+} = props;
+
+const rightHref = statusRightHref ?? rss;
+// Un flux est un document XML nu : ni header, ni footer, aucun retour vers le
+// site. C'est le seul cas où ouvrir un onglet rend service plutôt que de
+// décider à la place de l'utilisateur.
+const rightIsFeed = Boolean(rightHref?.endsWith(".xml"));
+
+const isAi = tone === "ai";
+const rssLabel = statusRight ?? (isAi ? "Radar RSS ↗" : "RSS always open ↗");
 ---
 
-<Breadcrumbs />
-<main id="main-content">
-  {
-    "titleTransition" in props ? (
-      <h1>
-        {props.pageTitle[0]}
-        <span transition:name={props.titleTransition}>
-          {props.pageTitle[1]}
-        </span>
-      </h1>
-    ) : (
-      <h1>
-        <span>{props.pageTitle}</span>
-        {props.rss && (
-          <a
-            target="_blank"
-            href={props.rss}
-            class="rss-link"
-            aria-label="rss feed"
-            title="RSS Feed"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" class="rss-icon">
-              <>
-                <path d="M19 20.001C19 11.729 12.271 5 4 5v2c7.168 0 13 5.832 13 13.001h2z" />
-                <path d="M12 20.001h2C14 14.486 9.514 10 4 10v2c4.411 0 8 3.589 8 8.001z" />
-                <circle cx="6" cy="18" r="2" />
-              </>
-            </svg>
-            <span class="sr-only">RSS Feed</span>
-          </a>
-        )}
-      </h1>
-    )
-  }
-  <p>{props.pageDesc}</p>
-  <slot />
-</main>
-
-<style>
-  @reference "../styles/theme.css";
-  #main-content {
-    @apply mx-auto w-full max-w-3xl px-4 pb-4;
-  }
-  #main-content h1 {
-    @apply text-2xl font-semibold;
-  }
-
-  @media (width >= 640px) {
-    #main-content h1 {
-      @apply text-3xl;
+<StatusBar variant={tone} indicator={indicator}>
+  <Fragment slot="left">{statusLeft}</Fragment>
+  <Fragment slot="center">{statusCenter}</Fragment>
+  <Fragment slot="right">
+    {
+      rightHref ? (
+        <a
+          href={rightHref}
+          target={rightIsFeed ? "_blank" : undefined}
+          rel={rightIsFeed ? "noopener" : undefined}
+          class="focus-outline uppercase hover:underline"
+        >
+          {rssLabel}
+          {rightIsFeed && <span class="sr-only"> (opens in a new tab)</span>}
+        </a>
+      ) : (
+        <span class="uppercase">{rssLabel}</span>
+      )
     }
-  }
-  #main-content p {
-    @apply mb-6 mt-2 italic;
-  }
-</style>
+  </Fragment>
+</StatusBar>
+
+<main id="main-content" class="w-full">
+  <div
+    class:list={[
+      "max-w-page mx-auto border-b px-(--page-gutter) pt-8 pb-6",
+      isAi ? "border-line-ai" : "border-line",
+    ]}
+  >
+    <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
+      {
+        "titleTransition" in props ? (
+          <h1
+            class:list={[
+              "font-reading text-title font-semibold",
+              isAi ? "text-ai-fg" : "text-fg-strong",
+            ]}
+          >
+            {props.pageTitle[0]}{" "}
+            <span transition:name={props.titleTransition}>
+              {props.pageTitle[1]}
+            </span>
+          </h1>
+        ) : (
+          <h1
+            class:list={[
+              "font-reading text-title font-semibold",
+              isAi ? "text-ai-fg" : "text-fg-strong",
+            ]}
+          >
+            {props.pageTitle}
+          </h1>
+        )
+      }
+      {
+        headingMeta && (
+          <p
+            class:list={[
+              "font-chrome text-meta tracking-chrome uppercase",
+              isAi ? "text-ai-muted" : "text-fg-muted",
+            ]}
+          >
+            {headingMeta}
+          </p>
+        )
+      }
+    </div>
+    {
+      pageDesc && (
+        <p
+          class:list={[
+            "max-w-measure font-reading text-lead mt-3 text-pretty",
+            isAi ? "text-ai-body" : "text-fg-body",
+          ]}
+        >
+          {pageDesc}
+        </p>
+      )
+    }
+  </div>
+
+  <div class="max-w-page mx-auto"><slot /></div>
+</main>

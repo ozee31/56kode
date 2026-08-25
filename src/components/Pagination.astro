@@ -1,66 +1,76 @@
 ---
-import LinkButton from "./LinkButton.astro";
-
+// Pagination partagée par les 4 layouts de liste (posts, ai-radar, tags,
+// tech-watch). Un seul markup, deux jeux d'accent : sur le canvas AI la
+// géométrie ne change pas, seules les couleurs basculent.
+//
+// Écart assumé vis-à-vis des maquettes : elles montrent des cellules numérotées
+// (1 2 3 4 5). Les générer supposerait de construire des URLs de page ici,
+// alors que chaque layout appelant fabrique déjà les siennes — le plan interdit
+// de toucher à ces chaînes. On garde donc la forme PREV / PAGE n OF m / NEXT,
+// qui est celle que les maquettes elles-mêmes utilisent en mobile, avec le
+// traitement visuel (cellules carrées, filets, aplat) du design system.
 export interface Props {
   currentPage: number;
   totalPages: number;
   prevUrl: string;
   nextUrl: string;
+  variant?: "site" | "ai";
 }
 
-const { currentPage, totalPages, prevUrl, nextUrl } = Astro.props;
+const {
+  currentPage,
+  totalPages,
+  prevUrl,
+  nextUrl,
+  variant = "site",
+}: Props = Astro.props;
 
-const prev = currentPage > 1 ? "" : "disabled";
-const next = currentPage < totalPages ? "" : "disabled";
-const isPrevDisabled = prev === "disabled";
-const isNextDisabled = next === "disabled";
+const isPrevDisabled = currentPage <= 1;
+const isNextDisabled = currentPage >= totalPages;
+const isAi = variant === "ai";
+
+const cell = [
+  "flex h-(--control-size) items-center justify-center border px-3.5",
+  "font-chrome text-ui uppercase tracking-ui transition-colors",
+];
+const idle = isAi
+  ? "border-line-ai text-ai-body hover:border-ai-accent hover:text-ai-accent"
+  : "border-line-strong text-fg-secondary hover:border-accent hover:text-accent";
+const off = isAi
+  ? "pointer-events-none border-line-ai/60 text-ai-muted/50"
+  : "pointer-events-none border-line-subtle text-fg-muted/50";
 ---
 
 {
   totalPages > 1 && (
-    <nav class="pagination-wrapper" aria-label="Pagination">
-      <LinkButton
-        disabled={isPrevDisabled}
-        href={prevUrl}
-        class={`mr-4 select-none ${prev}`}
-        ariaLabel="Previous"
+    <nav
+      class="mt-auto mb-10 flex items-center justify-center gap-2 pt-4"
+      aria-label="Pagination"
+    >
+      <a
+        href={isPrevDisabled ? undefined : prevUrl}
+        aria-disabled={isPrevDisabled}
+        class:list={["focus-outline", cell, isPrevDisabled ? off : idle]}
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class:list={[{ "disabled-svg": isPrevDisabled }]}
-        >
-          <path d="M12.707 17.293 8.414 13H18v-2H8.414l4.293-4.293-1.414-1.414L4.586 12l6.707 6.707z" />
-        </svg>
-        Prev
-      </LinkButton>
-      {currentPage} / {totalPages}
-      <LinkButton
-        disabled={isNextDisabled}
-        href={nextUrl}
-        class={`ml-4 select-none ${next}`}
-        ariaLabel="Next"
+        ← Prev
+      </a>
+
+      <span
+        class:list={[
+          "font-chrome text-meta tracking-chrome flex h-(--control-size) items-center px-3.5",
+          isAi ? "text-ai-muted" : "text-fg-muted",
+        ]}
       >
-        Next
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class:list={[{ "disabled-svg": isNextDisabled }]}
-        >
-          <path d="m11.293 17.293 1.414 1.414L19.414 12l-6.707-6.707-1.414 1.414L15.586 11H6v2h9.586z" />
-        </svg>
-      </LinkButton>
+        Page {currentPage} of {totalPages}
+      </span>
+
+      <a
+        href={isNextDisabled ? undefined : nextUrl}
+        aria-disabled={isNextDisabled}
+        class:list={["focus-outline", cell, isNextDisabled ? off : idle]}
+      >
+        Next →
+      </a>
     </nav>
   )
 }
-
-<style>
-  @reference "../styles/theme.css";
-  .pagination-wrapper {
-    @apply mb-8 mt-auto flex justify-center;
-  }
-  .disabled {
-    @apply pointer-events-none select-none opacity-50 hover:text-foreground group-hover:fill-foreground;
-  }
-  .disabled-svg {
-    @apply group-hover:!fill-foreground;
-  }
-</style>

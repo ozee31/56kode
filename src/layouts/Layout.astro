@@ -4,6 +4,9 @@ import "@styles/base.css";
 
 const googleSiteVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION;
 
+const FONTS_HREF =
+  "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap";
+
 export interface Props {
   title?: string;
   author?: string;
@@ -122,28 +125,25 @@ const structuredData = {
       set:html={JSON.stringify(structuredData)}
     />
 
-    <!-- Google Font (non-blocking) -->
+    <!-- Google Fonts (non-blocking) -->
+    <!-- IBM Plex Mono = chrome (header, nav, meta, pagination, code) -->
+    <!-- IBM Plex Sans = lecture (titres, chapôs, corps, résumés radar) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preload" as="style" href={FONTS_HREF} />
     <link
-      rel="preload"
-      as="style"
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap"
+      href={FONTS_HREF}
       rel="stylesheet"
       media="print"
       onload="this.media='all'"
     />
     <noscript>
-      <link
-        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap"
-        rel="stylesheet"
-      />
+      <link href={FONTS_HREF} rel="stylesheet" />
     </noscript>
 
-    <meta name="theme-color" content="" />
+    <!-- Site dark-only : valeur figée. C'est la seule couleur littérale hors
+         tokens.css, le HTML ne pouvant pas lire une variable CSS. -->
+    <meta name="theme-color" content="#070a09" />
 
     {
       // If PUBLIC_GOOGLE_SITE_VERIFICATION is set in the environment variable,
@@ -156,8 +156,6 @@ const structuredData = {
         />
       )
     }
-
-    <script is:inline src="/toggle-theme.js"></script>
   </head>
   <body>
     <slot />

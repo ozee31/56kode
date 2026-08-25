@@ -1,4 +1,6 @@
 import { defineConfig } from "astro/config";
+import { satteri } from "@astrojs/markdown-satteri";
+import { mdastReadingTimePlugin } from "./src/mdast/mdast-reading-time";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
@@ -13,14 +15,21 @@ export default defineConfig({
   // breadcrumbs and footer rely on those spaces being rendered.
   compressHTML: true,
   markdown: {
-    // `processor` is omitted on purpose: Sätteri is the default in Astro 7 and
-    // covers everything this blog used remark for. It applies GFM and smart
-    // punctuation, and always adds heading IDs via github-slugger -- which the
-    // anchor-link scripts in PostDetails.astro and AiRadarDetails.astro read
-    // back from the DOM.
+    // `satteri()` CONFIGURES the default processor rather than replacing it, so
+    // GFM, smart punctuation and the github-slugger heading IDs all stay --
+    // which the anchor-link script in ArticleBehaviors.astro and the "On this
+    // page" rail both read back from the DOM. Swapping in `unified()` here
+    // would drop all three.
+    processor: satteri({
+      mdastPlugins: [mdastReadingTimePlugin],
+    }),
     shikiConfig: {
+      // Single theme: the site is dark-only, so the dual-theme setup (and the
+      // `html[data-theme="dark"] pre span { ... !important }` override it needed
+      // in base.css) is gone. `min-dark` is low-chroma on purpose -- `night-owl`
+      // pulls blue and would fight the phosphor accent and the AI accent.
       // For more themes, visit https://shiki.style/themes
-      themes: { light: "min-light", dark: "night-owl" },
+      theme: "min-dark",
       wrap: true,
     },
   },

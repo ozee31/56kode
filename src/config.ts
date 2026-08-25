@@ -4,15 +4,21 @@ export const SITE: Site = {
   website: "https://www.56kode.com", // replace this with your deployed domain
   author: "Flavien Beninca",
   profile: "https://www.56kode.com/about",
-  desc: "56kode is a developer blog exploring AI agents, LLMs, and AI-assisted development, built on 15+ years of frontend expertise with React and TypeScript.",
+  desc: "56kode is a developer blog on AI-assisted development: shaping architecture, review and conventions so coding agents and LLMs write code worth keeping.",
   title: "56kode - AI & Frontend Development Blog",
   titleShort: "56kode",
   ogImage: "",
-  lightAndDarkMode: true,
   postPerIndex: 4,
   postPerPage: 10,
   scheduledPostMargin: 15 * 60 * 1000, // 15 minutes
 };
+
+/**
+ * Première année d'activité professionnelle. Sert à calculer l'ancienneté
+ * affichée dans le chrome plutôt que de la figer : un nombre écrit en dur se
+ * périme silencieusement chaque 1er janvier.
+ */
+export const CAREER_START_YEAR = 2010;
 
 export const LOCALE = {
   lang: "en", // html lang code. Set this empty and default will be "en"
@@ -46,9 +52,15 @@ export const SOCIALS: SocialObjects = [
     active: true,
   },
   {
-    name: "Twitter",
+    name: "X",
     href: "https://x.com/56_kode",
     linkTitle: `${SITE.title} on X`,
+    active: true,
+  },
+  {
+    name: "Bluesky",
+    href: "https://bsky.app/profile/56kode.bsky.social",
+    linkTitle: `${SITE.title} on Bluesky`,
     active: true,
   },
   {
@@ -91,7 +103,7 @@ export const SOCIALS: SocialObjects = [
     name: "CodePen",
     href: "https://codepen.io/56kode",
     linkTitle: `${SITE.title} on CodePen`,
-    active: true,
+    active: false,
   },
   {
     name: "Discord",

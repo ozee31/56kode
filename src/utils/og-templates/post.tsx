@@ -2,12 +2,13 @@ import satori from "satori";
 import type { CollectionEntry } from "astro:content";
 import { SITE } from "@config";
 import loadGoogleFonts, { type FontOptions } from "../loadGoogleFont";
+import { OG } from "./palette";
 
 export default async (post: CollectionEntry<"blog">) => {
   return satori(
     <div
       style={{
-        background: "#fefbfb",
+        background: OG.canvas,
         width: "100%",
         height: "100%",
         display: "flex",
@@ -15,33 +16,17 @@ export default async (post: CollectionEntry<"blog">) => {
         justifyContent: "center",
       }}
     >
+      {/* Filet accent à gauche : la signature du bloc de code, reprise en OG. */}
       <div
         style={{
-          position: "absolute",
-          top: "-1px",
-          right: "-1px",
-          border: "4px solid #000",
-          background: "#ecebeb",
-          opacity: "0.9",
-          borderRadius: "4px",
+          border: `1px solid ${OG.line}`,
+          borderLeft: `8px solid ${OG.accent}`,
+          background: OG.raised,
           display: "flex",
           justifyContent: "center",
           margin: "2.5rem",
-          width: "88%",
-          height: "80%",
-        }}
-      />
-
-      <div
-        style={{
-          border: "4px solid #000",
-          background: "#fefbfb",
-          borderRadius: "4px",
-          display: "flex",
-          justifyContent: "center",
-          margin: "2rem",
-          width: "88%",
-          height: "80%",
+          width: "90%",
+          height: "82%",
         }}
       >
         <div
@@ -49,16 +34,19 @@ export default async (post: CollectionEntry<"blog">) => {
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
-            margin: "20px",
+            margin: "40px",
             width: "90%",
-            height: "90%",
+            height: "84%",
           }}
         >
           <p
             style={{
-              fontSize: 72,
-              fontWeight: "bold",
-              maxHeight: "84%",
+              fontSize: 64,
+              fontWeight: 600,
+              letterSpacing: "-0.03em",
+              lineHeight: 1.1,
+              color: OG.textStrong,
+              maxHeight: "78%",
               overflow: "hidden",
             }}
           >
@@ -69,26 +57,14 @@ export default async (post: CollectionEntry<"blog">) => {
               display: "flex",
               justifyContent: "space-between",
               width: "100%",
-              marginBottom: "8px",
-              fontSize: 28,
+              fontSize: 24,
+              letterSpacing: "0.13em",
+              color: OG.textMuted,
             }}
           >
-            <span>
-              by{" "}
-              <span
-                style={{
-                  color: "transparent",
-                }}
-              >
-                "
-              </span>
-              <span style={{ overflow: "hidden", fontWeight: "bold" }}>
-                {post.data.author}
-              </span>
-            </span>
-
-            <span style={{ overflow: "hidden", fontWeight: "bold" }}>
-              {SITE.title}
+            <span style={{ overflow: "hidden" }}>{post.data.author}</span>
+            <span style={{ overflow: "hidden", color: OG.accent }}>
+              {SITE.titleShort}
             </span>
           </div>
         </div>
@@ -99,7 +75,7 @@ export default async (post: CollectionEntry<"blog">) => {
       height: 630,
       embedFont: true,
       fonts: (await loadGoogleFonts(
-        post.data.title + post.data.author + SITE.title + "by"
+        post.data.title + post.data.author + SITE.titleShort
       )) as FontOptions[],
     }
   );

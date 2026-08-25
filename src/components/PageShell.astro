@@ -1,0 +1,32 @@
+---
+// Conteneur de page. Remplace le `mx-auto max-w-3xl px-4` qui était répété dans
+// une dizaine de fichiers et imposé globalement par `section, footer` dans
+// base.css. La direction 3A est pleine largeur 1180 avec un gutter contextuel
+// (30px / 20px tablette / 16px mobile), porté par --page-gutter.
+
+export interface Props {
+  /** `page` = 1180px (défaut) · `measure` = 68ch, colonne de lecture · `full` = pleine largeur */
+  width?: "page" | "measure" | "full";
+  /** Élément rendu. `div` par défaut pour rester neutre sémantiquement. */
+  as?: "div" | "section" | "header" | "footer" | "nav" | "main";
+  class?: string;
+}
+
+const {
+  width = "page",
+  as: Tag = "div",
+  class: className = "",
+}: Props = Astro.props;
+
+const widths = {
+  page: "max-w-page",
+  measure: "max-w-measure",
+  full: "",
+} as const;
+---
+
+<Tag
+  class:list={["mx-auto w-full px-(--page-gutter)", widths[width], className]}
+>
+  <slot />
+</Tag>

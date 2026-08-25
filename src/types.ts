@@ -23,7 +23,6 @@ export type Site = {
   title: string;
   titleShort: string;
   ogImage?: string;
-  lightAndDarkMode: boolean;
   postPerIndex: number;
   postPerPage: number;
   scheduledPostMargin: number;

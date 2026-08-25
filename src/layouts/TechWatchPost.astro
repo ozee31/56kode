@@ -1,10 +1,12 @@
 ---
 import Header from "@components/Header.astro";
+import Footer from "@components/Footer.astro";
 import Layout from "./Layout.astro";
 import Main from "./Main.astro";
 import Pagination from "@components/Pagination.astro";
 import type { CollectionEntry } from "astro:content";
 import Card from "@components/Card";
+import getSiteStats from "@utils/getSiteStats";
 
 export interface Props {
   currentPage: number;
@@ -12,7 +14,8 @@ export interface Props {
   paginatedPosts: CollectionEntry<"techwatch">[];
 }
 
-const { currentPage, totalPages, paginatedPosts } = Astro.props;
+const { currentPage, totalPages, paginatedPosts }: Props = Astro.props;
+const stats = await getSiteStats();
 ---
 
 <Layout
@@ -21,10 +24,22 @@ const { currentPage, totalPages, paginatedPosts } = Astro.props;
 >
   <Header activeNav="tech-watch" />
   <Main
-    pageTitle="Tech Watch"
-    pageDesc="All the articles I've selected."
+    pageTitle="Tech watch archive"
+    pageDesc="Link dumps kept online so old URLs keep resolving. No summaries, no ratings, no upkeep — the AI Radar replaced this format."
     rss="/rss-techwatch.xml"
+    headingMeta={`${stats.techwatch} entries · frozen`}
+    indicator="none"
+    statusLeft="Archived · not in navigation · no longer updated"
+    statusCenter={`${stats.techwatch} entries · ${totalPages} pages`}
   >
+    <p class="px-(--page-gutter) pt-6">
+      <a
+        href="/ai-radar/"
+        class="focus-outline font-chrome text-ui tracking-ui text-ai-accent uppercase hover:underline"
+      >
+        Go to AI Radar →
+      </a>
+    </p>
     <ul>
       {
         paginatedPosts.map(item => (
@@ -39,6 +54,7 @@ const { currentPage, totalPages, paginatedPosts } = Astro.props;
               tags: item.data.tags,
             }}
             displayAuthor
+            action="Source ↗"
           />
         ))
       }
@@ -51,4 +67,6 @@ const { currentPage, totalPages, paginatedPosts } = Astro.props;
     prevUrl={`/tech-watch${currentPage - 1 !== 1 ? "/" + (currentPage - 1) : ""}/`}
     nextUrl={`/tech-watch/${currentPage + 1}/`}
   />
+
+  <Footer noMarginTop={totalPages > 1} />
 </Layout>

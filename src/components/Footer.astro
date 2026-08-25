@@ -1,6 +1,5 @@
 ---
-import Hr from "./Hr.astro";
-import Socials from "./Socials.astro";
+import { SOCIALS } from "@config";
 
 const currentYear = new Date().getFullYear();
 
@@ -8,60 +7,87 @@ export interface Props {
   noMarginTop?: boolean;
 }
 
-const { noMarginTop = false } = Astro.props;
+const { noMarginTop = false }: Props = Astro.props;
+
+// Le design system nomme ce groupe « ELSEWHERE ». Les libellés diffèrent des
+// clés de SOCIALS (Twitter → X, Mail → EMAIL), d'où cette table de rendu.
+const LABELS: Record<string, string> = {
+  Mail: "Email",
+};
+const GLYPHS: Record<string, string> = { Mail: "✉" };
+
+const elsewhere = SOCIALS.filter(s => s.active);
+
+// Pas de lien vers l'archive Tech Watch : elle reste délibérément hors
+// navigation, cf. design-reference/uploads/site-structure.txt.
+const feeds = [
+  { href: "/rss.xml", label: "RSS · Posts ↗", ai: false },
+  { href: "/rss-ai-radar.xml", label: "RSS · AI Radar ↗", ai: true },
+];
 ---
 
-<footer class={`${noMarginTop ? "" : "mt-auto"}`}>
-  <Hr noPadding />
-  <div class="footer-wrapper">
-    <Socials centered />
-    <div class="copyright-wrapper">
-      <span class="tagline">Human-directed, AI-assisted</span>
-      <div class="copyright-text">
-        <span>Copyright &#169; {currentYear}</span>
-        <span class="separator">&nbsp;|&nbsp;</span>
-        <span>All rights reserved.</span>
+<footer
+  class:list={[
+    "border-line bg-raised w-full border-t",
+    !noMarginTop && "mt-auto",
+  ]}
+>
+  <div
+    class="max-w-page mx-auto flex flex-col justify-between gap-8 px-(--page-gutter) py-7 sm:flex-row"
+  >
+    <div class="flex flex-col gap-2.5">
+      <div class="font-chrome text-meta tracking-ui text-fg-muted">
+        NO CARRIER · © {currentYear} 56KODE · <span class="text-accent"
+          >ATH0</span
+        >
       </div>
+      <p class="font-reading text-note text-fg-secondary max-w-[44ch]">
+        Making codebases where AI agents write code worth keeping.
+      </p>
+    </div>
+
+    <div class="flex gap-12 sm:gap-14">
+      <nav class="flex flex-col gap-2.5" aria-label="Elsewhere">
+        <h2 class="font-chrome text-micro tracking-chrome-wide text-fg-muted">
+          ELSEWHERE
+        </h2>
+        {
+          elsewhere.map(social => (
+            <a
+              href={social.href}
+              title={social.linkTitle}
+              class="focus-outline font-chrome text-ui tracking-ui text-fg-secondary hover:text-accent"
+            >
+              {(LABELS[social.name] ?? social.name).toUpperCase()}{" "}
+              {GLYPHS[social.name] ?? "↗"}
+            </a>
+          ))
+        }
+      </nav>
+
+      <nav class="flex flex-col gap-2.5" aria-label="Feeds">
+        <h2 class="font-chrome text-micro tracking-chrome-wide text-fg-muted">
+          FEEDS
+        </h2>
+        {
+          feeds.map(feed => (
+            <a
+              href={feed.href}
+              target="_blank"
+              rel="noopener"
+              class:list={[
+                "focus-outline font-chrome text-ui tracking-ui uppercase",
+                feed.ai
+                  ? "text-ai-accent hover:text-ai-accent-strong"
+                  : "text-fg-secondary hover:text-accent",
+              ]}
+            >
+              {feed.label}
+              <span class="sr-only"> (opens in a new tab)</span>
+            </a>
+          ))
+        }
+      </nav>
     </div>
   </div>
 </footer>
-
-<style>
-  @reference "../styles/theme.css";
-  footer {
-    @apply w-full;
-  }
-  .footer-wrapper {
-    @apply flex flex-col items-center justify-between py-6;
-  }
-  .link-button {
-    @apply my-1 p-2 hover:rotate-6;
-  }
-  .link-button svg {
-    @apply scale-125;
-  }
-  .tagline {
-    @apply mb-1 text-xs opacity-40;
-  }
-  .copyright-wrapper {
-    @apply my-2 flex flex-col items-center whitespace-nowrap;
-  }
-  .copyright-text {
-    @apply flex flex-col items-center;
-  }
-  .separator {
-    @apply hidden;
-  }
-
-  @media (width >= 640px) {
-    .footer-wrapper {
-      @apply flex-row-reverse py-4;
-    }
-    .copyright-text {
-      @apply flex-row;
-    }
-    .separator {
-      @apply inline;
-    }
-  }
-</style>

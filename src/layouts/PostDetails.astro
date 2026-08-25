@@ -1,19 +1,24 @@
 ---
+import { getCollection, type CollectionEntry } from "astro:content";
 import Layout from "@layouts/Layout.astro";
 import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
-import Tag from "@components/Tag.astro";
+import StatusBar from "@components/StatusBar.astro";
+import ArticleBehaviors from "@components/ArticleBehaviors.astro";
+import Tags from "@components/Tags";
 import Datetime from "@components/Datetime";
-import type { CollectionEntry } from "astro:content";
-import { slugifyStr } from "@utils/slugify";
 import ShareLinks from "@components/ShareLinks.astro";
+import getSortedPosts from "@utils/getSortedPosts";
+import { slugifyStr } from "@utils/slugify";
+import getMinutesRead from "@utils/getMinutesRead";
+import extractHeadings from "@utils/extractHeadings";
 import { SITE } from "@config";
 
 export interface Props {
   post: CollectionEntry<"blog">;
 }
 
-const { post } = Astro.props;
+const { post }: Props = Astro.props;
 
 const {
   title,
@@ -26,13 +31,19 @@ const {
   tags,
 } = post.data;
 
-// Use the HTML from post.rendered.html with null check
 const renderedHTML = post.rendered?.html;
+const readingTime = getMinutesRead(post);
+const headings = extractHeadings(renderedHTML);
 
-// Calculate reading time
-const wordCount =
-  renderedHTML?.replace(/<[^>]*>/g, "").split(/\s+/).length ?? 0;
-const readingTime = Math.max(1, Math.round(wordCount / 200));
+// Position dans la série et voisins immédiats, pour la barre de statut et le
+// bloc prev/next. Une seule lecture de la collection sert les deux.
+const sorted = getSortedPosts(
+  await getCollection("blog")
+) as CollectionEntry<"blog">[];
+const index = sorted.findIndex(entry => entry.id === post.id);
+const previous = index > 0 ? sorted[index - 1] : undefined;
+const next =
+  index >= 0 && index < sorted.length - 1 ? sorted[index + 1] : undefined;
 
 const ogImageUrl = typeof ogImage === "string" ? ogImage : ogImage?.src;
 const ogUrl = new URL(
@@ -53,180 +64,177 @@ const layoutProps = {
 ---
 
 <Layout {...layoutProps}>
-  <Header />
+  <Header activeNav="posts" />
 
-  <div class="mx-auto flex w-full max-w-3xl justify-start px-2">
-    <button
-      class="focus-outline mb-2 mt-8 flex hover:opacity-75"
-      onclick="(() => (history.length === 1) ? window.location = '/' : history.back())()"
-    >
-      <svg xmlns="http://www.w3.org/2000/svg"
-        ><path
-          d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z"
-        ></path>
-      </svg><span>Go back</span>
-    </button>
-  </div>
-  <main id="main-content">
-    <h1 transition:name={slugifyStr(title)} class="post-title">{title}</h1>
-    <div class="my-2 flex items-center gap-3">
-      <Datetime pubDatetime={pubDatetime} modDatetime={modDatetime} size="lg" />
-      <span class="text-sm opacity-80">&middot; {readingTime} min read</span>
-    </div>
-    <article id="article" class="prose mx-auto mt-8 max-w-3xl">
-      <div set:html={renderedHTML} />
-    </article>
-
-    <ul class="my-8 flex flex-wrap gap-2">
-      {tags.map(tag => <Tag tag={slugifyStr(tag)} />)}
-    </ul>
-
-    <div
-      class="flex flex-col-reverse items-center justify-between gap-6 sm:flex-row-reverse sm:items-end sm:gap-4"
-    >
-      <button
-        id="back-to-top"
-        class="focus-outline whitespace-nowrap py-1 hover:opacity-75"
+  <StatusBar>
+    <Fragment slot="left">
+      <a href="/posts/" class="focus-outline uppercase hover:underline"
+        >← All posts</a
       >
-        <svg xmlns="http://www.w3.org/2000/svg" class="rotate-90">
-          <path
-            d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z"
-          ></path>
-        </svg>
-        <span>Back to Top</span>
-      </button>
+    </Fragment>
+    <Fragment slot="center">
+      {index >= 0 && `Article ${index + 1} of ${sorted.length}`}
+    </Fragment>
+    <Fragment slot="right">
+      <a
+        href="/rss.xml"
+        target="_blank"
+        rel="noopener"
+        class="focus-outline uppercase hover:underline"
+      >
+        RSS always open ↗<span class="sr-only"> (opens in a new tab)</span>
+      </a>
+    </Fragment>
+  </StatusBar>
 
-      <ShareLinks />
+  <main id="main-content" class="w-full">
+    <!-- Masthead : la carte de liste, promue -->
+    <div class="border-line from-feature to-canvas border-b bg-gradient-to-b">
+      <div
+        class="max-w-page mx-auto grid gap-8 px-(--page-gutter) pt-10 pb-9 sm:grid-cols-[1fr_132px]"
+      >
+        <div>
+          <Datetime
+            pubDatetime={pubDatetime}
+            modDatetime={modDatetime}
+            className="mb-3.5 block"
+          />
+          <h1
+            transition:name={slugifyStr(title)}
+            class="font-reading text-display text-fg-strong mb-4 max-w-[24ch] font-semibold text-pretty"
+          >
+            {title}
+          </h1>
+          <p
+            class="max-w-measure font-reading text-lead text-fg-body text-pretty"
+          >
+            {description}
+          </p>
+        </div>
+        <div
+          class="flex flex-row items-center justify-between gap-2 sm:flex-col sm:items-end"
+        >
+          <p
+            class="font-chrome text-meta tracking-chrome text-fg-muted uppercase"
+          >
+            {readingTime}
+          </p>
+        </div>
+      </div>
     </div>
+
+    <div class="max-w-page mx-auto grid lg:grid-cols-[1fr_260px]">
+      <!-- Colonne de lecture -->
+      <div class="border-line px-(--page-gutter) pt-10 pb-11 lg:border-r">
+        <article id="article" class="prose max-w-measure">
+          <div set:html={renderedHTML} />
+        </article>
+
+        <Tags tags={tags.map(tag => slugifyStr(tag))} className="mt-9" />
+
+        <div
+          class="max-w-measure border-line mt-9 flex flex-col-reverse items-start justify-between gap-5 border-t pt-5 sm:flex-row sm:items-center"
+        >
+          <button
+            id="back-to-top"
+            class="focus-outline font-chrome text-meta tracking-chrome text-fg-secondary hover:text-accent uppercase"
+          >
+            ↑ Back to top
+          </button>
+          <ShareLinks {title} {description} />
+        </div>
+      </div>
+
+      <!-- Rail : sommaire construit depuis les titres du markdown -->
+      <aside class="hidden flex-col gap-6 px-5 pt-10 pb-11 lg:flex">
+        {
+          headings.length > 0 && (
+            <nav aria-labelledby="toc-label">
+              <p
+                id="toc-label"
+                class="font-chrome text-micro tracking-chrome-wide text-fg-muted mb-3 uppercase"
+              >
+                On this page
+              </p>
+              <ul class="flex flex-col gap-2.5">
+                {headings.map(heading => (
+                  <li>
+                    <a
+                      href={`#${heading.slug}`}
+                      class:list={[
+                        "focus-outline font-reading text-note text-fg-secondary hover:text-accent block leading-snug",
+                        heading.depth > 2 && "border-line border-l pl-3.5",
+                      ]}
+                    >
+                      {heading.text}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )
+        }
+        <div class="border-line border-t pt-5">
+          <p
+            class="font-chrome text-micro tracking-chrome-wide text-fg-muted mb-2.5 uppercase"
+          >
+            Carrier
+          </p>
+          <p
+            class="font-chrome text-micro tracking-ui text-fg-muted leading-[1.8] uppercase"
+          >
+            Published <Datetime pubDatetime={pubDatetime} hasVisibleLabel /><br
+            />
+            Read time {readingTime}<br />
+            56.6 kbps
+          </p>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Prev / next : même grammaire de carte que la liste -->
+    {
+      (previous || next) && (
+        <div class="max-w-page border-line mx-auto grid border-t sm:grid-cols-2">
+          {previous && (
+            <a
+              href={`/posts/${previous.id}/`}
+              class="focus-outline group border-line block border-b px-(--page-gutter) py-6 sm:border-r sm:border-b-0"
+            >
+              <p class="font-chrome text-micro tracking-chrome-wide text-fg-muted mb-2.5 uppercase">
+                ← Previous
+              </p>
+              <p class="font-reading text-heading text-fg-heading group-hover:decoration-accent mb-2 max-w-[30ch] font-semibold text-pretty group-hover:underline">
+                {previous.data.title}
+              </p>
+              <Datetime
+                pubDatetime={previous.data.pubDatetime}
+                modDatetime={previous.data.modDatetime}
+              />
+            </a>
+          )}
+          {next && (
+            <a
+              href={`/posts/${next.id}/`}
+              class="focus-outline group block px-(--page-gutter) py-6 sm:text-right"
+            >
+              <p class="font-chrome text-micro tracking-chrome-wide text-fg-muted mb-2.5 uppercase">
+                Next →
+              </p>
+              <p class="font-reading text-heading text-fg-heading group-hover:decoration-accent mb-2 max-w-[30ch] font-semibold text-pretty group-hover:underline sm:ml-auto">
+                {next.data.title}
+              </p>
+              <Datetime
+                pubDatetime={next.data.pubDatetime}
+                modDatetime={next.data.modDatetime}
+              />
+            </a>
+          )}
+        </div>
+      )
+    }
   </main>
+
   <Footer />
+  <ArticleBehaviors />
 </Layout>
-
-<style>
-  @reference "../styles/theme.css";
-  main {
-    @apply mx-auto w-full max-w-3xl px-4 pb-12;
-  }
-  .post-title {
-    @apply text-2xl font-semibold text-accent;
-  }
-</style>
-
-<script is:inline>
-  /** Create a progress indicator
-   *  at the top */
-  function createProgressBar() {
-    // Create the main container div
-    const progressContainer = document.createElement("div");
-    progressContainer.className =
-      "progress-container fixed top-0 z-10 h-1 w-full bg-background";
-
-    // Create the progress bar div
-    const progressBar = document.createElement("div");
-    progressBar.className = "progress-bar h-1 w-0 bg-accent";
-    progressBar.id = "myBar";
-
-    // Append the progress bar to the progress container
-    progressContainer.appendChild(progressBar);
-
-    // Append the progress container to the document body or any other desired parent element
-    document.body.appendChild(progressContainer);
-  }
-  createProgressBar();
-
-  /** Update the progress bar
-   *  when user scrolls */
-  function updateScrollProgress() {
-    const winScroll =
-      document.body.scrollTop || document.documentElement.scrollTop;
-    const height =
-      document.documentElement.scrollHeight -
-      document.documentElement.clientHeight;
-    const scrolled = (winScroll / height) * 100;
-    if (document) {
-      const myBar = document.getElementById("myBar");
-      if (myBar) {
-        myBar.style.width = scrolled + "%";
-      }
-    }
-  }
-  document.addEventListener("scroll", updateScrollProgress);
-
-  /** Attaches links to headings in the document,
-   *  allowing sharing of sections easily */
-  function addHeadingLinks() {
-    const headings = Array.from(
-      document.querySelectorAll("h2, h3, h4, h5, h6")
-    );
-    for (const heading of headings) {
-      heading.classList.add("group");
-      const link = document.createElement("a");
-      link.className =
-        "heading-link ml-2 opacity-0 group-hover:opacity-100 focus:opacity-100";
-      link.href = "#" + heading.id;
-      link.setAttribute(
-        "aria-label",
-        "Link to section: " + heading.textContent.trim()
-      );
-
-      const span = document.createElement("span");
-      span.ariaHidden = "true";
-      span.innerText = "#";
-      link.appendChild(span);
-      heading.appendChild(link);
-    }
-  }
-  addHeadingLinks();
-
-  /** Attaches copy buttons to code blocks in the document,
-   * allowing users to copy code easily. */
-  function attachCopyButtons() {
-    const copyButtonLabel = "Copy";
-    const codeBlocks = Array.from(document.querySelectorAll("pre"));
-
-    for (const codeBlock of codeBlocks) {
-      const wrapper = document.createElement("div");
-      wrapper.style.position = "relative";
-
-      const copyButton = document.createElement("button");
-      copyButton.className =
-        "copy-code absolute right-3 -top-3 rounded bg-card px-2 py-1 text-xs leading-4 text-foreground font-medium";
-      copyButton.innerHTML = copyButtonLabel;
-      codeBlock.setAttribute("tabindex", "0");
-      codeBlock.appendChild(copyButton);
-
-      // wrap codebock with relative parent element
-      codeBlock?.parentNode?.insertBefore(wrapper, codeBlock);
-      wrapper.appendChild(codeBlock);
-
-      copyButton.addEventListener("click", async () => {
-        await copyCode(codeBlock, copyButton);
-      });
-    }
-
-    async function copyCode(block, button) {
-      const code = block.querySelector("code");
-      const text = code?.innerText;
-
-      await navigator.clipboard.writeText(text ?? "");
-
-      // visual feedback that task is completed
-      button.innerText = "Copied";
-
-      setTimeout(() => {
-        button.innerText = copyButtonLabel;
-      }, 700);
-    }
-  }
-  attachCopyButtons();
-
-  /** Scrolls the document to the top when
-   * the "Back to Top" button is clicked. */
-  function backToTop() {
-    document.querySelector("#back-to-top")?.addEventListener("click", () => {
-      document.body.scrollTop = 0; // For Safari
-      document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-    });
-  }
-  backToTop();
-</script>

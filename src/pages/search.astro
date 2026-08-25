@@ -34,7 +34,13 @@ const searchList = [
 
 <Layout title={`Search | ${SITE.title}`}>
   <Header activeNav="search" />
-  <Main pageTitle="Search" pageDesc="Search any article ...">
+  <Main
+    pageTitle="Search"
+    pageDesc="Full-text search across the posts and the AI Radar. Titles and summaries, matched as you type."
+    headingMeta={`${searchList.length} entries indexed`}
+    statusLeft="Index loaded · client-side"
+    statusCenter={`${sortedPosts.length} posts · ${sortedAiRadarPosts.length} radar entries`}
+  >
     <SearchBar client:load searchList={searchList} />
   </Main>
   <Footer />

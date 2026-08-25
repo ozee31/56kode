@@ -1,24 +1,39 @@
 ---
+import { getCollection, type CollectionEntry } from "astro:content";
 import Layout from "@layouts/Layout.astro";
 import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
-import Tag from "@components/Tag.astro";
+import StatusBar from "@components/StatusBar.astro";
+import ArticleBehaviors from "@components/ArticleBehaviors.astro";
+import SignalBars from "@components/SignalBars";
+import Tags from "@components/Tags";
 import Datetime from "@components/Datetime";
-import type { CollectionEntry } from "astro:content";
-import { slugifyStr } from "@utils/slugify";
 import ShareLinks from "@components/ShareLinks.astro";
+import getSortedPosts from "@utils/getSortedPosts";
+import getHostname from "@utils/getHostname";
+import { slugifyStr } from "@utils/slugify";
+import { SIGNAL_SCALE, signalLabel } from "@utils/signalScale";
 import { SITE } from "@config";
 
 export interface Props {
   post: CollectionEntry<"aiRadar">;
 }
 
-const { post } = Astro.props;
-
+const { post }: Props = Astro.props;
 const { title, author, description, url, pubDatetime, tags, rating } =
   post.data;
 
+// Le markdown des entrées radar ouvre sur un h1 qui doublonnerait le masthead.
 const renderedHTML = post.rendered?.html?.replace(/<h1[^>]*>.*?<\/h1>/gs, "");
+const source = getHostname(url);
+
+const sorted = getSortedPosts(
+  await getCollection("aiRadar")
+) as CollectionEntry<"aiRadar">[];
+const index = sorted.findIndex(entry => entry.id === post.id);
+const earlier =
+  index >= 0 && index < sorted.length - 1 ? sorted[index + 1] : undefined;
+const later = index > 0 ? sorted[index - 1] : undefined;
 
 const layoutProps = {
   title: `${title} | ${SITE.title}`,
@@ -27,200 +42,253 @@ const layoutProps = {
   pubDatetime,
   scrollSmooth: true,
 };
-
-const stars = Array.from({ length: 5 }, (_, i) => i < rating);
 ---
 
 <Layout {...layoutProps}>
-  <Header />
+  <Header activeNav="ai-radar" />
 
-  <div class="mx-auto flex w-full max-w-3xl justify-start px-2">
-    <button
-      class="focus-outline mb-2 mt-8 flex hover:opacity-75"
-      onclick="(() => (history.length === 1) ? window.location = '/ai-radar/' : history.back())()"
-    >
-      <svg xmlns="http://www.w3.org/2000/svg"
-        ><path
-          d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z"
-        ></path>
-      </svg><span>Go back</span>
-    </button>
-  </div>
-  <main id="main-content">
-    <h1 transition:name={slugifyStr(title)} class="post-title">{title}</h1>
-    <div class="mt-2 flex flex-wrap items-center gap-3">
-      <Datetime pubDatetime={pubDatetime} modDatetime={pubDatetime} size="lg" />
+  <div class="bg-ai-canvas flex flex-1 flex-col">
+    <StatusBar variant="ai" indicator="pulse">
+      <Fragment slot="left">
+        <a href="/ai-radar/" class="focus-outline uppercase hover:underline"
+          >← All radar entries</a
+        >
+      </Fragment>
+      <Fragment slot="center">
+        {index >= 0 && `Entry ${index + 1} of ${sorted.length}`}
+      </Fragment>
+      <Fragment slot="right">
+        <a
+          href="/rss-ai-radar.xml"
+          target="_blank"
+          rel="noopener"
+          class="focus-outline uppercase hover:underline"
+        >
+          Radar RSS ↗<span class="sr-only"> (opens in a new tab)</span>
+        </a>
+      </Fragment>
+    </StatusBar>
+
+    <main id="main-content" class="w-full">
+      <!-- Masthead : la source est la destination, pas cette page -->
+      <div
+        class="border-line-ai from-ai-raised to-ai-canvas border-b bg-gradient-to-b"
+      >
+        <div
+          class="max-w-page mx-auto grid gap-8 px-(--page-gutter) pt-10 pb-9 lg:grid-cols-[1fr_260px]"
+        >
+          <div>
+            <p class="mb-3.5 flex flex-wrap items-center gap-2">
+              <Datetime pubDatetime={pubDatetime} tone="ai" />
+              {
+                source && (
+                  <span class="font-chrome text-meta tracking-chrome text-ai-muted uppercase">
+                    · {source}
+                  </span>
+                )
+              }
+            </p>
+            <h1
+              transition:name={slugifyStr(title)}
+              class="font-reading text-display text-ai-fg mb-4 max-w-[24ch] font-semibold text-pretty"
+            >
+              {title}
+            </h1>
+            <p
+              class="max-w-measure font-reading text-lead text-ai-body mb-6 text-pretty"
+            >
+              {description}
+            </p>
+            <a
+              href={url}
+              class="focus-outline bg-ai-accent font-chrome text-ui tracking-ui text-ai-canvas hover:bg-ai-accent-strong inline-flex items-center gap-2.5 px-5 py-3.5 uppercase transition-colors"
+            >
+              Read the original{source && ` on ${source}`} ↗
+            </a>
+          </div>
+
+          <div class="flex flex-col justify-between gap-6 lg:items-end">
+            <div class="lg:text-right">
+              <p
+                class="font-chrome text-micro tracking-chrome-wide text-ai-muted mb-3 uppercase"
+              >
+                My signal rating
+              </p>
+              <SignalBars value={rating} variant="ai" size="lg" showValue />
+              <p
+                class="font-chrome text-micro tracking-chrome text-ai-muted mt-1.5 uppercase"
+              >
+                {signalLabel(rating)}
+              </p>
+            </div>
+            <p
+              class="font-chrome text-micro tracking-ui text-ai-muted leading-[1.8] uppercase lg:text-right"
+            >
+              Caught <Datetime pubDatetime={pubDatetime} tone="ai" /><br />
+              Noted by {SITE.titleShort}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="max-w-page mx-auto grid lg:grid-cols-[1fr_260px]">
+        <!-- Ma note sur l'article de quelqu'un d'autre -->
+        <div class="border-line-ai px-(--page-gutter) pt-10 pb-11 lg:border-r">
+          <p
+            class="border-line-ai font-chrome text-micro tracking-chrome-wide text-ai-muted mb-4.5 border-b pb-3 uppercase"
+          >
+            What the article covers
+          </p>
+
+          <article id="article" class="prose max-w-measure">
+            <div set:html={renderedHTML} />
+          </article>
+
+          <Tags tags={tags.map(tag => slugifyStr(tag))} className="mt-9" />
+
+          <div
+            class="max-w-measure border-line-ai mt-9 flex flex-col-reverse items-start justify-between gap-5 border-t pt-5 sm:flex-row sm:items-center"
+          >
+            <button
+              id="back-to-top"
+              class="focus-outline font-chrome text-meta tracking-chrome text-ai-body hover:text-ai-accent uppercase"
+            >
+              ↑ Back to top
+            </button>
+            <ShareLinks {title} {description} />
+          </div>
+        </div>
+
+        <!-- Rail : tout vient du front-matter -->
+        <aside class="flex flex-col gap-6 px-5 pt-10 pb-11">
+          <div>
+            <p
+              class="font-chrome text-micro tracking-chrome-wide text-ai-muted mb-3 uppercase"
+            >
+              The source
+            </p>
+            <div class="border-line-ai bg-ai-raised border p-4">
+              <p
+                class="font-chrome text-meta tracking-ui text-ai-accent mb-2.5 uppercase"
+              >
+                {source}
+              </p>
+              <p class="font-reading text-note text-ai-fg mb-1">
+                {
+                  author && author !== "Unknown" ? (
+                    author
+                  ) : (
+                    <span class="text-ai-muted">Author not credited</span>
+                  )
+                }
+              </p>
+              <p class="mb-3.5">
+                <Datetime pubDatetime={pubDatetime} tone="ai" />
+              </p>
+              <a
+                href={url}
+                class="focus-outline font-chrome text-meta tracking-ui text-ai-accent uppercase hover:underline"
+              >
+                Open original ↗
+              </a>
+            </div>
+          </div>
+
+          <div class="border-line-ai border-t pt-5">
+            <p
+              class="font-chrome text-micro tracking-chrome-wide text-ai-muted mb-3 uppercase"
+            >
+              How I rate
+            </p>
+            <ul class="flex flex-col gap-2.5">
+              {
+                SIGNAL_SCALE.map(step => (
+                  <li class="flex items-center gap-2.5">
+                    <SignalBars value={step.value} variant="ai" size="sm" />
+                    <span
+                      class:list={[
+                        "font-reading text-body-sm",
+                        step.value === Math.round(rating)
+                          ? "text-ai-fg"
+                          : "text-ai-body",
+                      ]}
+                    >
+                      {step.label}
+                    </span>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+
+          <div class="border-line-ai border-t pt-5">
+            <p
+              class="font-chrome text-micro tracking-chrome-wide text-ai-muted mb-2.5 uppercase"
+            >
+              Radar
+            </p>
+            <p
+              class="font-chrome text-micro tracking-ui text-ai-muted leading-[1.8] uppercase"
+            >
+              {sorted.length} entries total<br />
+              {index >= 0 && `This one is #${index + 1}`}
+            </p>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Entrées voisines : grammaire de la liste, note comprise -->
       {
-        author && author.length > 0 && (
-          <span class="text-sm opacity-80">({author})</span>
+        (earlier || later) && (
+          <div class="max-w-page border-line-ai mx-auto grid border-t sm:grid-cols-2">
+            {earlier && (
+              <a
+                href={`/ai-radar/${earlier.data.slug}/`}
+                class="focus-outline group border-line-ai block border-b px-(--page-gutter) py-6 sm:border-r sm:border-b-0"
+              >
+                <p class="font-chrome text-micro tracking-chrome-wide text-ai-muted mb-3 uppercase">
+                  ← Earlier catch
+                </p>
+                <div class="mb-2 flex items-center justify-between gap-4">
+                  <Datetime pubDatetime={earlier.data.pubDatetime} tone="ai" />
+                  <SignalBars
+                    value={earlier.data.rating}
+                    variant="ai"
+                    size="sm"
+                  />
+                </div>
+                <p class="font-reading text-heading text-ai-fg group-hover:decoration-ai-accent max-w-[30ch] font-semibold text-pretty group-hover:underline">
+                  {earlier.data.title}
+                </p>
+              </a>
+            )}
+            {later && (
+              <a
+                href={`/ai-radar/${later.data.slug}/`}
+                class="focus-outline group block px-(--page-gutter) py-6 sm:text-right"
+              >
+                <p class="font-chrome text-micro tracking-chrome-wide text-ai-muted mb-3 uppercase">
+                  Later catch →
+                </p>
+                <div class="mb-2 flex items-center justify-between gap-4">
+                  <SignalBars
+                    value={later.data.rating}
+                    variant="ai"
+                    size="sm"
+                  />
+                  <Datetime pubDatetime={later.data.pubDatetime} tone="ai" />
+                </div>
+                <p class="font-reading text-heading text-ai-fg group-hover:decoration-ai-accent max-w-[30ch] font-semibold text-pretty group-hover:underline sm:ml-auto">
+                  {later.data.title}
+                </p>
+              </a>
+            )}
+          </div>
         )
       }
-      <span class="text-base" title={`${rating}/5`}>
-        {
-          stars.map(filled =>
-            filled ? (
-              <span class="text-accent">★</span>
-            ) : (
-              <span class="opacity-40">☆</span>
-            )
-          )
-        }
-      </span>
-    </div>
+    </main>
+  </div>
 
-    <article id="article" class="prose mx-auto mt-8 max-w-3xl">
-      <div set:html={renderedHTML} />
-    </article>
-
-    <div class="my-6">
-      <a
-        href={url}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="inline-flex items-center gap-1 text-accent underline decoration-dashed underline-offset-4 hover:decoration-solid"
-      >
-        Read the original article
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
-          ></path>
-          <polyline points="15 3 21 3 21 9"></polyline>
-          <line x1="10" y1="14" x2="21" y2="3"></line>
-        </svg>
-      </a>
-    </div>
-
-    <ul class="my-8 flex flex-wrap gap-2">
-      {tags.map(tag => <Tag tag={slugifyStr(tag)} />)}
-    </ul>
-
-    <div
-      class="flex flex-col-reverse items-center justify-between gap-6 sm:flex-row-reverse sm:items-end sm:gap-4"
-    >
-      <button
-        id="back-to-top"
-        class="focus-outline whitespace-nowrap py-1 hover:opacity-75"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="rotate-90">
-          <path
-            d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z"
-          ></path>
-        </svg>
-        <span>Back to Top</span>
-      </button>
-
-      <ShareLinks />
-    </div>
-  </main>
   <Footer />
+  <ArticleBehaviors />
 </Layout>
-
-<style>
-  @reference "../styles/theme.css";
-  main {
-    @apply mx-auto w-full max-w-3xl px-4 pb-12;
-  }
-  .post-title {
-    @apply text-2xl font-semibold text-accent;
-  }
-</style>
-
-<script is:inline>
-  function createProgressBar() {
-    const progressContainer = document.createElement("div");
-    progressContainer.className =
-      "progress-container fixed top-0 z-10 h-1 w-full bg-background";
-    const progressBar = document.createElement("div");
-    progressBar.className = "progress-bar h-1 w-0 bg-accent";
-    progressBar.id = "myBar";
-    progressContainer.appendChild(progressBar);
-    document.body.appendChild(progressContainer);
-  }
-  createProgressBar();
-
-  function updateScrollProgress() {
-    const winScroll =
-      document.body.scrollTop || document.documentElement.scrollTop;
-    const height =
-      document.documentElement.scrollHeight -
-      document.documentElement.clientHeight;
-    const scrolled = (winScroll / height) * 100;
-    if (document) {
-      const myBar = document.getElementById("myBar");
-      if (myBar) {
-        myBar.style.width = scrolled + "%";
-      }
-    }
-  }
-  document.addEventListener("scroll", updateScrollProgress);
-
-  function addHeadingLinks() {
-    const headings = Array.from(
-      document.querySelectorAll("h2, h3, h4, h5, h6")
-    );
-    for (const heading of headings) {
-      heading.classList.add("group");
-      const link = document.createElement("a");
-      link.className =
-        "heading-link ml-2 opacity-0 group-hover:opacity-100 focus:opacity-100";
-      link.href = "#" + heading.id;
-      link.setAttribute(
-        "aria-label",
-        "Link to section: " + heading.textContent.trim()
-      );
-      const span = document.createElement("span");
-      span.ariaHidden = "true";
-      span.innerText = "#";
-      link.appendChild(span);
-      heading.appendChild(link);
-    }
-  }
-  addHeadingLinks();
-
-  function attachCopyButtons() {
-    const copyButtonLabel = "Copy";
-    const codeBlocks = Array.from(document.querySelectorAll("pre"));
-    for (const codeBlock of codeBlocks) {
-      const wrapper = document.createElement("div");
-      wrapper.style.position = "relative";
-      const copyButton = document.createElement("button");
-      copyButton.className =
-        "copy-code absolute right-3 -top-3 rounded bg-card px-2 py-1 text-xs leading-4 text-foreground font-medium";
-      copyButton.innerHTML = copyButtonLabel;
-      codeBlock.setAttribute("tabindex", "0");
-      codeBlock.appendChild(copyButton);
-      codeBlock?.parentNode?.insertBefore(wrapper, codeBlock);
-      wrapper.appendChild(codeBlock);
-      copyButton.addEventListener("click", async () => {
-        await copyCode(codeBlock, copyButton);
-      });
-    }
-    async function copyCode(block, button) {
-      const code = block.querySelector("code");
-      const text = code?.innerText;
-      await navigator.clipboard.writeText(text ?? "");
-      button.innerText = "Copied";
-      setTimeout(() => {
-        button.innerText = copyButtonLabel;
-      }, 700);
-    }
-  }
-  attachCopyButtons();
-
-  function backToTop() {
-    document.querySelector("#back-to-top")?.addEventListener("click", () => {
-      document.body.scrollTop = 0;
-      document.documentElement.scrollTop = 0;
-    });
-  }
-  backToTop();
-</script>

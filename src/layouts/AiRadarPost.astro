@@ -1,10 +1,13 @@
 ---
 import Header from "@components/Header.astro";
+import Footer from "@components/Footer.astro";
 import Layout from "./Layout.astro";
 import Main from "./Main.astro";
 import Pagination from "@components/Pagination.astro";
 import type { CollectionEntry } from "astro:content";
-import AiRadarCard from "@components/AiRadarCard";
+import Card from "@components/Card";
+import getSiteStats from "@utils/getSiteStats";
+import getHostname from "@utils/getHostname";
 
 export interface Props {
   currentPage: number;
@@ -12,7 +15,8 @@ export interface Props {
   paginatedPosts: CollectionEntry<"aiRadar">[];
 }
 
-const { currentPage, totalPages, paginatedPosts } = Astro.props;
+const { currentPage, totalPages, paginatedPosts }: Props = Astro.props;
+const stats = await getSiteStats();
 ---
 
 <Layout
@@ -20,27 +24,39 @@ const { currentPage, totalPages, paginatedPosts } = Astro.props;
   description="Curated articles on AI agents, LLMs, and AI-assisted development. Each article is rated and summarized."
 >
   <Header activeNav="ai-radar" />
-  <Main
-    pageTitle="AI Radar"
-    pageDesc="AI & agent development articles, rated and summarized."
-    rss="/rss-ai-radar.xml"
-  >
-    <ul>
-      {
-        paginatedPosts.map(item => (
-          <AiRadarCard
-            href={`/ai-radar/${item.data.slug}/`}
-            frontmatter={item.data}
-          />
-        ))
-      }
-    </ul>
-  </Main>
+  <div class="bg-ai-canvas flex flex-1 flex-col">
+    <Main
+      tone="ai"
+      pageTitle="AI Radar"
+      pageDesc="Other people's articles on AI agents, LLMs and AI-assisted development. I read what comes through and keep what's worth your time."
+      rss="/rss-ai-radar.xml"
+      headingMeta="Signal 1–5 · rated by hand"
+      statusLeft="Scanning · rated by hand"
+      statusCenter={`${stats.radar} entries · ${totalPages} pages`}
+    >
+      <ul>
+        {
+          paginatedPosts.map(item => (
+            <Card
+              href={`/ai-radar/${item.data.slug}/`}
+              frontmatter={item.data}
+              tone="ai"
+              source={getHostname(item.data.url)}
+              action="Read note →"
+            />
+          ))
+        }
+      </ul>
+    </Main>
 
-  <Pagination
-    {currentPage}
-    {totalPages}
-    prevUrl={`/ai-radar${currentPage - 1 !== 1 ? "/" + (currentPage - 1) : ""}/`}
-    nextUrl={`/ai-radar/${currentPage + 1}/`}
-  />
+    <Pagination
+      variant="ai"
+      {currentPage}
+      {totalPages}
+      prevUrl={`/ai-radar${currentPage - 1 !== 1 ? "/" + (currentPage - 1) : ""}/`}
+      nextUrl={`/ai-radar/${currentPage + 1}/`}
+    />
+  </div>
+
+  <Footer noMarginTop={totalPages > 1} />
 </Layout>
