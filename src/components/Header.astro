@@ -19,8 +19,9 @@ const NAV = [
 ] as const;
 ---
 
-<header class="border-line bg-canvas relative border-b">
+<header class="border-line bg-canvas relative z-50 border-b">
   <a id="skip-to-content" href="#main-content">Skip to content</a>
+  <div id="menu-scrim" class="menu-scrim" aria-hidden="true"></div>
   <div
     class="max-w-page mx-auto flex items-center justify-between gap-6 px-(--page-gutter) py-3"
   >
@@ -138,9 +139,21 @@ const NAV = [
     @apply opacity-100;
   }
 
+  /* Voile d'assombrissement du reste de la page quand le menu est ouvert.
+     Pas de flou : ce serait le seul effet de ce genre du système, et le design
+     tient sur des aplats et des filets. Assombrir suffit à faire du panneau un
+     calque, puisque bg-raised et bg-canvas ne sont séparés que de quelques
+     valeurs. */
+  .menu-scrim {
+    @apply fixed inset-0 hidden bg-black/70;
+  }
+  .menu-scrim.open {
+    @apply block;
+  }
+
   /* Mobile : le menu se replie derrière le bouton 44px. */
   #menu-items {
-    @apply border-line bg-raised absolute inset-x-0 top-full z-40 hidden flex-col border-b px-(--page-gutter) py-2;
+    @apply border-line-strong bg-raised absolute inset-x-0 top-full hidden flex-col border-b px-(--page-gutter) py-2;
   }
   #menu-items.open {
     @apply flex;
@@ -170,6 +183,10 @@ const NAV = [
     .hamburger-menu {
       @apply hidden;
     }
+    .menu-scrim,
+    .menu-scrim.open {
+      @apply hidden;
+    }
     #menu-items {
       @apply static flex flex-row items-center gap-6 border-0 bg-transparent p-0;
     }
@@ -190,20 +207,30 @@ const NAV = [
 
 <script>
   function toggleNav() {
-    // Toggle menu
     const menuBtn = document.querySelector(".hamburger-menu");
     const menuIcon = document.querySelector(".menu-icon");
     const menuItems = document.querySelector("#menu-items");
+    const scrim = document.querySelector("#menu-scrim");
+
+    function setOpen(open: boolean) {
+      menuIcon?.classList.toggle("is-active", open);
+      menuItems?.classList.toggle("open", open);
+      scrim?.classList.toggle("open", open);
+      menuBtn?.setAttribute("aria-expanded", open ? "true" : "false");
+      menuBtn?.setAttribute("aria-label", open ? "Close Menu" : "Open Menu");
+    }
 
     menuBtn?.addEventListener("click", () => {
-      const menuExpanded = menuBtn.getAttribute("aria-expanded") === "true";
-      menuIcon?.classList.toggle("is-active");
-      menuBtn.setAttribute("aria-expanded", menuExpanded ? "false" : "true");
-      menuBtn.setAttribute(
-        "aria-label",
-        menuExpanded ? "Open Menu" : "Close Menu"
-      );
-      menuItems?.classList.toggle("open");
+      setOpen(menuBtn.getAttribute("aria-expanded") !== "true");
+    });
+
+    // Cliquer le voile ferme le menu : c'est ce qu'un utilisateur tente en
+    // premier, et sans ça le voile est un mur qui n'obéit à rien.
+    scrim?.addEventListener("click", () => setOpen(false));
+
+    // Échap ferme aussi, pour qui navigue au clavier.
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") setOpen(false);
     });
   }
 
