@@ -82,8 +82,12 @@
   blockquote {
     word-wrap: break-word;
   }
+  /* Héritage AstroPaper qui annulait `shikiConfig.wrap: true` : Shiki pose bien
+     `white-space: pre-wrap` en style inline sur le <pre>, mais ce `pre` sur le
+     <code> enfant le neutralisait. Les longues lignes ne s'enroulaient donc pas
+     et débordaient de l'écran en mobile. */
   pre > code {
-    white-space: pre;
+    white-space: inherit;
   }
 }
 

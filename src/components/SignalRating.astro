@@ -1,0 +1,43 @@
+---
+// Bloc de note d'une entrée AI Radar : libellé, barres, valeur, verdict.
+//
+// Extrait parce qu'il apparaît à deux endroits selon la taille d'écran — en
+// colonne de droite du masthead en desktop, sous le résumé en mobile — et que
+// dupliquer le markup était la première chose qu'on a éliminée ailleurs.
+import SignalBars from "./SignalBars";
+import { signalLabel } from "@utils/signalScale";
+
+export interface Props {
+  rating: number;
+  /** `stack` = colonne du masthead desktop · `inline` = bande sous le résumé en mobile */
+  layout?: "stack" | "inline";
+  class?: string;
+}
+
+const { rating, layout = "stack", class: className = "" }: Props = Astro.props;
+const isInline = layout === "inline";
+---
+
+<div class:list={[isInline ? "flex items-center gap-4" : "", className]}>
+  {
+    !isInline && (
+      <p class="font-chrome text-micro tracking-chrome-wide text-ai-muted mb-3 uppercase">
+        My signal rating
+      </p>
+    )
+  }
+  <SignalBars
+    value={rating}
+    variant="ai"
+    size={isInline ? "md" : "lg"}
+    showValue
+  />
+  <p
+    class:list={[
+      "font-chrome text-micro tracking-chrome text-ai-muted uppercase",
+      isInline ? "" : "mt-1.5",
+    ]}
+  >
+    {signalLabel(rating)}
+  </p>
+</div>

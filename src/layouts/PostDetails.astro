@@ -125,7 +125,9 @@ const layoutProps = {
 
     <div class="max-w-page mx-auto grid lg:grid-cols-[1fr_260px]">
       <!-- Colonne de lecture -->
-      <div class="border-line px-(--page-gutter) pt-10 pb-11 lg:border-r">
+      <div
+        class="border-line min-w-0 px-(--page-gutter) pt-10 pb-11 lg:border-r"
+      >
         <article id="article" class="prose max-w-measure">
           <div set:html={renderedHTML} />
         </article>
