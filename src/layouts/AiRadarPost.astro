@@ -8,6 +8,8 @@ import type { CollectionEntry } from "astro:content";
 import Card from "@components/Card";
 import getSiteStats from "@utils/getSiteStats";
 import getHostname from "@utils/getHostname";
+import getPaginationMeta from "@utils/getPaginationMeta";
+import { SITE } from "@config";
 
 export interface Props {
   currentPage: number;
@@ -17,11 +19,14 @@ export interface Props {
 
 const { currentPage, totalPages, paginatedPosts }: Props = Astro.props;
 const stats = await getSiteStats();
+const { titleSuffix, descSuffix } = getPaginationMeta(currentPage, totalPages);
 ---
 
 <Layout
-  title="AI Radar: Curated AI & Agent Development Articles"
-  description="Curated articles on AI agents, LLMs, and AI-assisted development. Each article is rated and summarized."
+  title={`AI Radar${titleSuffix} | ${SITE.titleShort}`}
+  description={`Curated articles on AI agents, LLMs and AI-assisted development, each one read and rated.${descSuffix}`}
+  schemaType="CollectionPage"
+  schemaName={`AI Radar${titleSuffix}`}
 >
   <Header activeNav="ai-radar" />
   <div class="bg-ai-canvas flex flex-1 flex-col">
@@ -30,8 +35,8 @@ const stats = await getSiteStats();
       pageTitle="AI Radar"
       pageDesc="Other people's articles on AI agents, LLMs and AI-assisted development. I read what comes through and keep what's worth your time."
       rss="/rss-ai-radar.xml"
-      headingMeta="Signal 1–5 · rated by hand"
-      statusLeft="Scanning · rated by hand"
+      headingMeta={`${stats.radar} entries · sorted by date`}
+      statusLeft="Scanning · picked after reading"
       statusCenter={`${stats.radar} entries · ${totalPages} pages`}
     >
       <ul>

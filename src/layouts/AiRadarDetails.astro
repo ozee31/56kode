@@ -5,15 +5,12 @@ import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
 import StatusBar from "@components/StatusBar.astro";
 import ArticleBehaviors from "@components/ArticleBehaviors.astro";
-import SignalBars from "@components/SignalBars";
-import SignalRating from "@components/SignalRating.astro";
 import Tags from "@components/Tags";
 import Datetime from "@components/Datetime";
 import ShareLinks from "@components/ShareLinks.astro";
 import getSortedPosts from "@utils/getSortedPosts";
 import getHostname from "@utils/getHostname";
 import { slugifyStr } from "@utils/slugify";
-import { SIGNAL_SCALE } from "@utils/signalScale";
 import { SITE } from "@config";
 
 export interface Props {
@@ -21,8 +18,7 @@ export interface Props {
 }
 
 const { post }: Props = Astro.props;
-const { title, author, description, url, pubDatetime, tags, rating } =
-  post.data;
+const { title, author, description, url, pubDatetime, tags } = post.data;
 
 // Le markdown des entrées radar ouvre sur un h1 qui doublonnerait le masthead.
 const renderedHTML = post.rendered?.html?.replace(/<h1[^>]*>.*?<\/h1>/gs, "");
@@ -37,8 +33,9 @@ const earlier =
 const later = index > 0 ? sorted[index - 1] : undefined;
 
 const layoutProps = {
-  title: `${title} | ${SITE.title}`,
-  author: author ?? "Unknown",
+  title: `${title} | ${SITE.titleShort}`,
+  schemaType: "BlogPosting" as const,
+  schemaName: title,
   description,
   pubDatetime,
   scrollSmooth: true,
@@ -75,9 +72,7 @@ const layoutProps = {
       <div
         class="border-line-ai from-ai-raised to-ai-canvas border-b bg-gradient-to-b"
       >
-        <div
-          class="max-w-page mx-auto grid gap-8 px-(--page-gutter) pt-10 pb-9 lg:grid-cols-[1fr_260px]"
-        >
+        <div class="max-w-page mx-auto px-(--page-gutter) pt-10 pb-9">
           <div>
             <p class="mb-3.5 flex flex-wrap items-center gap-2">
               <Datetime pubDatetime={pubDatetime} tone="ai" />
@@ -109,33 +104,16 @@ const layoutProps = {
             </p>
             <a
               href={url}
-              class="focus-outline bg-ai-accent font-chrome text-ui tracking-ui text-ai-canvas hover:bg-ai-accent-strong inline-flex items-center gap-2.5 px-5 py-3.5 uppercase transition-colors"
+              class="focus-outline bg-ai-accent font-chrome text-ui tracking-ui text-ai-canvas inline-flex items-center gap-2.5 px-5 py-3.5 uppercase transition-opacity hover:opacity-90"
             >
               Read the original{source && ` on ${source}`} ↗
             </a>
-          </div>
-
-          {
-            /* En mobile, ce bloc allongeait le masthead au point de repousser le
-              résumé hors du premier écran. Il repasse sous le résumé, là où il
-              sert de verdict après lecture. */
-          }
-          <div
-            class="hidden flex-col justify-between gap-6 lg:flex lg:items-end"
-          >
-            <SignalRating rating={rating} class="lg:text-right" />
-            <p
-              class="font-chrome text-micro tracking-ui text-ai-muted leading-[1.8] uppercase lg:text-right"
-            >
-              Caught <Datetime pubDatetime={pubDatetime} tone="ai" /><br />
-              Noted by {SITE.titleShort}
-            </p>
           </div>
         </div>
       </div>
 
       <div class="max-w-page mx-auto grid lg:grid-cols-[1fr_260px]">
-        <!-- Ma note sur l'article de quelqu'un d'autre -->
+        <!-- Le résumé de l'article de quelqu'un d'autre -->
         <div
           class="border-line-ai min-w-0 px-(--page-gutter) pt-10 pb-11 lg:border-r"
         >
@@ -151,15 +129,8 @@ const layoutProps = {
 
           <Tags tags={tags.map(tag => slugifyStr(tag))} className="mt-9" />
 
-          <!-- La note en mobile, puis le lien sortant : arrivé au bas du
-               résumé, le lecteur doit pouvoir juger et partir vers la source
-               sans remonter. -->
-          <SignalRating
-            rating={rating}
-            layout="inline"
-            class="max-w-measure border-line-ai mt-9 border-t pt-5 lg:hidden"
-          />
-
+          <!-- Le lien sortant : arrivé au bas du résumé, le lecteur doit
+               pouvoir partir vers la source sans remonter. -->
           <div
             class="max-w-measure lg:border-line-ai mt-6 lg:mt-9 lg:border-t lg:pt-5"
           >
@@ -221,33 +192,6 @@ const layoutProps = {
 
           <div class="border-line-ai border-t pt-5">
             <p
-              class="font-chrome text-micro tracking-chrome-wide text-ai-muted mb-3 uppercase"
-            >
-              How I rate
-            </p>
-            <ul class="flex flex-col gap-2.5">
-              {
-                SIGNAL_SCALE.map(step => (
-                  <li class="flex items-center gap-2.5">
-                    <SignalBars value={step.value} variant="ai" size="sm" />
-                    <span
-                      class:list={[
-                        "font-reading text-body-sm",
-                        step.value === Math.round(rating)
-                          ? "text-ai-fg"
-                          : "text-ai-body",
-                      ]}
-                    >
-                      {step.label}
-                    </span>
-                  </li>
-                ))
-              }
-            </ul>
-          </div>
-
-          <div class="border-line-ai border-t pt-5">
-            <p
               class="font-chrome text-micro tracking-chrome-wide text-ai-muted mb-2.5 uppercase"
             >
               Radar
@@ -262,7 +206,7 @@ const layoutProps = {
         </aside>
       </div>
 
-      <!-- Entrées voisines : grammaire de la liste, note comprise -->
+      <!-- Entrées voisines : même grammaire que la liste -->
       {
         (earlier || later) && (
           <div class="max-w-page border-line-ai mx-auto grid border-t sm:grid-cols-2">
@@ -274,14 +218,9 @@ const layoutProps = {
                 <p class="font-chrome text-micro tracking-chrome-wide text-ai-muted mb-3 uppercase">
                   ← Earlier catch
                 </p>
-                <div class="mb-2 flex items-center justify-between gap-4">
+                <p class="mb-2">
                   <Datetime pubDatetime={earlier.data.pubDatetime} tone="ai" />
-                  <SignalBars
-                    value={earlier.data.rating}
-                    variant="ai"
-                    size="sm"
-                  />
-                </div>
+                </p>
                 <p class="font-reading text-heading text-ai-fg group-hover:decoration-ai-accent max-w-[30ch] font-semibold text-pretty group-hover:underline">
                   {earlier.data.title}
                 </p>
@@ -295,14 +234,9 @@ const layoutProps = {
                 <p class="font-chrome text-micro tracking-chrome-wide text-ai-muted mb-3 uppercase">
                   Later catch →
                 </p>
-                <div class="mb-2 flex items-center justify-between gap-4">
-                  <SignalBars
-                    value={later.data.rating}
-                    variant="ai"
-                    size="sm"
-                  />
+                <p class="mb-2">
                   <Datetime pubDatetime={later.data.pubDatetime} tone="ai" />
-                </div>
+                </p>
                 <p class="font-reading text-heading text-ai-fg group-hover:decoration-ai-accent max-w-[30ch] font-semibold text-pretty group-hover:underline sm:ml-auto">
                   {later.data.title}
                 </p>

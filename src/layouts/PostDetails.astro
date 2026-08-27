@@ -36,14 +36,17 @@ const readingTime = getMinutesRead(post);
 const headings = extractHeadings(renderedHTML);
 
 // Position dans la série et voisins immédiats, pour la barre de statut et le
-// bloc prev/next. Une seule lecture de la collection sert les deux.
+// bloc des articles voisins. Une seule lecture de la collection sert les deux.
 const sorted = getSortedPosts(
   await getCollection("blog")
 ) as CollectionEntry<"blog">[];
 const index = sorted.findIndex(entry => entry.id === post.id);
-const previous = index > 0 ? sorted[index - 1] : undefined;
-const next =
+// `getSortedPosts` trie du plus récent au plus ancien : `index + 1` est donc
+// l'article plus ancien, `index - 1` le plus récent. Mêmes noms et même
+// disposition que l'AI Radar — le passé à gauche, le présent à droite.
+const earlier =
   index >= 0 && index < sorted.length - 1 ? sorted[index + 1] : undefined;
+const later = index > 0 ? sorted[index - 1] : undefined;
 
 const ogImageUrl = typeof ogImage === "string" ? ogImage : ogImage?.src;
 const ogUrl = new URL(
@@ -52,7 +55,9 @@ const ogUrl = new URL(
 ).href;
 
 const layoutProps = {
-  title: `${title} | ${SITE.title}`,
+  title: `${title} | ${SITE.titleShort}`,
+  schemaType: "BlogPosting" as const,
+  schemaName: title,
   author,
   description,
   pubDatetime,
@@ -194,41 +199,41 @@ const layoutProps = {
       </aside>
     </div>
 
-    <!-- Prev / next : même grammaire de carte que la liste -->
+    <!-- Articles voisins : même grammaire de carte que la liste -->
     {
-      (previous || next) && (
+      (earlier || later) && (
         <div class="max-w-page border-line mx-auto grid border-t sm:grid-cols-2">
-          {previous && (
+          {earlier && (
             <a
-              href={`/posts/${previous.id}/`}
+              href={`/posts/${earlier.id}/`}
               class="focus-outline group border-line block border-b px-(--page-gutter) py-6 sm:border-r sm:border-b-0"
             >
               <p class="font-chrome text-micro tracking-chrome-wide text-fg-muted mb-2.5 uppercase">
-                ← Previous
+                ← Earlier post
               </p>
               <p class="font-reading text-heading text-fg-heading group-hover:decoration-accent mb-2 max-w-[30ch] font-semibold text-pretty group-hover:underline">
-                {previous.data.title}
+                {earlier.data.title}
               </p>
               <Datetime
-                pubDatetime={previous.data.pubDatetime}
-                modDatetime={previous.data.modDatetime}
+                pubDatetime={earlier.data.pubDatetime}
+                modDatetime={earlier.data.modDatetime}
               />
             </a>
           )}
-          {next && (
+          {later && (
             <a
-              href={`/posts/${next.id}/`}
+              href={`/posts/${later.id}/`}
               class="focus-outline group block px-(--page-gutter) py-6 sm:text-right"
             >
               <p class="font-chrome text-micro tracking-chrome-wide text-fg-muted mb-2.5 uppercase">
-                Next →
+                Later post →
               </p>
               <p class="font-reading text-heading text-fg-heading group-hover:decoration-accent mb-2 max-w-[30ch] font-semibold text-pretty group-hover:underline sm:ml-auto">
-                {next.data.title}
+                {later.data.title}
               </p>
               <Datetime
-                pubDatetime={next.data.pubDatetime}
-                modDatetime={next.data.modDatetime}
+                pubDatetime={later.data.pubDatetime}
+                modDatetime={later.data.modDatetime}
               />
             </a>
           )}

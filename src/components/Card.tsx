@@ -1,6 +1,5 @@
 import { slugifyStr } from "@utils/slugify";
 import Datetime from "./Datetime";
-import SignalBars from "./SignalBars";
 import Tags from "./Tags";
 import type { PostData } from "../types";
 
@@ -69,7 +68,6 @@ export default function Card({
   // collections (blog, aiRadar, techwatch), qui n'ont pas les mêmes clés.
   const modDatetime =
     "modDatetime" in frontmatter ? frontmatter.modDatetime : undefined;
-  const rating = "rating" in frontmatter ? frontmatter.rating : undefined;
   // Le badge ne suit PAS la variante : `variant="featured"` décide de la place
   // dans la grille, le badge ne parle que de la donnée. Sans ça, l'article de
   // tête porterait « FEATURED » même quand aucun post n'est marqué.
@@ -145,21 +143,16 @@ export default function Card({
     </>
   );
 
-  // Colonne de droite : temps de lecture ou note, plus l'action. Absente en
-  // featured (le titre occupe toute la largeur) et en compact (rail étroit).
+  // Colonne de droite : l'action. Absente en featured (le titre occupe toute
+  // la largeur) et en compact (rail étroit).
   const aside =
-    !isFeatured && !isCompact && (rating !== undefined || action) ? (
-      <div className="flex shrink-0 flex-col items-end justify-between gap-3 sm:w-[132px]">
-        {rating !== undefined && (
-          <SignalBars value={rating} variant="ai" size="sm" showValue />
-        )}
-        {action && (
-          <span
-            className={`font-chrome text-meta tracking-chrome uppercase ${t.action}`}
-          >
-            {action}
-          </span>
-        )}
+    !isFeatured && !isCompact && action ? (
+      <div className="flex shrink-0 flex-col items-end justify-end sm:w-[132px]">
+        <span
+          className={`font-chrome text-meta tracking-chrome uppercase ${t.action}`}
+        >
+          {action}
+        </span>
       </div>
     ) : null;
 

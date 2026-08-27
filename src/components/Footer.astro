@@ -16,7 +16,11 @@ const LABELS: Record<string, string> = {
 };
 const GLYPHS: Record<string, string> = { Mail: "✉" };
 
-const elsewhere = SOCIALS.filter(s => s.active);
+// L'e-mail passe en dernier : c'est le seul lien qui n'ouvre pas un profil
+// mais un client de messagerie. Au milieu des réseaux, il rompait la liste.
+const elsewhere = SOCIALS.filter(s => s.active).sort(
+  (a, b) => Number(a.name === "Mail") - Number(b.name === "Mail")
+);
 
 // Pas de lien vers l'archive Tech Watch : elle reste délibérément hors
 // navigation, cf. design-reference/uploads/site-structure.txt.

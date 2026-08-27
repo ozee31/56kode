@@ -7,6 +7,8 @@ import Pagination from "@components/Pagination.astro";
 import type { CollectionEntry } from "astro:content";
 import Card from "@components/Card";
 import getSiteStats from "@utils/getSiteStats";
+import getPaginationMeta from "@utils/getPaginationMeta";
+import { SITE } from "@config";
 
 export interface Props {
   currentPage: number;
@@ -16,11 +18,14 @@ export interface Props {
 
 const { currentPage, totalPages, paginatedPosts }: Props = Astro.props;
 const stats = await getSiteStats();
+const { titleSuffix, descSuffix } = getPaginationMeta(currentPage, totalPages);
 ---
 
 <Layout
-  title="Tech Watch: Curated Articles on AI, Frontend & Development"
-  description="Curated articles on AI, frontend development, React, TypeScript, and developer tools. Stay ahead with the latest trends and insights."
+  title={`Tech watch archive${titleSuffix} | ${SITE.titleShort}`}
+  description={`Frozen archive of link dumps on AI, frontend, React and TypeScript, kept online so old URLs keep resolving.${descSuffix}`}
+  schemaType="CollectionPage"
+  schemaName={`Tech watch archive${titleSuffix}`}
 >
   <Header activeNav="tech-watch" />
   <Main

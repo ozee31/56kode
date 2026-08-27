@@ -12,7 +12,11 @@ import getSortedPosts from "@utils/getSortedPosts";
 const recent = getSortedPosts(await getCollection("blog")).slice(0, 3);
 ---
 
-<Layout title={`404 Not Found | ${SITE.title}`}>
+<Layout
+  title={`404 Not Found | ${SITE.titleShort}`}
+  description="This page does not exist. The connection dropped somewhere between the request and the file."
+  schemaName="404 Not Found"
+>
   <Header />
 
   <StatusBar indicator="dead">
@@ -38,9 +42,8 @@ const recent = getSortedPosts(await getCollection("blog")).slice(0, 3);
         <p
           class="max-w-measure font-reading text-lead text-fg-body mb-6.5 text-pretty"
         >
-          Either the URL was mistyped, or the page moved during one of the
-          fifteen years this site has been online. Both used to mean picking up
-          the handset and trying again.
+          Either the URL was mistyped, or the page moved. Both used to mean
+          picking up the handset and trying again.
         </p>
 
         <div class="max-w-measure border-l-accent bg-raised mb-6.5 border-l-2">

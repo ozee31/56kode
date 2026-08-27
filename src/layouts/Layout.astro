@@ -1,11 +1,17 @@
 ---
 import { LOCALE, SITE } from "@config";
+import { Font } from "astro:assets";
 import "@styles/base.css";
 
 const googleSiteVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION;
 
-const FONTS_HREF =
-  "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap";
+/**
+ * Type schema.org de la page. `BlogPosting` est réservé aux pages de détail :
+ * il était posé sur les 268 pages, y compris `/tags/`, `/search/` et la 404,
+ * qui ne sont pas des articles.
+ */
+export type SchemaType =
+  "BlogPosting" | "Blog" | "CollectionPage" | "ProfilePage" | "WebPage";
 
 export interface Props {
   title?: string;
@@ -17,6 +23,9 @@ export interface Props {
   pubDatetime?: Date;
   modDatetime?: Date | null;
   scrollSmooth?: boolean;
+  schemaType?: SchemaType;
+  /** Nom de la page dans le JSON-LD, sans le suffixe de marque du `<title>`. */
+  schemaName?: string;
 }
 
 const {
@@ -25,32 +34,46 @@ const {
   profile = SITE.profile,
   description = SITE.desc,
   ogImage = SITE.ogImage,
-  canonicalURL = new URL(Astro.url.pathname, Astro.site).href,
+  canonicalURL,
   pubDatetime,
   modDatetime,
   scrollSmooth = false,
+  schemaType = "WebPage",
+  schemaName,
 } = Astro.props;
 
+// `/posts/1/` rend exactement la même page que `/posts/`. Les deux existaient
+// en se déclarant chacune canonique d'elle-même : on renvoie la variante `/1/`
+// vers la page de base plutôt que de demander à Google de trancher.
+const canonicalPath = Astro.url.pathname.replace(/\/1\/$/, "/");
+const canonical = canonicalURL ?? new URL(canonicalPath, Astro.site).href;
+
 const socialImageURL = new URL(
-  ogImage ?? SITE.ogImage ?? "og.png",
+  ogImage || SITE.ogImage || "og.png",
   Astro.url.origin
 ).href;
 
+const isArticle = schemaType === "BlogPosting";
+
 const structuredData = {
   "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  headline: title,
+  "@type": schemaType,
+  name: schemaName ?? title,
+  description,
+  url: canonical,
   image: socialImageURL,
-  description: description,
-  datePublished: pubDatetime?.toISOString(),
-  ...(modDatetime && { dateModified: modDatetime.toISOString() }),
-  author: [{ "@type": "Person", name: author, url: profile }],
+  ...(isArticle && {
+    headline: schemaName ?? title,
+    datePublished: pubDatetime?.toISOString(),
+    ...(modDatetime && { dateModified: modDatetime.toISOString() }),
+    author: [{ "@type": "Person", name: author, url: profile }],
+    mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
+  }),
   publisher: {
     "@type": "Organization",
     name: SITE.titleShort,
     url: SITE.website,
   },
-  mainEntityOfPage: { "@type": "WebPage", "@id": canonicalURL },
 };
 ---
 
@@ -63,7 +86,7 @@ const structuredData = {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="canonical" href={canonicalURL} />
+    <link rel="canonical" href={canonical} />
     <meta name="generator" content={Astro.generator} />
 
     <!-- General Meta Tags -->
@@ -88,7 +111,7 @@ const structuredData = {
     <!-- Open Graph / Facebook -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:url" content={canonical} />
     <meta property="og:image" content={socialImageURL} />
     <meta property="og:type" content={pubDatetime ? "article" : "website"} />
     <meta property="og:locale" content="en_US" />
@@ -114,7 +137,7 @@ const structuredData = {
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content={canonicalURL} />
+    <meta property="twitter:url" content={canonical} />
     <meta property="twitter:title" content={title} />
     <meta property="twitter:description" content={description} />
     <meta property="twitter:image" content={socialImageURL} />
@@ -125,21 +148,20 @@ const structuredData = {
       set:html={JSON.stringify(structuredData)}
     />
 
-    <!-- Google Fonts (non-blocking) -->
-    <!-- IBM Plex Mono = chrome (header, nav, meta, pagination, code) -->
-    <!-- IBM Plex Sans = lecture (titres, chapôs, corps, résumés radar) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preload" as="style" href={FONTS_HREF} />
-    <link
-      href={FONTS_HREF}
-      rel="stylesheet"
-      media="print"
-      onload="this.media='all'"
-    />
-    <noscript>
-      <link href={FONTS_HREF} rel="stylesheet" />
-    </noscript>
+    <!-- Polices servies depuis notre origine, fichiers versionnés dans
+         src/assets/fonts/. Plus aucune requête vers un tiers : ni preconnect,
+         ni chargement différé à contourner, et l'IP du visiteur ne part nulle
+         part. IBM Plex Mono porte le chrome, IBM Plex Sans la lecture.
+
+         Pas de `preload` : le provider local ne renseigne pas le sous-ensemble
+         dans les données de préchargement, donc `preload` prendrait les 12
+         fichiers au lieu des 5 dont la page a besoin — `unicode-range` ne
+         filtre pas un préchargement. Le @font-face étant en ligne dans le
+         head, sur une connexion same-origin déjà ouverte, les polices sont
+         de toute façon reçues avant le premier rendu (mesuré : 40 ms contre
+         64 ms de FCP). -->
+    <Font cssVariable="--font-plex-mono" />
+    <Font cssVariable="--font-plex-sans" />
 
     <!-- Site dark-only : valeur figée. C'est la seule couleur littérale hors
          tokens.css, le HTML ne pouvant pas lire une variable CSS. -->

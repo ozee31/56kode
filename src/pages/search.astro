@@ -32,11 +32,15 @@ const searchList = [
 ];
 ---
 
-<Layout title={`Search | ${SITE.title}`}>
+<Layout
+  title={`Search | ${SITE.titleShort}`}
+  description="Search the posts and the AI Radar by title and summary."
+  schemaName="Search"
+>
   <Header activeNav="search" />
   <Main
     pageTitle="Search"
-    pageDesc="Full-text search across the posts and the AI Radar. Titles and summaries, matched as you type."
+    pageDesc="Search the posts and the AI Radar. Titles and summaries, matched as you type."
     headingMeta={`${searchList.length} entries indexed`}
     statusLeft="Index loaded · client-side"
     statusCenter={`${sortedPosts.length} posts · ${sortedAiRadarPosts.length} radar entries`}

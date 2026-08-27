@@ -46,7 +46,12 @@ const groups = LETTERS.map(letter => ({
 })).filter(group => group.tags.length > 0);
 ---
 
-<Layout title={`Tags | ${SITE.title}`}>
+<Layout
+  title={`Tags | ${SITE.titleShort}`}
+  description="Every tag used across the articles and the AI Radar, with how often each one comes up."
+  schemaType="CollectionPage"
+  schemaName="Tags"
+>
   <Header activeNav="tags" />
   <Main
     pageTitle="Tags"

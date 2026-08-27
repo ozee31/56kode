@@ -50,7 +50,7 @@ const NAV = [
       </span>
     </a>
 
-    <nav id="nav-menu" class="flex items-center">
+    <nav id="nav-menu" class="flex items-center" aria-label="Main">
       <button
         class="hamburger-menu focus-outline"
         aria-label="Open Menu"
@@ -85,9 +85,10 @@ const NAV = [
                 href={item.href}
                 class:list={[
                   "focus-outline nav-link",
-                  item.ai ? "text-ai-accent" : "text-fg-secondary",
+                  item.ai ? "nav-link-ai text-ai-accent" : "text-fg-secondary",
                   activeNav === item.key && (item.ai ? "active-ai" : "active"),
                 ]}
+                aria-current={activeNav === item.key ? "page" : undefined}
               >
                 {item.label}
               </a>
@@ -103,6 +104,7 @@ const NAV = [
             ]}
             aria-label="Search"
             title="Search"
+            aria-current={activeNav === "search" ? "page" : undefined}
           >
             <span aria-hidden="true">/</span>
             <span>search</span>
@@ -147,6 +149,15 @@ const NAV = [
   .menu-scrim {
     @apply fixed inset-0 hidden bg-black/70;
   }
+
+  /* Le panneau est `absolute` (ancré au document) et le voile `fixed` (ancré au
+     viewport) : les laisser défiler les désolidarise, le panneau sort de l'écran
+     et le voile reste seul à couvrir la page, qui devient noire et inerte. On
+     gèle donc le défilement le temps de l'ouverture. Le verrou est posé sur
+     <html> et non sur <body> : c'est le seul des deux que Safari iOS respecte. */
+  :global(html.menu-open) {
+    @apply overflow-hidden;
+  }
   .menu-scrim.open {
     @apply block;
   }
@@ -162,14 +173,16 @@ const NAV = [
     @apply font-chrome text-ui tracking-ui flex min-h-11 items-center uppercase;
   }
 
-  .nav-link:hover {
+  /* Le survol amène un lien à son propre accent. Un lien déjà à son accent ne
+     bouge donc pas : le lien actif, et le lien AI Radar, qui porte l'accent AI
+     en permanence par choix du design system. D'où l'exclusion plutôt qu'une
+     teinte de survol dédiée — inventer un bleu de survol donnerait au seul
+     lien AI un état que les autres n'ont pas. */
+  .nav-link:not(.nav-link-ai):hover {
     @apply text-accent;
   }
   .nav-link.active {
     @apply text-accent;
-  }
-  .nav-link.active-ai:hover {
-    @apply text-ai-accent;
   }
 
   .search-field {
@@ -207,10 +220,17 @@ const NAV = [
 
 <script>
   function toggleNav() {
-    const menuBtn = document.querySelector(".hamburger-menu");
+    const menuBtn =
+      document.querySelector<HTMLButtonElement>(".hamburger-menu");
     const menuIcon = document.querySelector(".menu-icon");
     const menuItems = document.querySelector("#menu-items");
     const scrim = document.querySelector("#menu-scrim");
+    const header = menuBtn?.closest("header");
+    const desktop = window.matchMedia("(width >= 640px)");
+
+    // Éléments qu'on a nous-mêmes rendus inertes, pour ne rendre au DOM que ce
+    // qu'on lui a pris si un jour quelque chose d'autre pose `inert`.
+    let inerted: Element[] = [];
 
     function setOpen(open: boolean) {
       menuIcon?.classList.toggle("is-active", open);
@@ -218,20 +238,58 @@ const NAV = [
       scrim?.classList.toggle("open", open);
       menuBtn?.setAttribute("aria-expanded", open ? "true" : "false");
       menuBtn?.setAttribute("aria-label", open ? "Close Menu" : "Open Menu");
+      document.documentElement.classList.toggle("menu-open", open);
+
+      // Le voile masque le reste de la page, il ne le neutralise pas : les liens
+      // derrière restent tabulables et activables, puisque le clavier ignore
+      // `pointer-events`, et un lecteur d'écran ne sait même pas que le menu
+      // s'est ouvert. `inert` retire les deux d'un coup.
+      if (open) {
+        inerted = Array.from(document.body.children).filter(
+          child => child !== header && !child.hasAttribute("inert")
+        );
+        inerted.forEach(child => child.setAttribute("inert", ""));
+      } else {
+        inerted.forEach(child => child.removeAttribute("inert"));
+        inerted = [];
+      }
+    }
+
+    // Fermer sans rendre le focus le laisserait retomber sur <body> : la
+    // tabulation suivante repartirait du lien d'évitement.
+    function close() {
+      const hadFocus = menuItems?.contains(document.activeElement);
+      setOpen(false);
+      if (hadFocus || document.activeElement === document.body)
+        menuBtn?.focus();
     }
 
     menuBtn?.addEventListener("click", () => {
-      setOpen(menuBtn.getAttribute("aria-expanded") !== "true");
+      if (menuBtn.getAttribute("aria-expanded") === "true") close();
+      else setOpen(true);
     });
 
     // Cliquer le voile ferme le menu : c'est ce qu'un utilisateur tente en
     // premier, et sans ça le voile est un mur qui n'obéit à rien.
-    scrim?.addEventListener("click", () => setOpen(false));
+    scrim?.addEventListener("click", close);
 
     // Échap ferme aussi, pour qui navigue au clavier.
     document.addEventListener("keydown", event => {
-      if (event.key === "Escape") setOpen(false);
+      if (event.key !== "Escape") return;
+      if (menuBtn?.getAttribute("aria-expanded") !== "true") return;
+      close();
     });
+
+    // Passer en desktop escamote le hamburger : sans ça le verrou de défilement
+    // et les `inert` survivraient à un simple pivot d'écran, sans plus aucun
+    // bouton pour les lever.
+    desktop.addEventListener("change", event => {
+      if (event.matches) setOpen(false);
+    });
+
+    // Le swap d'une view transition remplace <body> mais pas <html> : on repart
+    // d'un état propre plutôt que d'hériter d'un verrou orphelin.
+    setOpen(false);
   }
 
   toggleNav();

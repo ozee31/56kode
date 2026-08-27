@@ -48,6 +48,12 @@
   --color-accent-ai-strong: #c8d2f0; /* ajout : hover du bouton AI plein */
 
   /* --- signal ------------------------------------------------------------ */
+  /* Accent courant, redéfini par le conteneur du canevas AI. Sert à tout ce
+     qui doit suivre la teinte de la page sans que le markup ait à le savoir :
+     l'anneau de focus et les accents de `.prose`. Sans ça, le vert phosphore
+     du site ressortait sur le bleu des entrées radar. */
+  --accent-context: #6ef7a5;
+
   --color-signal-active: #6ef7a5;
   --color-signal-active-ai: #9aabff;
   --color-signal-track: #556b5f; /* corrigé (DS : #2c3a33, 1,62:1 → FAIL) */
@@ -177,9 +183,12 @@
 }
 
 @theme {
-  /* --- familles ---------------------------------------------------------- */
-  --font-chrome: "IBM Plex Mono", ui-monospace, monospace;
-  --font-reading: "IBM Plex Sans", system-ui, sans-serif;
+  /* --- familles ----------------------------------------------------------
+     `--font-plex-*` est généré par l'API `fonts` d'Astro à partir des fichiers
+     de `src/assets/fonts/` : la famille et ses replis y sont déclarés une
+     seule fois, dans astro.config.ts. Les répéter ici les ferait diverger. */
+  --font-chrome: var(--font-plex-mono);
+  --font-reading: var(--font-plex-sans);
 
   /* --- échelle typographique ---------------------------------------------
      5 pas fluides entre 375px et 1180px, bornés aux valeurs des maquettes. */

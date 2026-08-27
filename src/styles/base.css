@@ -9,8 +9,13 @@
   #main-content {
     animation: fadeIn 0.3s ease-out;
   }
+  /* Le canevas AI redéfinit l'accent courant : tout ce qui lit
+     `--accent-context` suit la teinte de la page sans règle dédiée. */
+  .bg-ai-canvas {
+    --accent-context: var(--color-accent-ai);
+  }
   a {
-    @apply focus-visible:outline-accent outline-hidden outline-offset-2 focus-visible:no-underline focus-visible:outline-2;
+    @apply focus-visible:outline-(--accent-context) outline-offset-2 focus-visible:outline-2;
   }
   /* Le preflight de Tailwind 4 a retiré le `cursor: pointer` que la v3 posait
      sur les boutons : sans ça, un <button> ne se signale plus comme cliquable.
@@ -29,7 +34,7 @@
 
   /* ===== Colonne de lecture ===== */
   .prose {
-    @apply font-reading prose-headings:!mb-3 prose-headings:!font-reading prose-headings:!text-fg-heading prose-p:!text-fg-body prose-a:!text-fg-body prose-a:!decoration-accent prose-a:underline-offset-4 hover:prose-a:!text-accent prose-blockquote:!border-l-accent/50 prose-blockquote:!text-fg-body prose-blockquote:not-italic prose-figcaption:!text-fg-muted prose-strong:!text-fg-strong prose-code:!rounded-none prose-code:!bg-raised prose-code:!font-chrome prose-code:!text-accent prose-code:p-1 prose-code:before:!content-none prose-code:after:!content-none prose-ol:!text-fg-body prose-ul:overflow-x-clip prose-ul:!text-fg-body prose-li:marker:!text-accent prose-table:!text-fg-body prose-th:border prose-th:!border-line prose-td:border prose-td:!border-line prose-img:!my-2 prose-img:mx-auto prose-img:border prose-img:!border-line prose-hr:!border-line;
+    @apply font-reading prose-headings:!mb-3 prose-headings:!font-reading prose-headings:!text-fg-heading prose-p:!text-fg-body prose-a:!text-fg-body prose-a:!decoration-(--accent-context) prose-a:underline-offset-4 hover:prose-a:!text-(--accent-context) prose-blockquote:!border-l-(--accent-context)/50 prose-blockquote:!text-fg-body prose-blockquote:not-italic prose-figcaption:!text-fg-muted prose-strong:!text-fg-strong prose-code:!rounded-none prose-code:!bg-raised prose-code:!font-chrome prose-code:!text-(--accent-context) prose-code:p-1 prose-code:before:!content-none prose-code:after:!content-none prose-ol:!text-fg-body prose-ul:overflow-x-clip prose-ul:!text-fg-body prose-li:marker:!text-(--accent-context) prose-table:!text-fg-body prose-th:border prose-th:!border-line prose-td:border prose-td:!border-line prose-img:!my-2 prose-img:mx-auto prose-img:border prose-img:!border-line prose-hr:!border-line;
   }
   .prose a {
     @apply break-words;
@@ -109,5 +114,5 @@
 }
 
 @utility focus-outline {
-  @apply focus-visible:outline-accent outline-hidden outline-offset-2 focus-visible:no-underline focus-visible:outline-2;
+  @apply focus-visible:outline-(--accent-context) outline-offset-2 focus-visible:outline-2;
 }

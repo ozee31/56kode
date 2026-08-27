@@ -46,7 +46,7 @@ const radarIsEmpty = radarEntries.length === 0;
 const stats = await getSiteStats();
 ---
 
-<Layout>
+<Layout schemaType="Blog" schemaName={SITE.titleShort}>
   <Header />
 
   <StatusBar>
@@ -103,6 +103,7 @@ const stats = await getSiteStats();
                 href={`/posts/${post.id}/`}
                 frontmatter={post.data}
                 readingTime={getMinutesRead(post)}
+                action="Read →"
               />
             ))
           }
@@ -155,13 +156,15 @@ const stats = await getSiteStats();
                 Nothing picked up yet
               </p>
               <p class="font-reading text-note text-ai-body">
-                Monitoring resumes as soon as an article earns a rating.
+                Monitoring resumes as soon as something worth keeping comes
+                through.
               </p>
             </div>
           ) : (
             <>
               <p class="border-line-ai font-reading text-body-sm text-ai-body border-b px-6 py-3">
-                Curated AI reading, rated by hand. 5 bars = read it tonight.
+                Other people's writing on AI agents and LLMs, picked after
+                reading.
               </p>
               {radarIsQuiet && (
                 <p class="border-line-ai flex items-center gap-3 border-b px-6 py-3.5">
