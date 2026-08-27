@@ -7,7 +7,7 @@ export const SITE: Site = {
   desc: "56kode is a developer blog on AI-assisted development: shaping architecture, review and conventions so coding agents and LLMs write code worth keeping.",
   title: "56kode - AI & Frontend Development Blog",
   titleShort: "56kode",
-  ogImage: "",
+  ogImage: "og.png",
   postPerIndex: 4,
   postPerPage: 10,
   scheduledPostMargin: 15 * 60 * 1000, // 15 minutes

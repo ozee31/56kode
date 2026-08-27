@@ -1,85 +1,53 @@
 import satori from "satori";
 import { SITE } from "@config";
-import loadGoogleFonts, { type FontOptions } from "../loadGoogleFont";
-import { OG } from "./palette";
+import loadFonts from "../loadFonts";
+import { OG, OG_FONT } from "./palette";
+import Frame from "./frame";
 
-export default async () => {
+export default async (stats?: { posts: number; radar: number }) => {
+  const statusRight = stats
+    ? `${stats.posts} posts · ${stats.radar} radar entries`
+    : undefined;
+
   return satori(
-    <div
-      style={{
-        background: OG.canvas,
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
+    <Frame
+      statusLeft={SITE.titleShort}
+      statusRight={statusRight}
+      footerLeft="Flavien Beninca · Context engineer"
     >
-      <div
+      <p
         style={{
-          border: `1px solid ${OG.line}`,
-          borderLeft: `8px solid ${OG.accent}`,
-          background: OG.raised,
-          display: "flex",
-          justifyContent: "center",
-          margin: "2.5rem",
-          width: "90%",
-          height: "82%",
+          fontFamily: OG_FONT.reading,
+          fontSize: 60,
+          fontWeight: 600,
+          letterSpacing: "-0.02em",
+          lineHeight: 1.12,
+          color: OG.textStrong,
+          margin: 0,
+          maxWidth: 940,
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            margin: "40px",
-            width: "90%",
-            height: "84%",
-          }}
-        >
-          <p
-            style={{
-              fontSize: 24,
-              letterSpacing: "0.13em",
-              color: OG.accent,
-              marginBottom: 16,
-            }}
-          >
-            {SITE.titleShort}
-          </p>
-          <p
-            style={{
-              fontSize: 64,
-              fontWeight: 600,
-              letterSpacing: "-0.03em",
-              lineHeight: 1.1,
-              color: OG.textStrong,
-              marginBottom: 20,
-            }}
-          >
-            {SITE.title}
-          </p>
-          <p
-            style={{
-              fontSize: 28,
-              lineHeight: 1.5,
-              color: OG.textMuted,
-              maxHeight: "30%",
-              overflow: "hidden",
-            }}
-          >
-            {SITE.desc}
-          </p>
-        </div>
-      </div>
-    </div>,
+        {SITE.title}
+      </p>
+      <p
+        style={{
+          fontFamily: OG_FONT.reading,
+          fontSize: 26,
+          lineHeight: 1.45,
+          color: OG.textBody,
+          marginTop: 26,
+          marginBottom: 0,
+          maxWidth: 940,
+        }}
+      >
+        {SITE.desc}
+      </p>
+    </Frame>,
     {
       width: 1200,
       height: 630,
       embedFont: true,
-      fonts: (await loadGoogleFonts(
-        SITE.title + SITE.desc + SITE.titleShort
-      )) as FontOptions[],
+      fonts: loadFonts(),
     }
   );
 };

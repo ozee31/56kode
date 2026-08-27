@@ -1,82 +1,68 @@
 import satori from "satori";
 import type { CollectionEntry } from "astro:content";
 import { SITE } from "@config";
-import loadGoogleFonts, { type FontOptions } from "../loadGoogleFont";
-import { OG } from "./palette";
+import getMinutesRead from "../getMinutesRead";
+import loadFonts from "../loadFonts";
+import { OG, OG_FONT } from "./palette";
+import Frame from "./frame";
+
+const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", {
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric",
+});
 
 export default async (post: CollectionEntry<"blog">) => {
+  const { title, description, pubDatetime, modDatetime } = post.data;
+  const date = DATE_FORMAT.format(modDatetime ?? pubDatetime);
+  const readingTime = getMinutesRead(post);
+
+  // L'auteur du site, pas celui du frontmatter : les 24 articles y portent
+  // « 56kode », ce qui affichait le nom du site deux fois dans le pied.
+  const footerLeft = [SITE.author, readingTime].filter(Boolean).join("  ·  ");
+
   return satori(
-    <div
-      style={{
-        background: OG.canvas,
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      {/* Filet accent à gauche : la signature du bloc de code, reprise en OG. */}
-      <div
+    <Frame statusLeft="Posts" statusRight={date} footerLeft={footerLeft}>
+      <p
         style={{
-          border: `1px solid ${OG.line}`,
-          borderLeft: `8px solid ${OG.accent}`,
-          background: OG.raised,
-          display: "flex",
-          justifyContent: "center",
-          margin: "2.5rem",
-          width: "90%",
-          height: "82%",
+          fontFamily: OG_FONT.reading,
+          fontSize: 60,
+          fontWeight: 600,
+          letterSpacing: "-0.02em",
+          lineHeight: 1.12,
+          color: OG.textStrong,
+          margin: 0,
+          // Satori pose lui-même l'ellipse, à condition d'un display block ;
+          // le `overflow: hidden` d'avant tranchait la phrase en plein mot.
+          display: "block",
+          lineClamp: 3,
         }}
       >
-        <div
+        {title}
+      </p>
+      {description && (
+        <p
           style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            margin: "40px",
-            width: "90%",
-            height: "84%",
+            fontFamily: OG_FONT.reading,
+            fontSize: 26,
+            lineHeight: 1.45,
+            color: OG.textBody,
+            marginTop: 26,
+            marginBottom: 0,
+            maxWidth: 940,
+            display: "block",
+            lineClamp: 3,
           }}
         >
-          <p
-            style={{
-              fontSize: 64,
-              fontWeight: 600,
-              letterSpacing: "-0.03em",
-              lineHeight: 1.1,
-              color: OG.textStrong,
-              maxHeight: "78%",
-              overflow: "hidden",
-            }}
-          >
-            {post.data.title}
-          </p>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              width: "100%",
-              fontSize: 24,
-              letterSpacing: "0.13em",
-              color: OG.textMuted,
-            }}
-          >
-            <span style={{ overflow: "hidden" }}>{post.data.author}</span>
-            <span style={{ overflow: "hidden", color: OG.accent }}>
-              {SITE.titleShort}
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>,
+          {description}
+        </p>
+      )}
+    </Frame>,
     {
       width: 1200,
       height: 630,
       embedFont: true,
-      fonts: (await loadGoogleFonts(
-        post.data.title + post.data.author + SITE.titleShort
-      )) as FontOptions[],
+      fonts: loadFonts(),
     }
   );
 };
