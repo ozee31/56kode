@@ -5,6 +5,7 @@ import { hastImageAttrsPlugin } from "./src/mdast/hast-image-attrs";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
+import minDark from "@shikijs/themes/min-dark";
 import { SITE } from "./src/config";
 
 /**
@@ -134,7 +135,18 @@ export default defineConfig({
       // in base.css) is gone. `min-dark` is low-chroma on purpose -- `night-owl`
       // pulls blue and would fight the phosphor accent and the AI accent.
       // For more themes, visit https://shiki.style/themes
-      theme: "min-dark",
+      //
+      // The theme is passed as an object rather than by name so its comment
+      // grey can be lifted: `#6b737c` on the raised background of a code block
+      // sits at 4.01:1, just under the 4.5:1 WCAG AA floor, and it was the only
+      // contrast failure left on the site. `#7d848c` reaches 5.10:1 and stays
+      // visibly dimmer than the code around it (the plain text runs at 10.05).
+      // Replacing the colour here means the corrected value is what Shiki
+      // emits, rather than a CSS rule fighting an inline style.
+      theme: {
+        ...minDark,
+        colorReplacements: { "#6b737c": "#7d848c" },
+      },
       wrap: true,
     },
   },
