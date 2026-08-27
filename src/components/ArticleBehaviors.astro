@@ -57,14 +57,17 @@
   /** Attaches links to headings in the document,
    *  allowing sharing of sections easily */
   function addHeadingLinks() {
-    const headings = Array.from(
-      document.querySelectorAll("h2, h3, h4, h5, h6")
-    );
+    // Portée limitée au contenu rendu : la sélection couvrait tout le document,
+    // donc les <h2> de colonne du pied de page (« Elsewhere », « Feeds »)
+    // recevaient un lien `href="#"` annoncé « Link to section ».
+    const article = document.getElementById("article");
+    if (!article) return;
+    const headings = Array.from(article.querySelectorAll("h2, h3, h4, h5, h6"));
     for (const heading of headings) {
       heading.classList.add("group");
       const link = document.createElement("a");
       link.className =
-        "heading-link ml-2 text-accent opacity-0 group-hover:opacity-100 focus:opacity-100";
+        "heading-link ml-2 text-accent opacity-0 group-hover:opacity-100 focus:opacity-100 [@media(hover:none)]:opacity-100";
       link.href = "#" + heading.id;
       link.setAttribute(
         "aria-label",
@@ -86,7 +89,7 @@
     const copyButtonLabel = "Copy";
     const codeBlocks = Array.from(document.querySelectorAll("pre"));
 
-    for (const codeBlock of codeBlocks) {
+    codeBlocks.forEach((codeBlock, index) => {
       const wrapper = document.createElement("div");
       wrapper.style.position = "relative";
 
@@ -94,6 +97,17 @@
       copyButton.className =
         "copy-code absolute right-3 -top-3 border border-line-strong bg-raised px-2 py-1 font-chrome text-micro uppercase tracking-chrome leading-4 text-fg-secondary hover:border-accent hover:text-accent";
       copyButton.innerHTML = copyButtonLabel;
+
+      // Le texte visible reste « Copy » ; le nom accessible distingue les
+      // boutons, sans quoi un lecteur d'écran en annonce onze identiques.
+      // Le langage vient de Shiki, qui le pose sur le <pre>.
+      const language = codeBlock.getAttribute("data-language");
+      copyButton.setAttribute(
+        "aria-label",
+        language
+          ? `Copy ${language} code block ${index + 1}`
+          : `Copy code block ${index + 1}`
+      );
       codeBlock.setAttribute("tabindex", "0");
       codeBlock.appendChild(copyButton);
 
@@ -104,7 +118,7 @@
       copyButton.addEventListener("click", async () => {
         await copyCode(codeBlock, copyButton);
       });
-    }
+    });
 
     async function copyCode(block, button) {
       const code = block.querySelector("code");

@@ -75,31 +75,39 @@ export default function SearchBar({ searchList }: Props) {
 
   return (
     <>
-      <label className="relative block">
-        <span className="absolute inset-y-0 left-0 flex items-center pl-3 font-chrome text-ui text-fg-muted">
-          <span aria-hidden="true">/</span>
-          <span className="sr-only">Search</span>
-        </span>
-        <input
-          className="block w-full border border-line-strong bg-raised py-3 pl-8 pr-3 font-reading text-lead text-fg-strong placeholder:text-fg-muted focus:border-accent focus:outline-none"
-          placeholder="search"
-          type="text"
-          name="search"
-          value={inputVal}
-          onChange={handleChange}
-          autoComplete="off"
-          // autoFocus
-          ref={inputRef}
-        />
-      </label>
+      {/* Le slot de `Main` n'a pas de gouttière : les cartes portent la leur,
+          d'où l'ajout ici. Sans ça le champ était collé au bord du conteneur,
+          décalé de 30px vers la gauche par rapport au titre de la page. */}
+      <div className="px-(--page-gutter) pt-6">
+        <label className="relative block">
+          <span className="absolute inset-y-0 left-0 flex items-center pl-3 font-chrome text-ui text-fg-muted">
+            <span aria-hidden="true">/</span>
+            <span className="sr-only">Search</span>
+          </span>
+          <input
+            className="block w-full border border-line-strong bg-raised py-3 pl-8 pr-3 font-reading text-lead text-fg-strong placeholder:text-fg-muted focus:border-accent focus:outline-none"
+            placeholder="search"
+            type="text"
+            name="search"
+            value={inputVal}
+            onChange={handleChange}
+            autoComplete="off"
+            // autoFocus
+            ref={inputRef}
+          />
+        </label>
 
-      {inputVal.length > 1 && (
-        <p className="mt-3.5 font-chrome text-meta uppercase tracking-chrome text-fg-muted">
-          {searchResults?.length ?? 0}
-          {searchResults?.length === 1 ? " result" : " results"} for “{inputVal}
-          ”
+        {/* Région live : les résultats arrivent sans rechargement, donc rien ne
+            les signalerait à un lecteur d'écran. `status` est poli — il attend
+            une pause dans la lecture au lieu de couper la frappe. */}
+        <p
+          role="status"
+          className="mt-3.5 font-chrome text-meta uppercase tracking-chrome text-fg-muted"
+        >
+          {inputVal.length > 1 &&
+            `${searchResults?.length ?? 0}${searchResults?.length === 1 ? " result" : " results"} for “${inputVal}”`}
         </p>
-      )}
+      </div>
 
       <ul className="mt-6 border-t border-line">
         {searchResults?.map(({ item, refIndex }) => (
