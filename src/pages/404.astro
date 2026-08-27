@@ -1,25 +1,117 @@
 ---
+import { getCollection } from "astro:content";
 import { SITE } from "@config";
 import Layout from "@layouts/Layout.astro";
 import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
-import LinkButton from "@components/LinkButton.astro";
+import StatusBar from "@components/StatusBar.astro";
+import Datetime from "@components/Datetime";
+import getSortedPosts from "@utils/getSortedPosts";
+
+// Seule page où le chrome prend le pas sur la colonne de lecture.
+const recent = getSortedPosts(await getCollection("blog")).slice(0, 3);
 ---
 
-<Layout title={`404 Not Found | ${SITE.title}`}>
+<Layout
+  title={`404 Not Found | ${SITE.titleShort}`}
+  description="This page does not exist. The connection dropped somewhere between the request and the file."
+  schemaName="404 Not Found"
+>
   <Header />
 
-  <main id="main-content">
-    <div class="not-found-wrapper">
-      <h1>404</h1>
-      <span aria-hidden="true">¯\_(ツ)_/¯</span>
-      <p>Page Not Found</p>
-      <LinkButton
-        href="/"
-        class="my-6 text-lg underline decoration-dashed underline-offset-8"
+  <StatusBar indicator="dead">
+    <Fragment slot="left">No carrier · 0 kbps · line dropped</Fragment>
+    <Fragment slot="center">Err 404 · requested path not found</Fragment>
+  </StatusBar>
+
+  <main id="main-content" class="relative w-full flex-1 overflow-hidden">
+    <div class="scanlines" aria-hidden="true"></div>
+
+    <div class="border-line bg-glow relative border-b">
+      <div class="max-w-page mx-auto px-(--page-gutter) pt-13 pb-11">
+        <p
+          class="font-reading text-display text-accent mb-5 leading-none font-semibold"
+        >
+          NO CARRIER
+        </p>
+        <h1
+          class="font-reading text-title text-fg-strong mb-4 max-w-[26ch] font-semibold text-pretty"
+        >
+          The line dropped before this page finished loading
+        </h1>
+        <p
+          class="max-w-measure font-reading text-lead text-fg-body mb-6.5 text-pretty"
+        >
+          Either the URL was mistyped, or the page moved. Both used to mean
+          picking up the handset and trying again.
+        </p>
+
+        <div class="max-w-measure border-l-accent bg-raised mb-6.5 border-l-2">
+          <div
+            class="border-line flex items-center justify-between border-b px-4 py-2.5"
+          >
+            <span
+              class="font-chrome text-micro tracking-chrome-wide text-fg-muted uppercase"
+              >Modem log</span
+            >
+            <span
+              class="font-chrome text-micro tracking-chrome text-fg-muted uppercase"
+              >tail -f</span
+            >
+          </div>
+          <pre
+            class="font-chrome text-body-sm text-accent overflow-x-auto p-4 leading-[1.8]">ATDT 56kode.com/<span class="text-fg-strong">the-page-you-wanted</span>
+CONNECT 56000/ARQ
+GET /the-page-you-wanted ... 404
+NO CARRIER<span class="caret" aria-hidden="true" /></pre>
+        </div>
+
+        <div class="flex flex-wrap gap-2.5">
+          <a
+            href="/"
+            class="focus-outline bg-accent font-chrome text-ui tracking-ui text-on-accent px-5 py-3.5 uppercase hover:opacity-90"
+            >Redial the homepage</a
+          >
+          <a
+            href="/posts/"
+            class="focus-outline border-line-strong font-chrome text-ui tracking-ui text-fg-body hover:border-accent hover:text-accent border px-5 py-3.5 uppercase"
+            >Browse all posts</a
+          >
+          <a
+            href="/search/"
+            class="focus-outline border-line-strong font-chrome text-ui tracking-ui text-fg-body hover:border-accent hover:text-accent border px-5 py-3.5 uppercase"
+            >Search instead</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <div class="max-w-page relative mx-auto px-(--page-gutter) py-6">
+      <h2
+        class="font-chrome text-micro tracking-chrome-wide text-fg-muted mb-3.5 uppercase"
       >
-        Go back home
-      </LinkButton>
+        While you are here — last three posts
+      </h2>
+      <ul class="flex flex-col gap-2.5">
+        {
+          recent.map(post => (
+            <li>
+              <a
+                href={`/posts/${post.id}/`}
+                class="focus-outline hover:text-accent flex flex-wrap items-baseline justify-between gap-x-5 gap-y-1"
+              >
+                <span class="font-reading text-body text-fg-heading">
+                  {post.data.title}
+                </span>
+                <Datetime
+                  pubDatetime={post.data.pubDatetime}
+                  modDatetime={post.data.modDatetime}
+                />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
     </div>
   </main>
 
@@ -28,22 +120,35 @@ import LinkButton from "@components/LinkButton.astro";
 
 <style>
   @reference "../styles/theme.css";
-  #main-content {
-    @apply mx-auto flex max-w-3xl flex-1 items-center justify-center;
-  }
-  .not-found-wrapper {
-    @apply mb-14 flex flex-col items-center justify-center;
-  }
-  .not-found-wrapper h1 {
-    @apply text-9xl font-bold text-accent;
-  }
-  .not-found-wrapper p {
-    @apply mt-4 text-2xl;
-  }
 
-  @media (width >= 640px) {
-    .not-found-wrapper p {
-      @apply text-3xl;
+  /* Lueur du tube, et lignes de balayage — dérivées de l'accent, jamais en dur. */
+  .bg-glow {
+    background: radial-gradient(
+      120% 140% at 20% 0%,
+      var(--color-bg-404-glow) 0%,
+      var(--color-bg-canvas) 62%
+    );
+  }
+  .scanlines {
+    @apply pointer-events-none absolute inset-0 z-10;
+    background: repeating-linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--color-accent-primary) 4%, transparent) 0 1px,
+      transparent 1px 4px
+    );
+  }
+  .caret {
+    @apply bg-accent ml-1.5 inline-block h-3.5 w-2 align-[-2px];
+    animation: caret 1.1s steps(1) infinite;
+  }
+  @keyframes caret {
+    50% {
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .caret {
+      animation: none;
     }
   }
 </style>

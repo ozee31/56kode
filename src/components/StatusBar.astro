@@ -1,0 +1,78 @@
+---
+// Barre de statut — composant signature de la direction 3A.
+// Une seule par page, juste sous le header. Porte l'humour modem du design
+// system (« CONNECTED · 56.6 KBPS ») et les compteurs réels du site.
+//
+// Trois zones (slots `left` / `center` / `right`) et deux jeux d'accent, le
+// canvas AI reprenant le même gabarit avec ses propres couleurs.
+import SignalBars from "./SignalBars.tsx";
+
+export interface Props {
+  variant?: "site" | "ai";
+  /** `signal` = barres de porteuse · `pulse` = point de monitoring · `dead` = ligne coupée (404) */
+  indicator?: "signal" | "pulse" | "dead" | "none";
+  /** Nombre de barres allumées quand `indicator="signal"`. */
+  signal?: number;
+  class?: string;
+}
+
+const {
+  variant = "site",
+  indicator = "signal",
+  signal = 4,
+  class: className = "",
+} = Astro.props;
+
+const isAi = variant === "ai";
+---
+
+<div
+  class:list={[
+    "border-line border-b",
+    isAi ? "border-line-ai bg-ai-raised" : "bg-raised",
+    className,
+  ]}
+>
+  <div
+    class:list={[
+      "max-w-page mx-auto flex items-center justify-between gap-x-6 px-(--page-gutter) py-2.5",
+      "font-chrome text-meta",
+      isAi ? "text-ai-muted" : "text-fg-muted",
+    ]}
+  >
+    <div class="flex min-w-0 items-center gap-2.5 truncate">
+      {
+        indicator === "signal" && (
+          <SignalBars value={signal} variant={variant} size="sm" />
+        )
+      }
+      {
+        indicator === "dead" && (
+          <SignalBars value={0} variant={variant} size="sm" />
+        )
+      }
+      {
+        indicator === "pulse" && (
+          <span
+            class:list={[
+              "rounded-dot size-2",
+              isAi
+                ? "bg-ai-accent shadow-(--glow-signal-ai)"
+                : "bg-online shadow-(--glow-signal)",
+            ]}
+            style="animation: var(--motion-pulse);"
+          />
+        )
+      }
+      <slot name="left" />
+    </div>
+
+    <div class="hidden sm:block"><slot name="center" /></div>
+
+    <div
+      class:list={["hidden sm:block", isAi ? "text-ai-accent" : "text-accent"]}
+    >
+      <slot name="right" />
+    </div>
+  </div>
+</div>

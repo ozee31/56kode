@@ -3,171 +3,205 @@ import { getCollection } from "astro:content";
 import Layout from "@layouts/Layout.astro";
 import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
-import LinkButton from "@components/LinkButton.astro";
+import StatusBar from "@components/StatusBar.astro";
 import Card from "@components/Card";
-import Socials from "@components/Socials.astro";
+import SignalBars from "@components/SignalBars";
 import getSortedPosts from "@utils/getSortedPosts";
-import { SITE, SOCIALS } from "@config";
+import getSiteStats from "@utils/getSiteStats";
+import getHostname from "@utils/getHostname";
+import getMinutesRead from "@utils/getMinutesRead";
+import { SITE } from "@config";
 
 const posts = await getCollection("blog");
-
 const sortedPosts = getSortedPosts(posts);
-const featuredPosts = sortedPosts.filter(({ data }) => data.featured);
-const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
 
-const socialCount = SOCIALS.filter(social => social.active).length;
+// Un seul article en tête, pleine largeur : le plus récent marqué `featured`,
+// à défaut le plus récent tout court. Les autres `featured` retombent dans la
+// liste — le gabarit 3A n'a qu'un emplacement de une.
+const featured =
+  sortedPosts.find(({ data }) => data.featured) ?? sortedPosts[0];
+const recentPosts = sortedPosts
+  .filter(post => post.id !== featured?.id)
+  .slice(0, SITE.postPerIndex);
+
+const radarEntries = await getCollection("aiRadar");
+radarEntries.sort(
+  (a, b) => b.data.pubDatetime.valueOf() - a.data.pubDatetime.valueOf()
+);
+// Autant d'entrées que d'articles dans la colonne de gauche : sous la barre
+// des 4, le rail s'arrête bien avant les posts et laisse une zone vide.
+const railEntries = radarEntries.slice(0, SITE.postPerIndex);
+const latestCatch = radarEntries[0]?.data.pubDatetime;
+
+// Le stress test prévoit un état vide explicite pour le rail : les barres
+// restent visibles mais éteintes et l'indicateur cesse de pulser. Sous 14 jours
+// sans nouvelle entrée, une variante compacte suffit.
+const DAY = 24 * 60 * 60 * 1000;
+const daysSinceCatch = latestCatch
+  ? Math.floor((Date.now() - latestCatch.valueOf()) / DAY)
+  : Infinity;
+const radarIsQuiet = daysSinceCatch > 14;
+const radarIsEmpty = radarEntries.length === 0;
+
+const stats = await getSiteStats();
 ---
 
-<Layout>
+<Layout schemaType="Blog" schemaName={SITE.titleShort}>
   <Header />
-  <main id="main-content">
-    <section id="hero">
-      <div class="hero-content">
-        <div class="hero-avatar shrink-0">
-          <img
-            src="/assets/avatar.png"
-            alt="Flavien Beninca"
-            width="112"
-            height="112"
-            class="avatar-img aspect-square h-28 w-28 shrink-0 rounded-full border-2 border-accent object-cover"
+
+  <StatusBar>
+    <Fragment slot="left">Connected · 56.6 kbps · ping 340 ms</Fragment>
+    <Fragment slot="center">
+      {stats.posts} posts · {stats.radar} radar entries
+    </Fragment>
+    <Fragment slot="right">
+      <a
+        href="/rss.xml"
+        target="_blank"
+        rel="noopener"
+        class="focus-outline uppercase hover:underline"
+      >
+        RSS always open ↗<span class="sr-only"> (opens in a new tab)</span>
+      </a>
+    </Fragment>
+  </StatusBar>
+
+  <main id="main-content" class="w-full">
+    {
+      featured && (
+        <ul class="max-w-page mx-auto">
+          <Card
+            href={`/posts/${featured.id}/`}
+            frontmatter={featured.data}
+            variant="featured"
+            headingLevel={1}
+            readingTime={getMinutesRead(featured)}
           />
-        </div>
-        <div class="hero-text">
-          <h1>
-            Flavien Beninca<br /><span class="text-xl"
-              >Lead Frontend Developer</span
-            >
-          </h1>
-          <p>
-            From 15+ years of frontend development to the frontier of AI agents
-            and LLMs — this blog covers AI-assisted development, React,
-            TypeScript, and the tools shaping how we build software today.
-          </p>
-          <div class="hero-links">
-            <a
-              target="_blank"
-              href="/rss.xml"
-              class="rss-link"
-              aria-label="rss feed"
-              title="RSS Feed"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="rss-icon"
-                ><path
-                  d="M19 20.001C19 11.729 12.271 5 4 5v2c7.168 0 13 5.832 13 13.001h2z"
-                ></path><path
-                  d="M12 20.001h2C14 14.486 9.514 10 4 10v2c4.411 0 8 3.589 8 8.001z"
-                ></path><circle cx="6" cy="18" r="2"></circle>
-              </svg>
-              <span class="sr-only">RSS Feed</span>
-            </a>
-            {socialCount > 0 && <Socials />}
-          </div>
-        </div>
-      </div>
-    </section>
+        </ul>
+      )
+    }
 
-    {
-      featuredPosts.length > 0 && (
-        <section id="featured">
-          <h2>Featured</h2>
-          <ul>
-            {featuredPosts.map(({ data, id }) => (
+    <div
+      class="max-w-page rail:grid-cols-[1fr_var(--layout-rail)] mx-auto grid"
+    >
+      <!-- Colonne des articles -->
+      <section aria-labelledby="recent-label" class="border-line rail:border-r">
+        <div
+          class="border-line bg-raised flex items-baseline justify-between border-b px-(--page-gutter) py-3.5"
+        >
+          <h2
+            id="recent-label"
+            class="font-chrome text-meta tracking-chrome-loose text-fg-muted uppercase"
+          >
+            Recent posts
+          </h2>
+        </div>
+        <ul>
+          {
+            recentPosts.map(post => (
               <Card
-                href={`/posts/${id}/`}
-                frontmatter={data}
-                secHeading={false}
+                href={`/posts/${post.id}/`}
+                frontmatter={post.data}
+                readingTime={getMinutesRead(post)}
+                action="Read →"
               />
-            ))}
-          </ul>
-        </section>
-      )
-    }
+            ))
+          }
+        </ul>
+        <p class="px-(--page-gutter) py-4.5">
+          <a
+            href="/posts/"
+            class="focus-outline font-chrome text-ui tracking-ui text-accent uppercase hover:underline"
+          >
+            All {stats.posts} posts →
+          </a>
+        </p>
+      </section>
 
-    {
-      recentPosts.length > 0 && (
-        <section id="recent-posts">
-          <h2>Recent Posts</h2>
-          <ul>
-            {recentPosts.map(
-              ({ data, id }, index) =>
-                index < SITE.postPerIndex && (
+      <!-- Rail AI Radar : canvas froid, accent bleu, jamais mélangé au site -->
+      <section aria-labelledby="radar-label" class="bg-ai-canvas">
+        <div
+          class="border-line-ai bg-ai-raised flex items-center justify-between border-b px-6 py-3.5"
+        >
+          <div class="flex items-center gap-2.5">
+            <span
+              class:list={[
+                "rounded-dot size-2",
+                radarIsEmpty || radarIsQuiet
+                  ? "bg-signal-off-ai"
+                  : "bg-ai-accent shadow-(--glow-signal-ai)",
+              ]}
+              style={radarIsEmpty || radarIsQuiet
+                ? undefined
+                : "animation: var(--motion-pulse);"}></span>
+            <h2
+              id="radar-label"
+              class="font-chrome text-ui tracking-chrome-loose text-ai-accent uppercase"
+            >
+              AI Radar
+            </h2>
+          </div>
+          <p class="font-chrome text-micro tracking-ui text-ai-muted uppercase">
+            {radarIsEmpty ? "No signal" : `${stats.radar} entries`}
+          </p>
+        </div>
+
+        {
+          radarIsEmpty ? (
+            <div class="px-6 py-9 text-center">
+              <div class="mb-4.5 flex justify-center">
+                <SignalBars value={0} variant="ai" size="md" />
+              </div>
+              <p class="font-reading text-subheading text-ai-fg mb-2.5 font-semibold">
+                Nothing picked up yet
+              </p>
+              <p class="font-reading text-note text-ai-body">
+                Monitoring resumes as soon as something worth keeping comes
+                through.
+              </p>
+            </div>
+          ) : (
+            <>
+              <p class="border-line-ai font-reading text-body-sm text-ai-body border-b px-6 py-3">
+                Other people's writing on AI agents and LLMs, picked after
+                reading.
+              </p>
+              {radarIsQuiet && (
+                <p class="border-line-ai flex items-center gap-3 border-b px-6 py-3.5">
+                  <SignalBars value={0} variant="ai" size="sm" />
+                  <span class="font-reading text-note text-ai-body">
+                    Nothing new for {daysSinceCatch} days — earlier entries
+                    below.
+                  </span>
+                </p>
+              )}
+              <ul>
+                {railEntries.map(entry => (
                   <Card
-                    href={`/posts/${id}/`}
-                    frontmatter={data}
-                    secHeading={false}
+                    href={`/ai-radar/${entry.data.slug}/`}
+                    frontmatter={entry.data}
+                    variant="compact"
+                    tone="ai"
+                    headingLevel={3}
+                    source={getHostname(entry.data.url)}
                   />
-                )
-            )}
-          </ul>
-        </section>
-      )
-    }
+                ))}
+              </ul>
+            </>
+          )
+        }
 
-    <div class="all-posts-btn-wrapper">
-      <LinkButton href="/posts/">
-        All Posts
-        <svg xmlns="http://www.w3.org/2000/svg"
-          ><path
-            d="m11.293 17.293 1.414 1.414L19.414 12l-6.707-6.707-1.414 1.414L15.586 11H6v2h9.586z"
-          ></path>
-        </svg>
-      </LinkButton>
+        <p class="px-6 py-4.5">
+          <a
+            href="/ai-radar/"
+            class="focus-outline font-chrome text-meta tracking-chrome text-ai-accent uppercase hover:underline"
+          >
+            All radar entries →
+          </a>
+        </p>
+      </section>
     </div>
   </main>
 
   <Footer />
 </Layout>
-
-<style>
-  @reference "../styles/theme.css";
-  /* ===== Hero Section ===== */
-  #hero {
-    @apply pb-6 pt-8;
-  }
-  .hero-content {
-    @apply flex flex-col items-center gap-5 text-center;
-  }
-  .avatar-img {
-    @apply h-28 w-28 shrink-0 rounded-full border-2 border-accent object-cover aspect-square;
-  }
-  #hero h1 {
-    @apply my-2 inline-block text-3xl font-bold;
-  }
-  #hero .rss-icon {
-    @apply h-6 w-6 scale-110 fill-accent;
-  }
-  #hero p {
-    @apply my-2;
-  }
-  .hero-links {
-    @apply mt-3 flex items-center gap-1;
-  }
-
-  @media (width >= 640px) {
-    .hero-content {
-      @apply flex-row items-start text-left;
-    }
-    .avatar-img {
-      @apply mt-2;
-    }
-    #hero h1 {
-      @apply my-2 text-5xl;
-    }
-    #hero .rss-icon {
-      @apply scale-125;
-    }
-  }
-
-  /* ===== Featured & Recent Posts Sections ===== */
-  #featured,
-  #recent-posts {
-    @apply pb-6 pt-6;
-  }
-  #featured h2,
-  #recent-posts h2 {
-    @apply text-2xl font-semibold tracking-wide;
-  }
-  .all-posts-btn-wrapper {
-    @apply my-8 text-center;
-  }
-</style>

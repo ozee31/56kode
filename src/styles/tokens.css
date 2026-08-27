@@ -1,0 +1,270 @@
+/* ============================================================================
+   56kode — design tokens
+   Direction 3A Phosphor. Source de vérité : design-reference/56kode Design System.dc.html
+   Seul fichier du projet autorisé à contenir des valeurs littérales.
+
+   Deux couches :
+     1. :root          — noms verbatim du design system, pour un audit 1:1 des maquettes
+     2. @theme         — exposition à Tailwind 4 sous des alias courts et lisibles
+   Les noms des deux couches sont volontairement DIFFÉRENTS : réutiliser le même nom
+   des deux côtés produit une auto-référence invalide (`--x: var(--x)`), le bug qui
+   existait dans l'ancien base.css et n'était sauvé que par l'ordre des layers.
+   ========================================================================== */
+
+:root {
+  color-scheme: dark;
+
+  /* --- surfaces ---------------------------------------------------------- */
+  --color-bg-canvas: #070a09;
+  --color-bg-raised: #0b0f0d;
+  --color-bg-feature: #0c120f;
+  --color-bg-ai-canvas: #080c14;
+  --color-bg-ai-raised: #0a1120;
+  --color-bg-404-glow: #0d1a13; /* ajout : centre du radial-gradient de la 404 */
+
+  /* --- filets ------------------------------------------------------------ */
+  --color-border-default: #23302a;
+  --color-border-subtle: #1a231e;
+  --color-border-interactive: #556b5f; /* corrigé (DS : #2c3a33, 1,62:1 → FAIL) */
+  --color-border-ai: #1c2740;
+
+  /* --- texte ------------------------------------------------------------- */
+  --color-text-primary: #f4fbf7;
+  --color-text-heading: #eef6f1;
+  --color-text-chrome: #e6efe9; /* ajout : texte hérité du wrapper mono */
+  --color-text-body: #c3d2ca;
+  --color-text-secondary: #a8bab0;
+  --color-text-muted: #8ba396;
+  --color-text-on-accent: #04160c;
+  --color-text-ai-heading: #eaeefb;
+  --color-text-ai-body: #93a3c6;
+  --color-text-ai-muted: #8b9ac0;
+
+  /* --- accents ----------------------------------------------------------- */
+  --color-accent-primary: #6ef7a5;
+  --color-accent-primary-wash: #12281c;
+  --color-accent-ai: #9aabff;
+  --color-accent-ai-wash: #141c33;
+  --color-accent-ai-strong: #c8d2f0; /* ajout : hover du bouton AI plein */
+
+  /* --- signal ------------------------------------------------------------ */
+  /* Accent courant, redéfini par le conteneur du canevas AI. Sert à tout ce
+     qui doit suivre la teinte de la page sans que le markup ait à le savoir :
+     l'anneau de focus et les accents de `.prose`. Sans ça, le vert phosphore
+     du site ressortait sur le bleu des entrées radar. */
+  --accent-context: #6ef7a5;
+
+  --color-signal-active: #6ef7a5;
+  --color-signal-active-ai: #9aabff;
+  --color-signal-track: #556b5f; /* corrigé (DS : #2c3a33, 1,62:1 → FAIL) */
+  --color-signal-track-ai: #4f6096; /* corrigé (DS : #252f4d, 1,48:1 → FAIL) */
+  --color-status-online: #6ef7a5;
+
+  /* --- graisses (pour le CSS brut ; Tailwind couvre déjà font-medium…) ---- */
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+
+  /* --- espacement --------------------------------------------------------
+     Rampe 2px alignée sur l'échelle native de Tailwind : chaque pas a son
+     utilitaire (2px = p-0.5, 6px = p-1.5, 30px = p-7.5, 56px = p-14…).
+     Ces variables servent au CSS brut et aux <style> scopés.
+     Snap appliqué aux maquettes : 9→10, 11→12, 13→14, 15→16, 22→24, 28→30. */
+  --space-1: 2px;
+  --space-2: 4px;
+  --space-3: 6px;
+  --space-4: 8px;
+  --space-5: 10px;
+  --space-6: 12px;
+  --space-7: 14px;
+  --space-8: 16px;
+  --space-9: 18px;
+  --space-10: 20px;
+  --space-11: 24px;
+  --space-12: 30px;
+  --space-13: 40px;
+  --space-14: 56px;
+
+  /* --- structure --------------------------------------------------------- */
+  --border-width: 1px;
+  --border-emphasis-width: 2px;
+  --measure-reading: 68ch;
+  --layout-rail: 400px;
+  --layout-page: 1180px;
+  --control-size: 30px; /* 44px sous 768px, cf. @media plus bas */
+
+  /* gutter contextuel : 30 en pleine largeur, 20 en tablette, 16 en mobile */
+  --page-gutter: 30px;
+
+  /* --- signal (géométrie) -------------------------------------------------
+     Le DS déclare 4/6/9/12/12, mais toutes les maquettes — y compris sa propre
+     démo — rendent 3/5/7/10/12. C'est cette série qui fait foi. */
+  --signal-bar-width: 3px;
+  --signal-bar-gap: 2px;
+  --signal-step-1: 3px;
+  --signal-step-2: 5px;
+  --signal-step-3: 7px;
+  --signal-step-4: 10px;
+  --signal-step-5: 12px;
+
+  --glow-signal: 0 0 10px var(--color-accent-primary);
+  --glow-signal-ai: 0 0 10px var(--color-accent-ai);
+  --motion-pulse: pulse 2s ease-in-out infinite;
+}
+
+@media (width < 768px) {
+  :root {
+    --page-gutter: 16px;
+    --control-size: 44px;
+  }
+}
+
+@media (width >= 768px) and (width < 1024px) {
+  :root {
+    --page-gutter: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-pulse: none;
+  }
+}
+
+/* ============================================================================
+   Exposition à Tailwind
+   ========================================================================== */
+
+@theme inline {
+  /* --- surfaces --- */
+  --color-canvas: var(--color-bg-canvas);
+  --color-raised: var(--color-bg-raised);
+  --color-feature: var(--color-bg-feature);
+  --color-ai-canvas: var(--color-bg-ai-canvas);
+  --color-ai-raised: var(--color-bg-ai-raised);
+  --color-glow-404: var(--color-bg-404-glow);
+
+  /* --- filets --- */
+  --color-line: var(--color-border-default);
+  --color-line-subtle: var(--color-border-subtle);
+  --color-line-strong: var(--color-border-interactive);
+  --color-line-ai: var(--color-border-ai);
+
+  /* --- texte --- */
+  --color-fg: var(--color-text-chrome);
+  --color-fg-strong: var(--color-text-primary);
+  --color-fg-heading: var(--color-text-heading);
+  --color-fg-body: var(--color-text-body);
+  --color-fg-secondary: var(--color-text-secondary);
+  --color-fg-muted: var(--color-text-muted);
+  --color-on-accent: var(--color-text-on-accent);
+  --color-ai-fg: var(--color-text-ai-heading);
+  --color-ai-body: var(--color-text-ai-body);
+  --color-ai-muted: var(--color-text-ai-muted);
+
+  /* --- accents --- */
+  --color-accent: var(--color-accent-primary);
+  --color-accent-wash: var(--color-accent-primary-wash);
+  --color-ai-accent: var(--color-accent-ai);
+  --color-ai-accent-wash: var(--color-accent-ai-wash);
+  --color-ai-accent-strong: var(--color-accent-ai-strong);
+
+  /* --- signal --- */
+  --color-signal-on: var(--color-signal-active);
+  --color-signal-off: var(--color-signal-track);
+  --color-signal-on-ai: var(--color-signal-active-ai);
+  --color-signal-off-ai: var(--color-signal-track-ai);
+  --color-online: var(--color-status-online);
+
+  /* --- conteneurs --- */
+  --container-page: var(--layout-page);
+  --container-rail: var(--layout-rail);
+  --container-measure: var(--measure-reading);
+}
+
+@theme {
+  /* --- familles ----------------------------------------------------------
+     `--font-plex-*` est généré par l'API `fonts` d'Astro à partir des fichiers
+     de `src/assets/fonts/` : la famille et ses replis y sont déclarés une
+     seule fois, dans astro.config.ts. Les répéter ici les ferait diverger. */
+  --font-chrome: var(--font-plex-mono);
+  --font-reading: var(--font-plex-sans);
+
+  /* --- échelle typographique ---------------------------------------------
+     5 pas fluides entre 375px et 1180px, bornés aux valeurs des maquettes. */
+  --text-display: clamp(27px, 20.01px + 1.863vw, 42px);
+  --text-display--line-height: 1.08;
+  --text-display--letter-spacing: -0.03em;
+
+  --text-title: 32px;
+  --text-title--line-height: 1.15;
+  --text-title--letter-spacing: -0.025em;
+
+  --text-heading: clamp(20px, 18.6px + 0.373vw, 23px);
+  --text-heading--line-height: 1.2;
+  --text-heading--letter-spacing: -0.02em;
+
+  --text-subheading: 18px;
+  --text-subheading--line-height: 1.3;
+  --text-subheading--letter-spacing: -0.015em;
+
+  --text-logo: 19px; /* ajout : logo du header, titre d'état vide */
+  --text-logo--line-height: 1.2;
+  --text-logo--letter-spacing: -0.02em;
+
+  --text-lead: clamp(17px, 16.53px + 0.124vw, 18px);
+  --text-lead--line-height: 1.65;
+
+  --text-body: clamp(15px, 14.53px + 0.124vw, 16px);
+  --text-body--line-height: 1.6;
+
+  --text-note: 14px; /* ajout : pitch du footer, liens du rail */
+  --text-note--line-height: 1.6;
+
+  --text-body-sm: 13px;
+  --text-body-sm--line-height: 1.55;
+
+  --text-ui: 12px;
+  --text-ui--line-height: 1.4;
+  --text-ui--letter-spacing: 0.1em;
+
+  --text-meta: 11px;
+  --text-meta--line-height: 1.4;
+  --text-meta--letter-spacing: 0.13em;
+
+  --text-micro: 10px; /* plancher absolu */
+  --text-micro--line-height: 1.4;
+  --text-micro--letter-spacing: 0.13em;
+
+  /* --- interlignes -------------------------------------------------------- */
+  --leading-display: 1.08;
+  --leading-heading: 1.2;
+  --leading-snug: 1.3;
+  --leading-ui: 1.4;
+  --leading-body: 1.6;
+  --leading-reading: 1.65;
+
+  /* --- interlettrages ----------------------------------------------------- */
+  --tracking-display: -0.03em;
+  --tracking-heading: -0.02em;
+  --tracking-ui: 0.1em;
+  --tracking-chrome: 0.13em;
+  --tracking-chrome-wide: 0.16em;
+  --tracking-chrome-loose: 0.2em;
+
+  /* --- rayons : le seul arrondi du système est le point de statut --------- */
+  --radius-dot: 50%;
+
+  /* --- breakpoint de bascule du rail AI Radar ----------------------------- */
+  --breakpoint-rail: 900px;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}

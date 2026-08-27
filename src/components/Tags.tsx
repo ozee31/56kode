@@ -1,21 +1,25 @@
+import Tag from "./Tag";
+
 export interface Props {
   tags: string[];
   size?: "sm" | "lg";
+  /** Tag actuellement filtré, rendu en aplat accent. */
+  activeTag?: string;
+  className?: string;
 }
 
-export default function Tags({ tags, size = "sm" }: Props) {
+/** Liste de badges. Toute la présentation vit dans `Tag` — ce composant ne fait que la grille. */
+export default function Tags({
+  tags,
+  size = "sm",
+  activeTag,
+  className = "",
+}: Props) {
   return (
-    <ul className="flex flex-wrap gap-2">
+    <ul className={`flex flex-wrap gap-2 ${className}`.trim()}>
       {tags.map(tag => (
-        <li key={tag} className="inline-block">
-          <a
-            href={`/tags/${tag}/`}
-            className={`${
-              size === "sm" ? "px-2.5 py-0.5 text-xs" : "px-3 py-1 text-sm"
-            } inline-block rounded-full border border-border bg-card/40 transition-colors hover:border-accent/40 hover:bg-accent/15 hover:text-accent focus-visible:p-1`}
-          >
-            {tag}
-          </a>
+        <li key={tag}>
+          <Tag tag={tag} size={size} active={tag === activeTag} />
         </li>
       ))}
     </ul>

@@ -75,45 +75,49 @@ export default function SearchBar({ searchList }: Props) {
 
   return (
     <>
-      <label className="relative block">
-        <span className="absolute inset-y-0 left-0 flex items-center pl-2 opacity-75">
-          <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M19.023 16.977a35.13 35.13 0 0 1-1.367-1.384c-.372-.378-.596-.653-.596-.653l-2.8-1.337A6.962 6.962 0 0 0 16 9c0-3.859-3.14-7-7-7S2 5.141 2 9s3.14 7 7 7c1.763 0 3.37-.66 4.603-1.739l1.337 2.8s.275.224.653.596c.387.363.896.854 1.384 1.367l1.358 1.392.604.646 2.121-2.121-.646-.604c-.379-.372-.885-.866-1.391-1.36zM9 14c-2.757 0-5-2.243-5-5s2.243-5 5-5 5 2.243 5 5-2.243 5-5 5z"></path>
-          </svg>
-          <span className="sr-only">Search</span>
-        </span>
-        <input
-          className="block w-full rounded border border-foreground/40 bg-background py-3 pl-10 pr-3 placeholder:italic focus:border-accent focus:outline-none"
-          placeholder="Search for anything..."
-          type="text"
-          name="search"
-          value={inputVal}
-          onChange={handleChange}
-          autoComplete="off"
-          // autoFocus
-          ref={inputRef}
-        />
-      </label>
+      {/* Le slot de `Main` n'a pas de gouttière : les cartes portent la leur,
+          d'où l'ajout ici. Sans ça le champ était collé au bord du conteneur,
+          décalé de 30px vers la gauche par rapport au titre de la page. */}
+      <div className="px-(--page-gutter) pt-6">
+        <label className="relative block">
+          <span className="absolute inset-y-0 left-0 flex items-center pl-3 font-chrome text-ui text-fg-muted">
+            <span aria-hidden="true">/</span>
+            <span className="sr-only">Search</span>
+          </span>
+          <input
+            className="block w-full border border-line-strong bg-raised py-3 pl-8 pr-3 font-reading text-lead text-fg-strong placeholder:text-fg-muted focus:border-accent focus:outline-none"
+            placeholder="search"
+            type="text"
+            name="search"
+            value={inputVal}
+            onChange={handleChange}
+            autoComplete="off"
+            // autoFocus
+            ref={inputRef}
+          />
+        </label>
 
-      {inputVal.length > 1 && (
-        <div className="mt-8">
-          Found {searchResults?.length}
-          {searchResults?.length && searchResults?.length === 1
-            ? " result"
-            : " results"}{" "}
-          for '{inputVal}'
-        </div>
-      )}
+        {/* Région live : les résultats arrivent sans rechargement, donc rien ne
+            les signalerait à un lecteur d'écran. `status` est poli — il attend
+            une pause dans la lecture au lieu de couper la frappe. */}
+        <p
+          role="status"
+          className="mt-3.5 font-chrome text-meta uppercase tracking-chrome text-fg-muted"
+        >
+          {inputVal.length > 1 &&
+            `${searchResults?.length ?? 0}${searchResults?.length === 1 ? " result" : " results"} for “${inputVal}”`}
+        </p>
+      </div>
 
-      <ul>
-        {searchResults &&
-          searchResults.map(({ item, refIndex }) => (
-            <Card
-              href={item.href}
-              frontmatter={item.data}
-              key={`${refIndex}-${item.href}`}
-            />
-          ))}
+      <ul className="mt-6 border-t border-line">
+        {searchResults?.map(({ item, refIndex }) => (
+          <Card
+            href={item.href}
+            frontmatter={item.data}
+            tone={item.href.startsWith("/ai-radar/") ? "ai" : "site"}
+            key={`${refIndex}-${item.href}`}
+          />
+        ))}
       </ul>
     </>
   );

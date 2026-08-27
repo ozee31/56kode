@@ -5,10 +5,11 @@ import Main from "@layouts/Main.astro";
 import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
 import Card from "@components/Card";
-import AiRadarCard from "@components/AiRadarCard";
 import Pagination from "@components/Pagination.astro";
+import getHostname from "@utils/getHostname";
+import getMinutesRead from "@utils/getMinutesRead";
+import getPaginationMeta from "@utils/getPaginationMeta";
 import { SITE } from "@config";
-import Hr from "@components/Hr.astro";
 
 export interface Props {
   currentPage: number;
@@ -30,27 +31,48 @@ const {
   tag,
   tagName,
   aiRadarPagination,
-} = Astro.props;
+}: Props = Astro.props;
+
+const matches = paginatedPosts.length + aiRadarPagination.paginatedPosts.length;
+const { titleSuffix, descSuffix } = getPaginationMeta(currentPage, totalPages);
 ---
 
 <Layout
-  title={`Tag: ${tagName} | ${SITE.title}`}
-  description={`Browse all articles and AI radar posts tagged with "${tagName}". In-depth content about ${tagName} development, best practices, and insights.`}
+  title={`Tag: ${tagName}${titleSuffix} | ${SITE.titleShort}`}
+  description={`Every article and AI Radar entry tagged “${tagName}”.${descSuffix}`}
+  schemaType="CollectionPage"
+  schemaName={`Tag: ${tagName}${titleSuffix}`}
 >
   <Header activeNav="tags" />
   <Main
-    pageTitle={[`Tag:`, `${tagName}`]}
+    pageTitle={["Tag:", tagName]}
     titleTransition={tag}
-    pageDesc={`All the articles with the tag "${tagName}".`}
+    pageDesc={`Everything tagged “${tagName}” — my own articles first, then the AI Radar entries that carry the same tag.`}
+    headingMeta={`Filter active · ${matches} ${matches === 1 ? "match" : "matches"}`}
+    statusLeft="Filter active"
+    statusCenter={`Tag “${tagName}”`}
+    statusRight="All tags →"
+    statusRightHref="/tags/"
   >
-    <h1 slot="title" transition:name={tag}>{`Tag:${tag}`}</h1>
     {
       paginatedPosts.length > 0 && (
-        <section>
-          <h2 class="text-3xl">My posts</h2>
+        <section aria-labelledby="tag-posts-label">
+          <div class="border-line bg-raised border-b px-(--page-gutter) py-3.5">
+            <h2
+              id="tag-posts-label"
+              class="font-chrome text-meta tracking-chrome-loose text-fg-muted uppercase"
+            >
+              My posts
+            </h2>
+          </div>
           <ul>
-            {paginatedPosts.map(({ data, id }) => (
-              <Card href={`/posts/${id}/`} frontmatter={data} />
+            {paginatedPosts.map(post => (
+              <Card
+                href={`/posts/${post.id}/`}
+                frontmatter={post.data}
+                readingTime={getMinutesRead(post)}
+                action="Read →"
+              />
             ))}
           </ul>
         </section>
@@ -58,19 +80,24 @@ const {
     }
 
     {
-      paginatedPosts.length > 0 &&
-        aiRadarPagination.paginatedPosts.length > 0 && <Hr />
-    }
-
-    {
       aiRadarPagination.paginatedPosts.length > 0 && (
-        <section class="mt-5">
-          <h2 class="text-3xl">AI Radar</h2>
+        <section aria-labelledby="tag-radar-label" class="bg-ai-canvas">
+          <div class="border-line-ai bg-ai-raised border-y px-(--page-gutter) py-3.5">
+            <h2
+              id="tag-radar-label"
+              class="font-chrome text-meta tracking-chrome-loose text-ai-accent uppercase"
+            >
+              AI Radar
+            </h2>
+          </div>
           <ul>
             {aiRadarPagination.paginatedPosts.map(item => (
-              <AiRadarCard
+              <Card
                 href={`/ai-radar/${item.data.slug}/`}
                 frontmatter={item.data}
+                tone="ai"
+                source={getHostname(item.data.url)}
+                action="Read note →"
               />
             ))}
           </ul>

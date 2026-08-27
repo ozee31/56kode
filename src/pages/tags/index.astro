@@ -4,21 +4,148 @@ import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
 import Layout from "@layouts/Layout.astro";
 import Main from "@layouts/Main.astro";
-import Tag from "@components/Tag.astro";
+import Tag from "@components/Tag";
 import { getUniqueTagsForAllPosts } from "@utils/getUniqueTags";
+import { slugifyAll } from "@utils/slugify";
 import { SITE } from "@config";
 
 const blogPosts = await getCollection("blog");
 const aiRadarPosts = await getCollection("aiRadar");
 const tags = getUniqueTagsForAllPosts(blogPosts, aiRadarPosts);
+
+// Fréquence d'usage : le volume est le vrai problème de cette page (~180 tags),
+// donc la maquette classe d'abord par usage avant de dérouler l'alphabet.
+const counts = new Map<string, number>();
+for (const entry of [...blogPosts, ...aiRadarPosts]) {
+  for (const slug of slugifyAll(entry.data.tags)) {
+    counts.set(slug, (counts.get(slug) ?? 0) + 1);
+  }
+}
+
+const withCounts = tags.map(({ tag, tagName }) => ({
+  tag,
+  tagName,
+  count: counts.get(tag) ?? 0,
+}));
+
+const maxCount = Math.max(1, ...withCounts.map(t => t.count));
+const mostUsed = [...withCounts].sort((a, b) => b.count - a.count).slice(0, 12);
+
+// Groupes alphabétiques, pour le rail de saut.
+const LETTERS = ["#", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
+// getUniqueTagsForAllPosts concatène les tags du blog puis ceux du radar :
+// l'ordre global n'est donc pas alphabétique. On le rétablit pour les groupes.
+const alphabetical = [...withCounts].sort((a, b) => a.tag.localeCompare(b.tag));
+
+const groups = LETTERS.map(letter => ({
+  letter,
+  tags: alphabetical.filter(({ tag }) => {
+    const first = tag[0]?.toUpperCase() ?? "";
+    return letter === "#" ? !/[A-Z]/.test(first) : first === letter;
+  }),
+})).filter(group => group.tags.length > 0);
 ---
 
-<Layout title={`Tags | ${SITE.title}`}>
+<Layout
+  title={`Tags | ${SITE.titleShort}`}
+  description="Every tag used across the articles and the AI Radar, with how often each one comes up."
+  schemaType="CollectionPage"
+  schemaName="Tags"
+>
   <Header activeNav="tags" />
-  <Main pageTitle="Tags" pageDesc="All the tags used in posts.">
-    <ul class="flex flex-wrap gap-2">
-      {tags.map(({ tag }) => <Tag {tag} size="lg" />)}
-    </ul>
+  <Main
+    pageTitle="Tags"
+    pageDesc="Every tag used across the posts and the AI Radar. Sorted by how often each one actually shows up, then alphabetically."
+    headingMeta={`${withCounts.length} tags`}
+    statusLeft="Index · sorted by usage"
+    statusCenter={`${withCounts.length} tags across ${blogPosts.length + aiRadarPosts.length} entries`}
+  >
+    <section aria-labelledby="most-used" class="border-line border-b">
+      <div class="border-line bg-raised border-b px-(--page-gutter) py-3.5">
+        <h2
+          id="most-used"
+          class="font-chrome text-meta tracking-chrome-loose text-fg-muted uppercase"
+        >
+          Most used
+        </h2>
+      </div>
+      <ul
+        class="grid gap-x-8 gap-y-4.5 px-(--page-gutter) py-6 sm:grid-cols-2 lg:grid-cols-3"
+      >
+        {
+          mostUsed.map(({ tag, tagName, count }) => (
+            <li>
+              <a href={`/tags/${tag}/`} class="focus-outline group block">
+                <span class="mb-2 flex items-baseline justify-between gap-3">
+                  <span class="font-reading text-body text-fg-heading group-hover:text-accent">
+                    {tagName}
+                  </span>
+                  <span class="font-chrome text-meta text-fg-muted">
+                    {count}
+                  </span>
+                </span>
+                <span class="bg-signal-off block h-[3px] w-full">
+                  <span
+                    class="bg-accent block h-[3px]"
+                    style={`width: ${Math.round((count / maxCount) * 100)}%`}
+                  />
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <nav
+      aria-label="Jump to letter"
+      class="border-line bg-raised flex flex-wrap items-center border-b px-(--page-gutter)"
+    >
+      <span
+        class="font-chrome text-micro tracking-chrome-wide text-fg-muted pr-3 uppercase"
+        >Jump</span
+      >
+      {
+        LETTERS.map(letter => {
+          const has = groups.some(group => group.letter === letter);
+          return has ? (
+            <a
+              href={`#letter-${letter === "#" ? "other" : letter}`}
+              class="focus-outline font-chrome text-ui text-fg-secondary hover:text-accent px-2 py-2.5"
+            >
+              {letter}
+            </a>
+          ) : (
+            <span
+              aria-hidden="true"
+              class="font-chrome text-ui text-signal-off px-2 py-2.5"
+            >
+              {letter}
+            </span>
+          );
+        })
+      }
+    </nav>
+
+    {
+      groups.map(group => (
+        <section
+          id={`letter-${group.letter === "#" ? "other" : group.letter}`}
+          class="border-line-subtle scroll-mt-4 border-b px-(--page-gutter) py-6"
+        >
+          <h2 class="font-chrome text-micro tracking-chrome-wide text-fg-muted mb-3.5 uppercase">
+            {group.letter}
+          </h2>
+          <ul class="flex flex-wrap gap-2">
+            {group.tags.map(({ tag, count }) => (
+              <li>
+                <Tag tag={tag} size="lg" count={count} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
   </Main>
   <Footer />
 </Layout>

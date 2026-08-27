@@ -2,49 +2,84 @@
 import LinkButton from "./LinkButton.astro";
 import socialIcons from "@assets/socialIcons";
 
-const URL = Astro.url;
+export interface Props {
+  title: string;
+  description?: string;
+}
 
+const { title, description }: Props = Astro.props;
+
+const url = Astro.url.href;
+const enc = encodeURIComponent;
+
+/**
+ * Coupe sur une frontière de mot et suffixe une ellipse.
+ * X et Bluesky ont des limites dures : un texte tronqué au milieu d'un mot,
+ * ou un partage refusé, sont deux mauvaises façons d'échouer.
+ */
+function truncate(text: string, max: number): string {
+  if (text.length <= max) return text;
+  const cut = text.slice(0, max - 1);
+  const boundary = cut.lastIndexOf(" ");
+  return `${(boundary > max * 0.6 ? cut.slice(0, boundary) : cut).trimEnd()}…`;
+}
+
+const blurb = description?.trim() || title;
+
+// X : 280 caractères, l'URL en consomme 23 quelle que soit sa longueur (t.co).
+const xText = truncate(blurb, 230);
+// Bluesky : un seul champ de 300 caractères, URL comprise et non raccourcie.
+const blueskyText = `${truncate(blurb, Math.max(40, 292 - url.length))}\n\n${url}`;
+
+/**
+ * Réseaux où un article de dev a une chance d'être partagé. WhatsApp, Telegram
+ * et Pinterest ont été retirés : héritage du thème AstroPaper, sans usage ici.
+ *
+ * LinkedIn et Facebook n'acceptent **que** l'URL : leurs paramètres de texte
+ * (`title`/`summary` pour l'ancien `shareArticle`, `quote` pour Facebook) sont
+ * dépréciés et ignorés. Les deux construisent leur aperçu à partir des balises
+ * Open Graph de la page — c'est donc `Layout.astro` qui décide de leur rendu,
+ * pas ce composant.
+ */
 const shareLinks = [
   {
-    name: "WhatsApp",
-    href: "https://wa.me/?text=",
-    linkTitle: `Share this post via WhatsApp`,
+    name: "X",
+    href: `https://x.com/intent/post?text=${enc(xText)}&url=${enc(url)}`,
+    linkTitle: "Share this post on X",
+  },
+  {
+    name: "LinkedIn",
+    href: `https://www.linkedin.com/sharing/share-offsite/?url=${enc(url)}`,
+    linkTitle: "Share this post on LinkedIn",
+  },
+  {
+    name: "Bluesky",
+    href: `https://bsky.app/intent/compose?text=${enc(blueskyText)}`,
+    linkTitle: "Share this post on Bluesky",
   },
   {
     name: "Facebook",
-    href: "https://www.facebook.com/sharer.php?u=",
-    linkTitle: `Share this post on Facebook`,
-  },
-  {
-    name: "Twitter",
-    href: "https://twitter.com/intent/tweet?url=",
-    linkTitle: `Tweet this post`,
-  },
-  {
-    name: "Telegram",
-    href: "https://t.me/share/url?url=",
-    linkTitle: `Share this post via Telegram`,
-  },
-  {
-    name: "Pinterest",
-    href: "https://pinterest.com/pin/create/button/?url=",
-    linkTitle: `Share this post on Pinterest`,
+    href: `https://www.facebook.com/sharer.php?u=${enc(url)}`,
+    linkTitle: "Share this post on Facebook",
   },
   {
     name: "Mail",
-    href: "mailto:?subject=See%20this%20post&body=",
-    linkTitle: `Share this post via email`,
+    href: `mailto:?subject=${enc(title)}&body=${enc(`${blurb}\n\n${url}`)}`,
+    linkTitle: "Share this post via email",
   },
 ] as const;
 ---
 
 <div class={`social-icons`}>
-  <span class="italic">Share this post on:</span>
+  <span
+    class="font-chrome text-micro tracking-chrome-wide text-fg-muted uppercase"
+    >Share this post on</span
+  >
   <div class="text-center">
     {
       shareLinks.map(social => (
         <LinkButton
-          href={`${social.href + URL}`}
+          href={social.href}
           class="link-button"
           title={social.linkTitle}
         >
@@ -59,10 +94,10 @@ const shareLinks = [
 <style>
   @reference "../styles/theme.css";
   .social-icons {
-    @apply flex flex-col flex-wrap items-center justify-center gap-1;
+    @apply flex flex-col flex-wrap items-center justify-center gap-2;
   }
   .link-button {
-    @apply scale-90 p-2 hover:rotate-6;
+    @apply scale-90 p-2;
   }
 
   @media (width >= 640px) {

@@ -1,0 +1,371 @@
+---
+import { SITE, SOCIALS } from "@config";
+import Layout from "@layouts/Layout.astro";
+import Header from "@components/Header.astro";
+import Footer from "@components/Footer.astro";
+import StatusBar from "@components/StatusBar.astro";
+import getYearsOfExperience from "@utils/getYearsOfExperience";
+
+// Remplace l'ancien couple about.md + AboutLayout.astro. La page est passée en
+// `.astro` parce qu'elle n'est plus de la prose : c'est une page structurée
+// (le rôle, les leviers, les résultats, le parcours), et empiler du HTML stylé
+// dans du markdown était précisément ce qui rendait l'ancienne version pénible.
+const years = getYearsOfExperience();
+
+/**
+ * Les trois chantiers du rôle actuel. Volontairement en tête de page : c'est ce
+ * qui distingue « je sais faire coder un agent » de « je fais coder des agents
+ * correctement à l'échelle d'une organisation ».
+ *
+ * Formulés sans nommer l'employeur ni exposer de détail interne, conformément
+ * au cadrage retenu.
+ */
+const building = [
+  {
+    title: "Turnkey agent config, per role",
+    body: "A tool that distributes Claude configuration — skills, settings, MCP servers — tailored to who you are. A product manager does not need a frontend developer's skills, and a backend developer does not need the same set as the frontend one sitting next to them. Everyone gets a working setup instead of a wiki page they will not read.",
+  },
+  {
+    title: "Telemetry on agent usage",
+    body: "You cannot optimise what you do not measure. This one tracks token and context consumption over time, so we can answer real questions: did that optimisation actually help, which models are quietly expensive, and are the skills and MCP servers we shipped being used at all.",
+  },
+  {
+    title: "An MCP gateway",
+    body: "Before the config tool existed, sharing MCP servers across teams was the bottleneck. Putting GitLab, Jira, Figma and the rest behind a single gateway made distribution a non-problem — one endpoint to hand out instead of one setup per person, per server.",
+  },
+];
+
+/** Les leviers du métier. Le cœur de la page : c'est le travail d'aujourd'hui. */
+const levers = [
+  {
+    title: "Architecture",
+    body: "An agent inherits your structure. A codebase full of god modules and implicit coupling generates bad code for the same reason it always did — there is just a lot more of it, a lot faster.",
+  },
+  {
+    title: "Context engineering",
+    body: "Explicit, reviewable rules the tools actually read, shared across the team. Rails, not prompts. Context is also a finite resource: most agent failures I see are a polluted context, not a weak model.",
+  },
+  {
+    title: "Subagents",
+    body: "Splitting work so each agent gets a narrow, clean context, instead of one long session that slowly drowns in its own history.",
+  },
+  {
+    title: "Review",
+    body: "The bottleneck moved from writing to reviewing. AI finds patterns, humans confirm intent — and the engineering judgment now lives in the review, not the keystrokes.",
+  },
+];
+
+/** Résultats mesurés, tous publiés en détail dans les articles. */
+const proof = [
+  {
+    figure: "22s → 4s",
+    body: "Test startup per file, after an agent found the architectural flaw instead of me tuning config flags.",
+    href: "/posts/how-gemini-3-pro-cut-our-pipeline-time-in-half/",
+    label: "Read the write-up",
+  },
+  {
+    figure: "15 min",
+    body: "Saved on every CI run, from that same refactor — roughly 90 files updated by the agent.",
+    href: "/posts/how-gemini-3-pro-cut-our-pipeline-time-in-half/",
+    label: "Read the write-up",
+  },
+  {
+    figure: "2900+ tests",
+    body: "Migrated from Jest to Vitest on a React/TypeScript codebase, ESM handling included.",
+    href: "/posts/migration-from-jest-to-vitest/",
+    label: "Read the write-up",
+  },
+  {
+    figure: "0 lines",
+    body: "Written by hand on a side business now live in production — the run that convinced me the job had changed from typing to orchestrating.",
+    href: "/posts/moving-from-cursor-to-claude-code/",
+    label: "Read the write-up",
+  },
+];
+
+const timeline = [
+  {
+    when: "2010",
+    what: "Started fullstack — PHP, MySQL, and the servers under the desk. Then a decade across construction, real estate, e-learning, delivery and public administration.",
+  },
+  {
+    when: "2016",
+    what: "Still fullstack — CakePHP on the back — but Vue.js is where the pull started: a learning management system, a serious game shipped as a desktop app, an internal CRM.",
+  },
+  {
+    when: "2017",
+    what: "Lead frontend developer in a four-person agency. React and Apollo over PHP and Node microservices — including a data platform for a French public agency, released open source.",
+  },
+  {
+    when: "2020",
+    what: "Lead frontend, full remote, on a construction-industry SaaS. Hired to take a Symfony monolith to an independent React front end, alongside the design system and a team of nine frontend developers. TypeScript, linting, unit tests with coverage, real reviews, CI.",
+  },
+  {
+    when: "2025",
+    what: "New role, same company: making agents productive across the whole engineering org — not just in my own terminal.",
+  },
+];
+
+// Repris de SOCIALS pour ne pas dupliquer les URLs, avec l'e-mail en tête :
+// c'est le canal qu'on veut mettre en avant sur une page « get in touch ».
+const ORDER = ["Mail", "LinkedIn", "X", "Bluesky", "Github"];
+const contacts = ORDER.map(name =>
+  SOCIALS.find(social => social.name === name && social.active)
+).filter(social => social !== undefined);
+---
+
+<Layout
+  title={`About | ${SITE.titleShort}`}
+  schemaType="ProfilePage"
+  schemaName="About"
+  description="Flavien Beninca — context engineer. I design the architecture, context rules and agent tooling that decide whether AI ships code worth keeping inside a large codebase."
+>
+  <Header activeNav="about" />
+
+  <StatusBar>
+    <Fragment slot="left">Context engineer · full remote</Fragment>
+    <Fragment slot="center">{SITE.author}</Fragment>
+    <Fragment slot="right">
+      <a
+        href="/rss.xml"
+        target="_blank"
+        rel="noopener"
+        class="focus-outline uppercase hover:underline"
+      >
+        RSS always open ↗<span class="sr-only"> (opens in a new tab)</span>
+      </a>
+    </Fragment>
+  </StatusBar>
+
+  <main id="main-content" class="w-full">
+    <!-- Masthead : la thèse d'abord, le CV plus bas -->
+    <div class="border-line from-feature to-canvas border-b bg-gradient-to-b">
+      <div
+        class="max-w-page mx-auto flex flex-col gap-7 px-(--page-gutter) pt-10 pb-9 sm:flex-row sm:items-start"
+      >
+        <img
+          src="/assets/avatar.png"
+          alt={SITE.author}
+          width="120"
+          height="120"
+          class="border-line-strong aspect-square size-24 shrink-0 border object-cover"
+        />
+        <div>
+          <p
+            class="font-chrome text-meta tracking-chrome text-fg-muted mb-3.5 uppercase"
+          >
+            Who is typing
+          </p>
+          <h1
+            class="font-reading text-display text-fg-strong mb-4 max-w-[24ch] font-semibold text-pretty"
+          >
+            {years} years writing code. Now I make sure the machine writes it well.
+          </h1>
+          <p
+            class="max-w-measure font-reading text-lead text-fg-body text-pretty"
+          >
+            I'm {SITE.author}. I make AI agents productive inside large
+            codebases: the architecture they inherit, the context they get, and
+            the tooling a whole team needs to do it consistently. My job used to
+            be writing the code. Today it is designing the rails that decide
+            whether an agent ships something you would keep — or something you
+            will rewrite in three months.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Les trois chantiers concrets, avant les principes -->
+    <section aria-labelledby="building" class="border-line border-b">
+      <div class="border-line bg-raised border-b px-(--page-gutter) py-3.5">
+        <div class="max-w-page mx-auto">
+          <h2
+            id="building"
+            class="font-chrome text-meta tracking-chrome-loose text-fg-muted uppercase"
+          >
+            What I am building
+          </h2>
+        </div>
+      </div>
+      <div class="max-w-page mx-auto px-(--page-gutter) py-8">
+        <p
+          class="max-w-measure font-reading text-lead text-fg-body mb-8 text-pretty"
+        >
+          Getting one agent to behave is a solved problem. Getting a whole
+          engineering org to do it consistently — and knowing whether it worked
+          — is the actual job.
+        </p>
+        <dl class="grid gap-x-10 gap-y-7 sm:grid-cols-3">
+          {
+            building.map(item => (
+              <div class="border-line-subtle border-t pt-4">
+                <dt class="font-reading text-subheading text-fg-heading mb-2 font-semibold">
+                  {item.title}
+                </dt>
+                <dd class="font-reading text-body text-fg-secondary text-pretty">
+                  {item.body}
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    <!-- Les principes sous-jacents -->
+    <section aria-labelledby="work" class="border-line border-b">
+      <div class="border-line bg-raised border-b px-(--page-gutter) py-3.5">
+        <div class="max-w-page mx-auto">
+          <h2
+            id="work"
+            class="font-chrome text-meta tracking-chrome-loose text-fg-muted uppercase"
+          >
+            What it rests on
+          </h2>
+        </div>
+      </div>
+      <div class="max-w-page mx-auto px-(--page-gutter) py-8">
+        <p
+          class="max-w-measure font-reading text-lead text-fg-body mb-8 text-pretty"
+        >
+          None of it works without the basics. Four things decide whether an
+          agent ships something you keep.
+        </p>
+        <dl class="grid gap-x-10 gap-y-7 sm:grid-cols-2">
+          {
+            levers.map(lever => (
+              <div class="border-line-subtle border-t pt-4">
+                <dt class="font-reading text-subheading text-fg-heading mb-2 font-semibold">
+                  {lever.title}
+                </dt>
+                <dd class="font-reading text-body text-fg-secondary text-pretty">
+                  {lever.body}
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    <!-- Ce que ça donne, chiffres publiés -->
+    <section aria-labelledby="proof" class="border-line border-b">
+      <div class="border-line bg-raised border-b px-(--page-gutter) py-3.5">
+        <div class="max-w-page mx-auto">
+          <h2
+            id="proof"
+            class="font-chrome text-meta tracking-chrome-loose text-fg-muted uppercase"
+          >
+            What it buys
+          </h2>
+        </div>
+      </div>
+      <div
+        class="max-w-page mx-auto grid gap-x-10 gap-y-7 px-(--page-gutter) py-8 sm:grid-cols-2 lg:grid-cols-4"
+      >
+        {
+          proof.map(item => (
+            <div class="border-line-subtle border-t pt-4">
+              <p class="font-reading text-title text-accent mb-2 font-semibold">
+                {item.figure}
+              </p>
+              <p class="font-reading text-body text-fg-secondary mb-3 text-pretty">
+                {item.body}
+              </p>
+              <a
+                href={item.href}
+                class="focus-outline font-chrome text-meta tracking-chrome text-accent uppercase hover:underline"
+              >
+                {item.label} →
+              </a>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- Le parcours, en second : il sert de caution, pas d'argument -->
+    <section aria-labelledby="path" class="border-line border-b">
+      <div class="border-line bg-raised border-b px-(--page-gutter) py-3.5">
+        <div class="max-w-page mx-auto">
+          <h2
+            id="path"
+            class="font-chrome text-meta tracking-chrome-loose text-fg-muted uppercase"
+          >
+            The path
+          </h2>
+        </div>
+      </div>
+      <div class="max-w-page mx-auto px-(--page-gutter) py-8">
+        <dl class="max-w-measure flex flex-col">
+          {
+            timeline.map(step => (
+              <div class="border-line-subtle grid grid-cols-[5rem_1fr] gap-5 border-b py-3.5 last:border-b-0">
+                <dt class="font-chrome text-meta tracking-chrome text-fg-muted pt-0.5 uppercase">
+                  {step.when}
+                </dt>
+                <dd class="font-reading text-body text-fg-secondary text-pretty">
+                  {step.what}
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    <!-- Ce que je ne vends pas : la ligne de crédibilité -->
+    <section class="border-line border-b">
+      <div class="max-w-page mx-auto px-(--page-gutter) py-8">
+        <p
+          class="max-w-measure border-l-accent font-reading text-lead text-fg-body border-l-2 pl-5 text-pretty"
+        >
+          I do not work for a company that sells AI products, and I do not sell
+          training. What is on this blog is what I actually run — including the
+          parts that break, loop, or turn out to be a waste of tokens.
+        </p>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section aria-labelledby="contact">
+      <div class="border-line bg-raised border-b px-(--page-gutter) py-3.5">
+        <div class="max-w-page mx-auto">
+          <h2
+            id="contact"
+            class="font-chrome text-meta tracking-chrome-loose text-fg-muted uppercase"
+          >
+            Get in touch
+          </h2>
+        </div>
+      </div>
+      <div class="max-w-page mx-auto px-(--page-gutter) py-8">
+        <p
+          class="max-w-measure font-reading text-lead text-fg-body mb-6 text-pretty"
+        >
+          If you are working on the same problem — making a large codebase safe
+          for agents to work in — I am interested in the conversation.
+        </p>
+        <div class="flex flex-wrap gap-2.5">
+          {
+            contacts.map((contact, i) => (
+              <a
+                href={contact.href}
+                class:list={[
+                  "focus-outline font-chrome text-ui tracking-ui px-5 py-3.5 uppercase",
+                  i === 0
+                    ? "bg-accent text-on-accent hover:opacity-90"
+                    : "border-line-strong text-fg-body hover:border-accent hover:text-accent border",
+                ]}
+              >
+                {contact.name === "Mail" ? "Email ✉" : `${contact.name} ↗`}
+              </a>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>

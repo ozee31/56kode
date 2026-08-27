@@ -2,73 +2,73 @@ import { LOCALE } from "@config";
 
 interface DatetimesProps {
   pubDatetime: string | Date;
-  modDatetime: string | Date | undefined | null;
+  modDatetime?: string | Date | undefined | null;
 }
 
 interface Props extends DatetimesProps {
+  /** `sm` = --text-meta (listes, cartes) · `lg` = --text-body-sm (page d'article) */
   size?: "sm" | "lg";
+  tone?: "site" | "ai";
+  /**
+   * Le texte environnant porte déjà un libellé visible (« Published … »).
+   * On supprime alors le préfixe pour lecteurs d'écran, sinon ils annoncent
+   * « Published Published: 19.08.2026 » — et le copier-coller le duplique aussi.
+   */
+  hasVisibleLabel?: boolean;
   className?: string;
 }
 
+/**
+ * Date au format chrome : `26.11.2025`, mono, majuscule, sans icône.
+ *
+ * L'ancienne version affichait « Nov 26, 2025 | 10:00 » précédé d'une icône
+ * calendrier ; la direction 3A veut une ligne de méta nue. L'heure disparaît de
+ * l'affichage mais reste dans l'attribut `datetime` en ISO, donc rien n'est
+ * perdu pour les machines ni pour le SEO.
+ */
 export default function Datetime({
   pubDatetime,
   modDatetime,
   size = "sm",
+  tone = "site",
+  hasVisibleLabel = false,
   className = "",
 }: Props) {
+  const isUpdated = Boolean(modDatetime && modDatetime > pubDatetime);
+  const value = new Date(isUpdated ? modDatetime! : pubDatetime);
+
   return (
-    <div
-      className={`flex items-center space-x-2 opacity-80 ${className}`.trim()}
+    <span
+      className={[
+        "font-chrome tracking-chrome",
+        size === "sm" ? "text-meta" : "text-body-sm",
+        tone === "ai" ? "text-ai-muted" : "text-fg-muted",
+        className,
+      ]
+        .filter(Boolean)
+        .join(" ")}
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className={`${
-          size === "sm" ? "scale-90" : "scale-100"
-        } inline-block h-6 w-6 min-w-[1.375rem] fill-foreground`}
-        aria-hidden="true"
-      >
-        <path d="M7 11h2v2H7zm0 4h2v2H7zm4-4h2v2h-2zm0 4h2v2h-2zm4-4h2v2h-2zm0 4h2v2h-2z"></path>
-        <path d="M5 22h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2zM19 8l.001 12H5V8h14z"></path>
-      </svg>
-      {modDatetime && modDatetime > pubDatetime ? (
-        <span className={`italic ${size === "sm" ? "text-sm" : "text-base"}`}>
-          Updated:
+      {!hasVisibleLabel && (
+        <span className="sr-only">
+          {isUpdated ? "Updated: " : "Published: "}
         </span>
-      ) : (
-        <span className="sr-only">Published:</span>
       )}
-      <span className={`italic ${size === "sm" ? "text-sm" : "text-base"}`}>
-        <FormattedDatetime
-          pubDatetime={pubDatetime}
-          modDatetime={modDatetime}
-        />
-      </span>
-    </div>
+      <time dateTime={value.toISOString()}>{formatDate(value)}</time>
+      {isUpdated && <span aria-hidden="true"> · UPD</span>}
+    </span>
   );
 }
 
-const FormattedDatetime = ({ pubDatetime, modDatetime }: DatetimesProps) => {
-  const myDatetime = new Date(
-    modDatetime && modDatetime > pubDatetime ? modDatetime : pubDatetime
-  );
-
-  const date = myDatetime.toLocaleDateString(LOCALE.langTag, {
+/** `26.11.2025` — jour, mois, année zéro-paddés, séparés par des points. */
+function formatDate(value: Date): string {
+  const parts = new Intl.DateTimeFormat(LOCALE.langTag, {
     year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(value);
 
-  const time = myDatetime.toLocaleTimeString(LOCALE.langTag, {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const get = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find(part => part.type === type)?.value ?? "";
 
-  return (
-    <>
-      <time dateTime={myDatetime.toISOString()}>{date}</time>
-      <span aria-hidden="true"> | </span>
-      <span className="sr-only">&nbsp;at&nbsp;</span>
-      <span className="text-nowrap">{time}</span>
-    </>
-  );
-};
+  return `${get("day")}.${get("month")}.${get("year")}`;
+}
