@@ -40,6 +40,7 @@ const RESIZE = {
   "posts/responsive-images-a-quick-example-with-react/desktop-preview.png": 1306,
   "posts/ai-powered-development-chrome-extension-n8n-automation-claude-code/workflow.png": 1306,
   "posts/text-truncation-with-ellipsis-on-multiple-lines/caniuse.png": 1306,
+  "posts/redesign-blog-claude-design-claude-code/old-website.png": 1306,
 };
 
 const files = [];
